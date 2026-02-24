@@ -2,6 +2,8 @@ class ApiConstants {
   static const String baseUrl =
       "https://emtrackotrapi-staging.azurewebsites.net";
 
+  // https://emtrackotrapi-staging.azurewebsites.net/UserManagement/CreateUser
+
   // ================= AUTH =================
   static const String login = "/Auth/Login";
   static const String logout = "/Auth/LogOut";
@@ -32,4 +34,24 @@ class ApiConstants {
   //================= Master DATA =============
   static const String grandParentAccountGetAll =
       "/api/GrandParentAccount/GetAll";
+
+  //=========================User Management==========================
+  static const String createUser = "/UserManagement/CreateUser";
+  static const String createUserProfile = "/api/UserProfile/CreateUserProfile";
+  static const String createUserPreference =
+      "/api/UserPreferences/CreateUserPreference";
+
+  static const String assignRole = "/Role/AssignRole";
+
+  // Grant Parent
+  static const String createGrandParentAccount =
+      "/api/GrandParentAccount/Create";
+  static const String updateGrandParentAccount =
+      "api/ParentAccount/UpdateGrandParentAccount";
+
+  // Assign grandparent
+  static const String getParentAccountList =
+      "/api/ParentAccount/GetAccountList";
+  static const String getGrandparentAccountList =
+      "api/GrandParentAccount/GetAll";
 }

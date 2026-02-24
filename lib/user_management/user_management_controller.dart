@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 class UserManagementController extends GetxController {
   final _service = UserManagementService();
 
+  RxBool isLoading = false.obs;
+
   /// Stepper
   RxInt currentStep = 0.obs;
   final int totalSteps = 3;
@@ -44,7 +46,7 @@ class UserManagementController extends GetxController {
   RxString pressureUnit = ''.obs;
 
   /// Dropdown Data
-  List<String> roles = ['Admin', 'User'];
+  List<String> roles = ['EMTADMIN', 'EMTUSER', 'EMTCADMIN', 'EMTCVO'];
   List<String> countries = ['India', 'USA'];
   List<String> languages = ['English', 'Hindi'];
   List<String> measurements = ['Metric', 'Imperial'];
@@ -68,6 +70,7 @@ class UserManagementController extends GetxController {
 
   /// Submit
   Future<void> submit() async {
+    isLoading.value = true;
     final formState = preferenceFormKey.currentState;
 
     if (formState == null) {
@@ -78,14 +81,14 @@ class UserManagementController extends GetxController {
     if (!formState.validate()) return;
 
     final model = UserManagementModel(
-      username: username.value,
-      password: password.value,
+      username: usernameC.text,
+      password: passwordC.text,
       role: role.value,
-      firstName: firstName.value,
-      middleName: middleName.value,
-      lastName: lastName.value,
-      email: email.value,
-      phone: phone.value,
+      firstName: firstNameC.text,
+      middleName: middleNameC.text,
+      lastName: lastNameC.text,
+      email: emailC.text,
+      phone: phoneC.text,
       country: country.value,
       language: language.value,
       measurement: measurement.value,
@@ -94,7 +97,7 @@ class UserManagementController extends GetxController {
 
     await _service.registerUser(model);
 
-    Get.snackbar("Success", "User Created Successfully");
+    // Get.snackbar("Success", "User Created Successfully");
   }
 
   @override

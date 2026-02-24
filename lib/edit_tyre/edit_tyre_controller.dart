@@ -1,16 +1,12 @@
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:emtrack/create_tyre/app_loader.dart';
 import 'package:emtrack/edit_tyre/edit_tyre_model.dart';
 import 'package:emtrack/edit_tyre/edit_tyre_service.dart';
-import 'package:emtrack/services/api_constants.dart';
+
 import 'package:emtrack/services/master_data_service.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:emtrack/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
 class EditTyreController extends GetxController {
   // ================= STEPPER =================
