@@ -96,7 +96,7 @@ class AppPages {
     ),
     GetPage(
       name: PASSWORD_RESET,
-      page: () => PasswordResetView(),
+      page: () => ResetPasswordView(),
       binding: AppBindings(),
     ),
   ];

@@ -43,15 +43,21 @@ class ApiConstants {
 
   static const String assignRole = "/Role/AssignRole";
 
+  // Reset Password
+  static const String sendPasswordToken =
+      "/UserManagement/SendPasswordResetCode";
+
+  static const String resetPassword = "/UserManagement/PasswordResetWToken";
+
   // Grant Parent
   static const String createGrandParentAccount =
       "/api/GrandParentAccount/Create";
   static const String updateGrandParentAccount =
-      "api/ParentAccount/UpdateGrandParentAccount";
+      "/api/ParentAccount/UpdateGrandParentAccount";
 
   // Assign grandparent
   static const String getParentAccountList =
       "/api/ParentAccount/GetAccountList";
   static const String getGrandparentAccountList =
-      "api/GrandParentAccount/GetAll";
+      "/api/GrandParentAccount/GetAll";
 }

@@ -143,48 +143,56 @@ class GrandparentAccountView extends StatelessWidget {
 
   /// STEP-2 UI
   Widget _assignAccount() {
-    return Padding(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        children: [
-          DropdownButtonFormField(
-            decoration: InputDecoration(
-              labelText: "Parent Account",
-              border: OutlineInputBorder(),
+    return Obx(
+      () => Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            DropdownButtonFormField(
+              isExpanded: true,
+              decoration: InputDecoration(
+                labelText: "Parent Account",
+                border: OutlineInputBorder(),
+              ),
+              items: c.parentAccounts
+                  .map(
+                    (e) => DropdownMenuItem(
+                      value: e['id'],
+                      child: Text("${e['id']} : ${e['name']}"),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (v) => c.selectedParentId.value = v as int? ?? 0,
             ),
-            items: c.parentAccounts
-                .map(
-                  (e) =>
-                      DropdownMenuItem(value: e['id'], child: Text(e['name'])),
-                )
-                .toList(),
-            onChanged: (v) => c.selectedParentId.value = v as int? ?? 0,
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          DropdownButtonFormField(
-            decoration: InputDecoration(
-              labelText: "Grandparent Account",
-              border: OutlineInputBorder(),
+            DropdownButtonFormField(
+              isExpanded: true,
+              decoration: InputDecoration(
+                labelText: "Grandparent Account",
+                border: OutlineInputBorder(),
+              ),
+              items: c.grandparentAccounts
+                  .map(
+                    (e) => DropdownMenuItem(
+                      value: e['id'],
+                      child: Text("${e['id']} : ${e['name']}"),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (v) => c.selectedGrandparentId.value = v as int? ?? 0,
             ),
-            items: c.grandparentAccounts
-                .map(
-                  (e) =>
-                      DropdownMenuItem(value: e['id'], child: Text(e['name'])),
-                )
-                .toList(),
-            onChanged: (v) => c.selectedGrandparentId.value = v as int? ?? 0,
-          ),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          _bottomButtons(
-            onPrevious: c.previous,
-            onNext: c.assignGrandparent,
-            nextText: "ASSIGN",
-          ),
-        ],
+            _bottomButtons(
+              onPrevious: c.previous,
+              onNext: c.assignGrandparent,
+              nextText: "ASSIGN",
+            ),
+          ],
+        ),
       ),
     );
   }
