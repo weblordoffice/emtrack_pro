@@ -16,13 +16,25 @@ class UserManagementView extends StatelessWidget {
         centerTitle: true,
         leading: BackButton(color: Colors.white),
       ),
-      body: Obx(
-        () => Column(
-          children: [
-            _stepHeader(),
-            Expanded(child: _stepBody()),
-          ],
-        ),
+      body: Stack(
+        children: [
+          Obx(
+            () => Column(
+              children: [
+                _stepHeader(),
+                Expanded(child: _stepBody()),
+              ],
+            ),
+          ),
+
+          Obx(() {
+            if (!c.isLoading.value) return const SizedBox();
+
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.secondary),
+            );
+          }),
+        ],
       ),
     );
   }
@@ -207,11 +219,14 @@ class UserManagementView extends StatelessWidget {
   }
 
   Widget _preferences() {
-    return _form([
-      _dropdown("Language", c.languages, c.language),
-      _dropdown("Measurement", c.measurements, c.measurement),
-      _dropdown("Pressure Unit", c.pressureUnits, c.pressureUnit),
-    ]);
+    return Form(
+      key: c.preferenceFormKey,
+      child: _form([
+        _dropdown("Language", c.languages, c.language),
+        _dropdown("Measurement", c.measurements, c.measurement),
+        _dropdown("Pressure Unit", c.pressureUnits, c.pressureUnit),
+      ]),
+    );
   }
 
   Widget _buttons() {

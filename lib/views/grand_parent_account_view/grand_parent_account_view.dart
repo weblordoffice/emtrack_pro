@@ -103,7 +103,7 @@ class GrandparentAccountView extends StatelessWidget {
 
           TextFormField(
             initialValue: "OWNED",
-            readOnly: true,
+            readOnly: false,
             decoration: const InputDecoration(
               labelText: "Account Type",
               border: OutlineInputBorder(),
@@ -119,7 +119,23 @@ class GrandparentAccountView extends StatelessWidget {
             onChanged: (v) => c.grandparentName.value = v,
           ),
           const SizedBox(height: 20),
-          _bottomButtons(onNext: c.createGrandparent, nextText: "NEXT"),
+          Row(
+            children: [
+              Expanded(
+                child: _bottomButtons(
+                  onNext: c.grandparentName.value.isEmpty
+                      ? null
+                      : c.createGrandparent,
+                  nextText: "Save",
+                ),
+              ),
+              SizedBox(width: 15),
+
+              Expanded(
+                child: _bottomButtons(onNext: c.next, nextText: "Next"),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -176,7 +192,7 @@ class GrandparentAccountView extends StatelessWidget {
   /// BUTTONS
   Widget _bottomButtons({
     VoidCallback? onPrevious,
-    required VoidCallback onNext,
+    required VoidCallback? onNext,
     required String nextText,
   }) {
     return Row(
@@ -201,12 +217,21 @@ class GrandparentAccountView extends StatelessWidget {
         Expanded(
           child: ElevatedButton(
             onPressed: onNext,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return Colors.grey;
+                }
+                return Colors.red;
+              }),
             ),
+            //  ElevatedButton.styleFrom(
+
+            //   backgroundColor: Colors.red,
+            //   shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.circular(10),
+            //   ),
+            // ),
             child: Text(nextText, style: const TextStyle(color: Colors.white)),
           ),
         ),

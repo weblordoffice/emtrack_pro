@@ -89,7 +89,6 @@ class AppPages {
       page: () => VehicleInspeView(),
       binding: AppBindings(),
     ),
-
     GetPage(
       name: INSTALL_TYRE_VIEW,
       page: () => InstallTyreView(),

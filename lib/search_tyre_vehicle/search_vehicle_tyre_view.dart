@@ -104,7 +104,7 @@ class SearchVehicleTyreView extends StatelessWidget {
                                         tireId: e.tireId,
                                         tireSerialNo: e.tireSerialNo,
                                         wheelPosition: e.wheelPosition,
-                                        vehicleId: e.vehicleId,
+                                        //vehicleId: e.vehicleId,
                                         // map other fields
                                       );
 
