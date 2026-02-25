@@ -101,7 +101,7 @@ class HomeService {
       final uri = Uri.parse(
         "${ApiConstants.baseUrl}/api/Tire/GetTiresByAccount/$parentAccountId",
       );
-
+      print("Calling URL: $uri");
       final resp = await http.get(
         uri,
         headers: {"Content-Type": "application/json", "Cookie": cookie},

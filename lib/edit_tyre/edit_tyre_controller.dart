@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:ffi';
-
 import 'package:emtrack/create_tyre/app_loader.dart';
 import 'package:emtrack/edit_tyre/edit_tyre_model.dart';
 import 'package:emtrack/edit_tyre/edit_tyre_service.dart';
@@ -522,7 +521,7 @@ class EditTyreController extends GetxController {
         selectedId: selectedManufacturerId,
       );
       //...........
-      //sizeId.text = tyre.sizeId.toString();
+
       setDropdownById(
         id: tyre.sizeId,
         idList: tireSizeIdList.toList(),
@@ -532,9 +531,7 @@ class EditTyreController extends GetxController {
       );
       starRatingId.text = tyre.starRatingId.toString();
       starRating.value = tyre.starRatingId ?? 0;
-      // model.typeId = int.tryParse(typeId.text) ?? 0;
 
-      // indCodeId.text = tyre.indCodeId.toString();
       setDropdownById(
         id: tyre.indCodeId,
         idList: indCodeIdList.toList(),
@@ -542,7 +539,7 @@ class EditTyreController extends GetxController {
         controller: indCodeId,
         selectedId: selectedIndCodeId,
       );
-      // compoundId.text = tyre.compoundId.toString();
+
       setDropdownById(
         id: tyre.compoundId,
         idList: compoundIdList.toList(),
@@ -550,7 +547,7 @@ class EditTyreController extends GetxController {
         controller: compoundId,
         selectedId: selectedCompoundId,
       );
-      // loadRatingId.text = tyre.loadRatingId.toString();
+
       setDropdownById(
         id: tyre.loadRatingId,
         idList: loadRatingIdList.toList(),
@@ -585,7 +582,7 @@ class EditTyreController extends GetxController {
       // 🔹 STEP 4
       purchaseCost.text = tyre.purchaseCost.toString();
       casingValue.text = tyre.casingValue.toString();
-      // fillTypeId.text = tyre.fillTypeId.toString();
+
       setDropdownById(
         id: tyre.fillTypeId,
         idList: fillTypeIdList.toList(),

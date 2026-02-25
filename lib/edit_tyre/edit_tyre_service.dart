@@ -16,8 +16,18 @@ class EditTyreService {
 
       final url = "${ApiConstants.baseUrl}/api/Tire";
       print("🟢 UPDATE API => $url");
+      //final body = model.toJson();
+      // ✅ Step 1: Convert to Map
+      final Map<String, dynamic> bodyMap = model.toJson();
 
-      final body = jsonEncode(model.toJson());
+      // ✅ Step 2: Remove unwanted fields
+      bodyMap.remove("tireId");
+      bodyMap.remove("vehicleId");
+      bodyMap.remove("mountedRimId");
+
+      // ✅ Step 3: Encode after removing
+      final body = jsonEncode(bodyMap);
+
       print("🟡 REQUEST BODY => $body");
 
       final response = await http.put(

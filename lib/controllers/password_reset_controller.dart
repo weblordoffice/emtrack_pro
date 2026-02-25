@@ -29,7 +29,12 @@ class PasswordResetController extends GetxController {
       if (response.statusCode == 200) {
         message.value = "Password Reset Successfully";
         Get.back();
-        Get.snackbar("Success", message.value);
+        Get.snackbar(
+          "Success",
+          message.value,
+          backgroundColor: Colors.white,
+          colorText: Colors.black,
+        );
       } else {
         final error = jsonDecode(response.body);
         message.value = error.toString();
