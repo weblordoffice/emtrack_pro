@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:emtrack/models/grand_parent_account_model/assign_grand_parent_model.dart';
 import 'package:emtrack/models/grand_parent_account_model/grand_parent_account_model.dart';
 import 'package:emtrack/routes/app_pages.dart';
+import 'package:emtrack/services/api_constants.dart';
+import 'package:emtrack/services/api_service.dart';
 import 'package:emtrack/services/grand_parent_account_service/grand_parent_account_service.dart';
+
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:get/get.dart';
 
@@ -21,13 +26,13 @@ class GrandparentAccountController extends GetxController {
   RxInt selectedGrandparentId = 0.obs;
 
   /// Dummy dropdown data (API se ayega)
-  RxList<Map<String, dynamic>> parentAccounts = [
-    {"id": 10768, "name": "05 CBA (Cre Rians)"},
-  ].obs;
+  RxList<Map<String, dynamic>> parentAccounts = <Map<String, dynamic>>[].obs;
 
-  RxList<Map<String, dynamic>> grandparentAccounts = [
-    {"id": 4, "name": "EMTTST_ADMIN Accounts"},
-  ].obs;
+  RxList<Map<String, dynamic>> grandparentAccounts =
+      <Map<String, dynamic>>[].obs;
+  // [
+  //   {"id": 4, "name": "EMTTST_ADMIN Accounts"},
+  // ].obs;
 
   /// Navigation
   void next() {
@@ -36,7 +41,13 @@ class GrandparentAccountController extends GetxController {
     }
   }
 
+  @override
+  void onInit() {
+    super.onInit();
 
+    fetchParentAccounts();
+    fetchGrandParentAccounts();
+  }
 
   void previous() {
     if (currentStep.value > 0) {
@@ -76,6 +87,49 @@ class GrandparentAccountController extends GetxController {
     final data = await service.assignGrandparent(model);
     if (data) {
       Get.to(AppPages.HOME);
+    }
+  }
+
+  Future<void> fetchParentAccounts() async {
+    try {
+      final response = await ApiService.getApi(
+        endpoint: ApiConstants.getParentAccountList,
+      );
+
+      if (response['model'] != null && response['model'].length > 0) {
+        final List data = response['model'];
+
+        parentAccounts.value = data.map<Map<String, dynamic>>((item) {
+          return {"id": item["parentAccountId"], "name": item["accountName"]};
+        }).toList();
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
+
+  Future<void> fetchGrandParentAccounts() async {
+    try {
+      final response = await ApiService.getApi(
+        endpoint: ApiConstants.getGrandparentAccountList,
+      );
+
+      if (response['model'] != null && response['model'].length > 0) {
+        final List data = response['model'];
+
+        grandparentAccounts.value = data.map<Map<String, dynamic>>((item) {
+          return {
+            "id": item["grandParentAccountId"],
+            "name": item["grandParentAccountName"],
+          };
+        }).toList();
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception: $e");
     }
   }
 }

@@ -29,6 +29,6 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => RemoveTyreController());
     Get.lazyPut(() => VehicleInspeController());
     Get.lazyPut(() => InstallTyreController());
-    Get.lazyPut(() => PasswordResetController());
+    Get.lazyPut(() => ResetPasswordController());
   }
 }

@@ -42,6 +42,4 @@ class GrandparentAccountService {
       return false;
     }
   }
-
- 
 }

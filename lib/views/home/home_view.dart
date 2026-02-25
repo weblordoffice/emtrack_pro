@@ -403,7 +403,7 @@ class _HomeViewState extends State<HomeView> {
                                                       BlendMode.srcIn,
                                                     ),
                                               ),
-                                              SizedBox(width: 10),
+                                              SizedBox(width: 8),
                                               Column(
                                                 children: [
                                                   Text(
