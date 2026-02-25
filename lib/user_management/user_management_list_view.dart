@@ -1,0 +1,131 @@
+import 'package:emtrack/routes/app_pages.dart';
+import 'package:emtrack/user_management/user_management_list_controller.dart';
+import 'package:emtrack/user_management/user_management_model.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class UserManagementListView extends StatelessWidget {
+  final c = Get.put(UserManagementListController());
+
+  UserManagementListView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text("USER MANAGEMENT"), centerTitle: true),
+      body: Column(
+        children: [
+          /// 🔴 CREATE USER BUTTON
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: w,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: () {
+                  Get.toNamed(AppPages.USER_MANAGEMENT_VIEW);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text(
+                  "+ CREATE USER",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+
+          /// 🔍 SEARCH BAR
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextField(
+              onChanged: c.search,
+              decoration: InputDecoration(
+                hintText: "Search User",
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          /// 📋 USER LIST
+          Expanded(
+            child: Obx(() {
+              if (c.loading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: c.filteredUsers.length,
+                itemBuilder: (context, index) {
+                  final user = c.filteredUsers[index];
+
+                  return _userCard(user);
+                },
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _userCard(UserManagementModel user) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// LEFT DATA
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user.username,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  if (user.role.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text("${user.role}   ${user.firstName}"),
+                    ),
+                  if (user.phone.isNotEmpty) Text(user.phone),
+                  const SizedBox(height: 6),
+                  Text(
+                    "phone: ${user.phone}",
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+
+            /// 🗑 DELETE
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () =>
+                  Get.find<UserManagementListController>().deleteUser(user),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

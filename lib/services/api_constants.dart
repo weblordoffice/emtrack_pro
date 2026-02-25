@@ -1,0 +1,35 @@
+class ApiConstants {
+  static const String baseUrl =
+      "https://emtrackotrapi-staging.azurewebsites.net";
+
+  // ================= AUTH =================
+  static const String login = "/Auth/Login";
+  static const String logout = "/Auth/LogOut";
+
+  // ================= TYRE =================
+  static const String createTyre = "/api/Tire";
+  static const String getTyreById = "/api/Tire/GetById/";
+  static const String getTyresByAccount = "/api/Tire/GetTiresByAccount/";
+
+  // ================= VEHICLE =================
+  static const String createVehicle = "/api/Vehicle/Create";
+
+  /// https://emtrackotrapi-staging.azurewebsites.net/api/Vehicle/GetVehicleByUser/11855/0?timeStamp=0
+  static String getVehicleByUser(
+    int parentAccountId, {
+    int pageNumber = 0,
+    int timeStamp = 0,
+  }) {
+    return "/api/Vehicle/GetVehicleByUser/$parentAccountId/$pageNumber?timeStamp=$timeStamp";
+  }
+
+  //=================== MASTER DATA GET All COUNTRY==============
+  static const String getAllCountryName = "/api/MasterData/GetCountryList";
+  // ================= USER =================
+  static const String updatePreferences = "/api/UserPreferences/Update";
+  //================= Master DATA =============
+  static const String masterData = "/api/MasterData/GetMasterDataMobile";
+  //================= Master DATA =============
+  static const String grandParentAccountGetAll =
+      "/api/GrandParentAccount/GetAll";
+}
