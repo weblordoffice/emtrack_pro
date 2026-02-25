@@ -69,8 +69,6 @@ class VehicleDiagramForView extends StatefulWidget {
   }
 }
 
-
-
 class _VehicleDiagramForViewState extends State<VehicleDiagramForView> {
   String generateRandomSerial() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -199,7 +197,7 @@ class _VehicleDiagramForViewState extends State<VehicleDiagramForView> {
   /// Placeholder box for empty tire positions
   Widget _emptyTyreBox({required String axleNo, required String side}) {
     return InkWell(
-      onTap: () async {
+      /*  onTap: () async {
         Get.to(
           () => SearchInstallView(),
           arguments: {
@@ -207,8 +205,7 @@ class _VehicleDiagramForViewState extends State<VehicleDiagramForView> {
             "wheelPosition": "$axleNo$side",
           },
         );
-      },
-
+      },*/
       child: Container(
         width: 92,
         height: 160,
@@ -268,7 +265,7 @@ class _VehicleDiagramForViewState extends State<VehicleDiagramForView> {
 
     return InkWell(
       borderRadius: BorderRadius.circular(16),
-      onTap: () => Get.to(() => InspectTyreView(), arguments: tire),
+      // onTap: () => Get.to(() => InspectTyreView(), arguments: tire),
       child: Column(
         children: [
           VehicleDiagramForView._serial(tire.tireSerialNo ?? ""),
@@ -297,7 +294,10 @@ class _VehicleDiagramForViewState extends State<VehicleDiagramForView> {
                   'To',
                   tire.outsideTread?.toString() ?? '',
                 ),
-                VehicleDiagramForView._value('Ti', tire.insideTread?.toString() ?? ''),
+                VehicleDiagramForView._value(
+                  'Ti',
+                  tire.insideTread?.toString() ?? '',
+                ),
               ],
             ),
           ),

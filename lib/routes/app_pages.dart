@@ -10,8 +10,10 @@ import 'package:emtrack/views/all_tyres_view.dart';
 import 'package:emtrack/views/all_vehicles_list_view.dart';
 import 'package:emtrack/views/home/home_view.dart';
 import 'package:emtrack/views/install_tyre_view.dart';
+import 'package:emtrack/views/password_reset_view.dart';
 import 'package:emtrack/views/preferences_view.dart';
 import 'package:emtrack/views/remove_tyre_view.dart';
+import 'package:emtrack/views/vehicle_view.dart';
 import 'package:get/get.dart';
 import '../views/splash_view.dart';
 import '../views/login_view.dart';
@@ -30,6 +32,8 @@ class AppPages {
   static const REMOVE_TIRE = "/remove-tyre";
   static const VEHICLE_INSPEC_VIEW = "/vehicle-inspec-view";
   static const INSTALL_TYRE_VIEW = "/install-tyre-view";
+  static const VEHICLE_VIEW = "/vehicle-view";
+  static const PASSWORD_RESET = "/password-reset";
 
   static final pages = [
     GetPage(name: SPLASH, page: () => SplashView(), binding: AppBindings()),
@@ -88,6 +92,11 @@ class AppPages {
     GetPage(
       name: INSTALL_TYRE_VIEW,
       page: () => InstallTyreView(),
+      binding: AppBindings(),
+    ),
+    GetPage(
+      name: PASSWORD_RESET,
+      page: () => PasswordResetView(),
       binding: AppBindings(),
     ),
   ];

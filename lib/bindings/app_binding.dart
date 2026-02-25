@@ -1,5 +1,6 @@
 import 'package:emtrack/controllers/all_vehicles_controller.dart';
 import 'package:emtrack/controllers/install_tyre_controller.dart';
+import 'package:emtrack/controllers/password_reset_controller.dart';
 import 'package:emtrack/controllers/preferences_controller.dart';
 import 'package:emtrack/controllers/remove_tyre_controller.dart';
 import 'package:emtrack/controllers/selected_account_controller.dart';
@@ -28,5 +29,6 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => RemoveTyreController());
     Get.lazyPut(() => VehicleInspeController());
     Get.lazyPut(() => InstallTyreController());
+    Get.lazyPut(() => PasswordResetController());
   }
 }

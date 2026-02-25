@@ -1,12 +1,16 @@
+import 'dart:convert';
+import 'dart:ffi';
+
 import 'package:emtrack/create_tyre/app_loader.dart';
 import 'package:emtrack/edit_tyre/edit_tyre_model.dart';
 import 'package:emtrack/edit_tyre/edit_tyre_service.dart';
-
+import 'package:emtrack/services/api_constants.dart';
 import 'package:emtrack/services/master_data_service.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:emtrack/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class EditTyreController extends GetxController {
   // ================= STEPPER =================
@@ -202,7 +206,7 @@ class EditTyreController extends GetxController {
     print("🔎 selectedTypeId => ${selectedTypeId.value}");
 
     model.tireStatusId = selectedstatus.value;
-    model.vehicleId = model.vehicleId;
+    // vehicleId & vehicleNumber are set from API in loadTyreDetails(), not from UI
     model.tireSerialNo = tireSerialNo.text.trim();
     model.brandNo = int.tryParse(brandNo.text) ?? 0;
     model.registeredDate = registeredDateApi.toString();
@@ -464,6 +468,10 @@ class EditTyreController extends GetxController {
       final tyre = await EditTyreService.getTyreById(tireId!);
       // 🔹 STEP 1
       print("✅ Tyre fetched successfully");
+
+      // ✅ Save vehicleId & vehicleNumber from API so they are sent back on update
+      model.vehicleId = tyre.vehicleId;
+      model.vehicleNumber = tyre.vehicleNumber;
 
       print("ManufacturerId => ${tyre.manufacturerId}");
       print("TypeId => ${tyre.typeId}");

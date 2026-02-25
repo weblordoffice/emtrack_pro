@@ -1,5 +1,6 @@
 import 'package:emtrack/color/app_color.dart';
 import 'package:emtrack/controllers/selected_account_controller.dart';
+import 'package:emtrack/inspection/vehicle_inspe_controller.dart';
 import 'package:emtrack/inspection/vehicle_inspe_model.dart';
 import 'package:emtrack/inspection/vehicle_inspe_view.dart';
 import 'package:emtrack/services/update_vehicle_service.dart';
@@ -20,6 +21,8 @@ class VehicleView extends StatefulWidget {
 class _VehicleViewState extends State<VehicleView> {
   final UpdateVehicleService _vehicleService = UpdateVehicleService();
   final selectedCtrl = Get.put(SelectedAccountController());
+
+  final VehicleInspeController c = Get.put(VehicleInspeController());
   VehicleModel? vehicle;
   bool isLoading = true;
 
@@ -113,7 +116,23 @@ class _VehicleViewState extends State<VehicleView> {
                   ),
                   const SizedBox(height: 20),
                   const Text("Vehicle Diagram"),
-                  VehicleDiagramForView(tires: rxTires, vehicleId: parsedVehicleId),
+                  //VehicleDiagramForView(tires: rxTires, vehicleId: parsedVehicleId),
+                  Obx(() {
+                    final response = c.inspectionResponse.value;
+
+                    if (response == null) {
+                      return const Center(child: Text(""));
+                    }
+
+                    final tires = response.model?.installedTires ?? [];
+
+                    return VehicleDiagramForView(
+                      // tires: tires.obs,
+                      tires: c.tires,
+                      vehicleId: parsedVehicleId,
+                    );
+                  }),
+
                   const SizedBox(height: 20),
                   _buildInfoRow(
                     "Recommended Pressure for Axel1",

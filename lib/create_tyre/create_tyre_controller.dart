@@ -174,11 +174,105 @@ class CreateTyreController extends GetxController {
     netCost.text = (a - b + c + d + e + f - g - h).toStringAsFixed(2);
   }
 
-      
+  // ================= MAP CONTROLLERS → MODEL =================
 
+  // void bindToModel() async {
+  //   // ================= STEP 1 =================
+  //   model.tireStatusId = int.tryParse(selectedstatus.toString());
+  //   model.tireSerialNo = tireSerialNo.text.trim();
+  //   model.brandNo = brandNo.text.trim().isEmpty ? null : brandNo.text.trim();
 
+  //   model.registeredDate = registeredDateApi != null
+  //       ? DateTime.parse(registeredDateApi!).toUtc()
+  //       : DateTime.now().toUtc();
 
+  //   model.evaluationNo = evaluationNo.text.trim().isEmpty
+  //       ? null
+  //       : evaluationNo.text.trim();
 
+  //   model.lotNo = lotNo.text.trim().isEmpty ? null : lotNo.text.trim();
+  //   model.poNo = poNo.text.trim().isEmpty ? null : poNo.text.trim();
+
+  //   model.currentHours = double.tryParse(currentHours.text) ?? 0;
+  //   model.currentMiles = 0;
+
+  //   // ================= STEP 2 =================
+  //   model.manufacturerId = selectedManufacturerId.value;
+  //   model.sizeId = selectedSizeId.value;
+  //   model.starRatingId = starRating.value;
+  //   model.plyId = 1123;
+  //   model.typeId = selectedTypeId.value;
+
+  //   model.indCodeId = selectedIndCodeId.value;
+  //   model.compoundId = selectedCompoundId.value;
+  //   model.loadRatingId = selectedLoadRatingId.value;
+  //   model.speedRatingId = selectedSpeedRatingId.value;
+  //   model.fillTypeId = selectedFillTypeId;
+
+  //   // ================= STEP 3 =================
+  //   model.originalTread = double.tryParse(originalTread.text) ?? 0;
+  //   model.removeAt = double.tryParse(removeAt.text) ?? 0;
+  //   model.purchasedTread = double.tryParse(purchasedTread.text) ?? 0;
+
+  //   model.outsideTread = double.tryParse(outsideTread.text) ?? 0;
+  //   model.middleTread = 0.0;
+  //   model.insideTread = double.tryParse(insideTread.text) ?? 0;
+
+  //   // ================= STEP 4 =================
+  //   model.purchaseCost = double.tryParse(purchaseCost.text) ?? 0;
+  //   model.casingValue = double.tryParse(casingValue.text) ?? 0;
+  //   model.fillCost = double.tryParse(fillCost.text) ?? 0;
+
+  //   model.repairCount = 0;
+  //   model.repairCost = double.tryParse(repairCost.text) ?? 0;
+
+  //   model.retreadCount = 0;
+  //   model.retreadCost = double.tryParse(retreadCost.text) ?? 0;
+
+  //   model.warrantyAdjustment = double.tryParse(warrantyAdjustment.text) ?? 0;
+
+  //   model.costAdjustment = double.tryParse(costAdjustment.text) ?? 0;
+
+  //   model.soldAmount = double.tryParse(soldAmount.text) ?? 0;
+
+  //   model.netCost = double.tryParse(netCost.text) ?? 0;
+
+  //   // ================= REQUIRED FIX FIELDS =================
+
+  //   model.mileageType = "1";
+  //   model.dispositionId = 8;
+  //   // model.tireStatusId = 7;
+  //   model.mountedRimId = null;
+  //   model.isMountToRim = false;
+  //   model.isEditable = false;
+  //   model.tireId = null;
+  //   model.vehicleId = null;
+  //   model.recommendedPressure = 0;
+  //   model.currentPressure = 0;
+  //   model.averageTreadDepth = 0;
+  //   model.currentTreadDepth = 0;
+  //   model.percentageWorn = 0;
+
+  //   model.mountStatus = "Not Mounted";
+  //   model.wheelPosition = "N/A";
+  //   model.mountedRimSerialNo = "N/A";
+
+  //   model.tireGraphData = null;
+  //   model.vehicleNumber = null;
+
+  //   // ================= PARENT & LOCATION =================
+  //   final parentId = SecureStorage.getParentAccountId();
+
+  //   model.parentAccountId = int.tryParse(parentId.toString() ?? "");
+
+  //   final storedLocation = await SecureStorage.getLocationId();
+
+  //   print("Stored LocationId => $storedLocation");
+
+  //   model.locationId = storedLocation != null && storedLocation.isNotEmpty
+  //       ? int.parse(storedLocation)
+  //       : null;
+  // }
 
   Future<void> bindToModel() async {
     // ================= STEP 1: Basic info =================

@@ -12,7 +12,7 @@ class VehicleInspeView extends StatelessWidget {
   const VehicleInspeView({super.key});
   @override
   Widget build(BuildContext context) {
-    final VehicleInspeController c = Get.find<VehicleInspeController>();
+    final VehicleInspeController c = Get.put(VehicleInspeController());
 
     return Scaffold(
       backgroundColor: Colors.white,

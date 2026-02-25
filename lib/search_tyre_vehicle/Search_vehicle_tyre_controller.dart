@@ -103,7 +103,7 @@ class SearchVehicleTyreController extends GetxController {
           : vehicles
                 .where(
                   (v) =>
-                      v.vehicleId?.toString().contains(searchText.value) ??
+                      v.vehicleNumber?.toString().contains(searchText.value) ??
                       false,
                 )
                 .toList();
@@ -111,7 +111,7 @@ class SearchVehicleTyreController extends GetxController {
       visibleList.value = searchText.value.isEmpty
           ? tyres
           : tyres
-                .where((t) => t.tireId.toString().contains(searchText.value))
+                .where((t) => t.tireSerialNo.toString().contains(searchText.value))
                 .toList();
     }
   }

@@ -1,5 +1,6 @@
 import 'package:emtrack/color/app_color.dart';
 import 'package:emtrack/models/user_models.dart';
+import 'package:emtrack/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
@@ -114,10 +115,15 @@ class LoginView extends StatelessWidget {
                       SizedBox(height: 15),
 
                       // Password reset text
-                      Text(
-                        "Password\nReset",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.textBlack),
+                      InkWell(
+                        onTap: () {
+                          Get.toNamed(AppPages.PASSWORD_RESET);
+                        },
+                        child: Text(
+                          "Password\nReset",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppColors.textBlack),
+                        ),
                       ),
 
                       SizedBox(height: 20),
