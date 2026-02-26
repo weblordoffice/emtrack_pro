@@ -32,12 +32,12 @@ class GrandparentAccountService {
       );
 
       if (response['httpStatusCode'] == 200) {
-        Get.snackbar("Success", "Grandparent Assigned Successfully");
+        // Get.snackbar("Success", "Grandparent Assigned Successfully");
       }
       return true;
     } catch (e) {
       print(" Failed to create grandparent: $e");
-      Get.snackbar("Error", "Failed to create grandparent: $e");
+      //   Get.snackbar("Error", "Failed to create grandparent: $e");
 
       return false;
     }

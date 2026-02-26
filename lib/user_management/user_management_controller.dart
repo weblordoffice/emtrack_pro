@@ -2,6 +2,7 @@ import 'package:emtrack/user_management/user_management_model.dart';
 import 'package:emtrack/user_management/user_management_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../models/country/country_model.dart';
 
 class UserManagementController extends GetxController {
   final _service = UserManagementService();
@@ -46,11 +47,22 @@ class UserManagementController extends GetxController {
   RxString pressureUnit = ''.obs;
 
   /// Dropdown Data
-  List<String> roles = ['EMTADMIN', 'EMTUSER', 'EMTCADMIN', 'EMTCVO'];
-  List<String> countries = ['India', 'USA'];
+  List<String> roles = <String>[].obs;
+  List<String> countries = <String>[].obs;
   List<String> languages = ['English', 'Hindi'];
   List<String> measurements = ['Metric', 'Imperial'];
   List<String> pressureUnits = ['PSI', 'BAR'];
+
+  @override
+  void onInit() {
+    super.onInit();
+    _init();
+  }
+
+  Future<void> _init() async {
+    await loadRoles();
+    await loadCountries();
+  }
 
   /// Navigation
   void next() {
@@ -98,6 +110,18 @@ class UserManagementController extends GetxController {
     await _service.registerUser(model);
 
     // Get.snackbar("Success", "User Created Successfully");
+  }
+
+  Future<void> loadCountries() async {
+    List<CountryModel> countryList = await _service.countryList();
+
+    countries = countryList.map((e) => e.countryName).toList();
+  }
+
+  Future<void> loadRoles() async {
+    List<String> rolelist = await _service.getUserRole();
+
+    roles.assignAll(rolelist);
   }
 
   @override
