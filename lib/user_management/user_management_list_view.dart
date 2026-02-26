@@ -1,8 +1,11 @@
+import 'package:emtrack/models/user_models.dart';
 import 'package:emtrack/routes/app_pages.dart';
 import 'package:emtrack/user_management/user_management_list_controller.dart';
-import 'package:emtrack/user_management/user_management_model.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'user_list_model.dart';
 
 class UserManagementListView extends StatelessWidget {
   final c = Get.put(UserManagementListController());
@@ -81,7 +84,7 @@ class UserManagementListView extends StatelessWidget {
     );
   }
 
-  Widget _userCard(UserManagementModel user) {
+  Widget _userCard(UserlListModel user) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -96,21 +99,21 @@ class UserManagementListView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    user.username,
+                    user.userRole.toString(),
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
-                  if (user.role.isNotEmpty)
+                  if (user.firstName != null && user.firstName!.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
-                      child: Text("${user.role}   ${user.firstName}"),
+                      child: Text("${user.firstName}   ${user.firstName}"),
                     ),
-                  if (user.phone.isNotEmpty) Text(user.phone),
+                  if (user.phoneNumber!.isNotEmpty) Text(user.phoneNumber!),
                   const SizedBox(height: 6),
                   Text(
-                    "phone: ${user.phone}",
+                    "phone: ${user.phoneNumber ?? 'N/A'}",
                     style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ],

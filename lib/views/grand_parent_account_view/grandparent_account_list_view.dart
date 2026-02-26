@@ -48,60 +48,68 @@ class GrandparentAccountListView extends StatelessWidget {
   /// 📋 List
   Widget _list() {
     return Obx(() {
-      return ListView.builder(
-        itemCount: c.accounts.length,
-        itemBuilder: (context, index) {
-          final a = c.accounts[index];
+      return Stack(
+        children: [
+          if (c.loading.value) const Center(child: CircularProgressIndicator()),
+          if (!c.loading.value && c.accounts.isEmpty)
+            const Center(child: Text("No accounts found")),
 
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+          ListView.builder(
+            itemCount: c.accounts.length,
+            itemBuilder: (context, index) {
+              final a = c.accounts[index];
+
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "ID: ${a.id}",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      Row(
+                        children: [
+                          Text(
+                            "ID: ${a.id}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.check_circle,
+                            color: a.isActive ? Colors.green : Colors.grey,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            a.isActive ? "Active" : "Inactive",
+                            style: TextStyle(
+                              color: a.isActive ? Colors.green : Colors.grey,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      Icon(
-                        Icons.check_circle,
-                        color: a.isActive ? Colors.green : Colors.grey,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
+                      const SizedBox(height: 6),
+
                       Text(
-                        a.isActive ? "Active" : "Inactive",
-                        style: TextStyle(
-                          color: a.isActive ? Colors.green : Colors.grey,
+                        a.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+
+                      const SizedBox(height: 6),
+                      _row("Owned By", a.ownedBy),
+                      _row("Created By", a.createdBy),
+                      _row("Create Date", a.createDate),
+                      _row("Updated By", a.updatedBy),
+                      _row("Update Date", a.updateDate),
                     ],
                   ),
-                  const SizedBox(height: 6),
-
-                  Text(
-                    a.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(height: 6),
-                  _row("Owned By", a.ownedBy),
-                  _row("Created By", a.createdBy),
-                  _row("Create Date", a.createDate),
-                  _row("Updated By", a.updatedBy),
-                  _row("Update Date", a.updateDate),
-                ],
-              ),
-            ),
-          );
-        },
+                ),
+              );
+            },
+          ),
+        ],
       );
     });
   }

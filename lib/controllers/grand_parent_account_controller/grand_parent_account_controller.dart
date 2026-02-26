@@ -19,6 +19,8 @@ class GrandparentAccountController extends GetxController {
   RxInt currentStep = 0.obs;
   final int totalSteps = 2;
 
+  final isloading = false.obs;
+
   /// Step-1 fields
   RxString accountType = 'OWNED'.obs;
   RxString grandparentName = ''.obs;
@@ -80,6 +82,7 @@ class GrandparentAccountController extends GetxController {
 
   /// Submit Step-2
   Future<void> assignGrandparent() async {
+    isloading.value = true;
     final model = AssignGrandparentModel(
       userId: selectedParentId.value,
       parentAccountId: selectedParentId.value,
@@ -89,7 +92,7 @@ class GrandparentAccountController extends GetxController {
     final data = await service.assignGrandparent(model);
     if (data) {
       Get.to(() => GrandparentAccountListView());
-      //   Get.toNamed(AppPages.HOME);
+      isloading.value = false;
     }
   }
 

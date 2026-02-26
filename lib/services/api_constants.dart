@@ -63,4 +63,7 @@ class ApiConstants {
 
   static const getCountryList = "/api/MasterData/GetCountryList/";
   static const getRoleList = "/Role/GetRoles";
+
+  // get All user
+  static const getAllUserList = "/api/UserProfile/GetAllUsers";
 }

@@ -51,7 +51,7 @@ class UserManagementController extends GetxController {
   List<String> countries = <String>[].obs;
   List<String> languages = ['English', 'Hindi'];
   List<String> measurements = ['Metric', 'Imperial'];
-  List<String> pressureUnits = ['PSI', 'BAR'];
+  List<String> pressureUnits = ['PSI', 'KPA', 'BAR'];
 
   @override
   void onInit() {
@@ -107,7 +107,10 @@ class UserManagementController extends GetxController {
       pressureUnit: pressureUnit.value,
     );
 
-    await _service.registerUser(model);
+    final result = await _service.registerUser(model);
+    if (result) {
+      isLoading.value = false;
+    }
 
     // Get.snackbar("Success", "User Created Successfully");
   }

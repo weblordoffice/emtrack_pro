@@ -48,4 +48,21 @@ class UserManagementModel {
       "pressureUnit": pressureUnit,
     };
   }
+
+  factory UserManagementModel.fromJson(Map<String, dynamic> json) {
+    return UserManagementModel(
+      username: json["username"] ?? "",
+      password: json["password"] ?? "",
+      role: json["role"] ?? "",
+      firstName: json["firstName"] ?? "",
+      middleName: json["middleName"] ?? "",
+      lastName: json["lastName"] ?? "",
+      email: json["email"] ?? "",
+      phone: json["phone"] ?? "",
+      country: json["country"] ?? "",
+      language: json["language"] ?? "",
+      measurement: json["measurement"] ?? "",
+      pressureUnit: json["pressureUnit"] ?? "",
+    );
+  }
 }

@@ -25,10 +25,21 @@ class GrandparentAccountView extends StatelessWidget {
         centerTitle: true,
       ),
       body: Obx(
-        () => Column(
+        () => Stack(
           children: [
-            _stepHeader(),
-            Expanded(child: _stepBody()),
+            Column(
+              children: [
+                _stepHeader(),
+                Expanded(child: _stepBody()),
+              ],
+            ),
+            if (c.isloading.value)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
+              ),
           ],
         ),
       ),

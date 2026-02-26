@@ -3,12 +3,13 @@ import 'package:emtrack/services/api_constants.dart';
 import 'package:emtrack/services/api_service.dart';
 import 'package:emtrack/user_management/user_management_model.dart';
 import 'package:emtrack/utils/secure_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../models/country/country_model.dart';
 
 class UserManagementService {
-  Future<void> registerUser(UserManagementModel model) async {
+  Future<bool> registerUser(UserManagementModel model) async {
     try {
       final createuserResponse = await ApiService.postApi(
         endpoint: ApiConstants.createUser,
@@ -20,6 +21,7 @@ class UserManagementService {
       );
 
       print(createuserResponse);
+      _checkApiError(createuserResponse, "User Creation Failed");
 
       final createUserProfileResponse = await ApiService.postApi(
         endpoint: ApiConstants.createUserProfile,
@@ -36,6 +38,7 @@ class UserManagementService {
       );
 
       print(createUserProfileResponse);
+      _checkApiError(createUserProfileResponse, "Profile Creation Failed");
 
       final parentAccountId = await SecureStorage.getParentAccountId();
       final parentAccountName = await SecureStorage.getParentAccountName();
@@ -59,18 +62,32 @@ class UserManagementService {
       );
 
       print(createUserPreferenceResponse);
+      _checkApiError(
+        createUserPreferenceResponse,
+        "Preference Creation Failed",
+      );
 
       final assignroleResponse = await ApiService.postApi(
         endpoint: ApiConstants.assignRole,
         body: {"username": model.username, "roleName": model.role},
       );
+      _checkApiError(assignroleResponse, "Role Assignment Failed");
 
-      print(assignroleResponse);
-      if (assignroleResponse["message"] != null) {
-        Get.offAllNamed(AppPages.HOME);
-      }
+      /// ================= SUCCESS =================
+      Get.snackbar("Success", "Registration Completed Successfully");
+      Get.offAllNamed(AppPages.HOME);
+
+      return true;
     } catch (e) {
-      print("❌ Registration Failed: $e");
+      Get.snackbar("Error", e.toString(), snackPosition: SnackPosition.BOTTOM);
+      return false;
+    }
+    // Any cleanup if needed    return true;
+  }
+
+  void _checkApiError(Map<String, dynamic> response, String defaultMessage) {
+    if (response["message"] == null && response["message"].toString().isEmpty) {
+      throw Exception(response["errorMessage"] ?? defaultMessage);
     }
   }
 
