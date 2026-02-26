@@ -60,4 +60,7 @@ class ApiConstants {
       "/api/ParentAccount/GetAccountList";
   static const String getGrandparentAccountList =
       "/api/GrandParentAccount/GetAll";
+
+  static const getCountryList = "/api/MasterData/GetCountryList/";
+  static const getRoleList = "/Role/GetRoles";
 }
