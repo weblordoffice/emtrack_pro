@@ -1,12 +1,17 @@
 import 'package:emtrack/models/country/state_model.dart';
 
 class CountryModel {
-  String? countryName;
+  String countryName;
   int? countryId;
   String? currency;
   List<StateModel>? states;
 
-  CountryModel({this.countryName, this.countryId, this.currency, this.states});
+  CountryModel({
+    required this.countryName,
+    this.countryId,
+    this.currency,
+    this.states,
+  });
 
   factory CountryModel.fromJson(Map<String, dynamic> json) {
     return CountryModel(

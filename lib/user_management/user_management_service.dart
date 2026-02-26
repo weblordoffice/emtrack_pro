@@ -5,6 +5,8 @@ import 'package:emtrack/user_management/user_management_model.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:get/get.dart';
 
+import '../models/country/country_model.dart';
+
 class UserManagementService {
   Future<void> registerUser(UserManagementModel model) async {
     try {
@@ -69,6 +71,33 @@ class UserManagementService {
       }
     } catch (e) {
       print("❌ Registration Failed: $e");
+    }
+  }
+
+  Future<List<CountryModel>> countryList() async {
+    final response = await ApiService.getApi(
+      endpoint: ApiConstants.getCountryList,
+    );
+
+    if (response['model'] != null && response['model'].length > 0) {
+      return response['model']
+          .map<CountryModel>((e) => CountryModel.fromJson(e))
+          .toList();
+    } else {
+      throw Exception("Failed to load country list");
+    }
+  }
+
+  Future<List<String>> getUserRole() async {
+    final response = await ApiService.getApi(
+      endpoint: ApiConstants.getRoleList,
+    );
+
+    if (response != null && response.length > 0) {
+      List<String> roles = List<String>.from(response);
+      return roles;
+    } else {
+      throw Exception("Failed to load country list");
     }
   }
 }
