@@ -17,7 +17,16 @@ class EditTyreService {
       final url = "${ApiConstants.baseUrl}/api/Tire";
       print("🟢 UPDATE API => $url");
 
-      final body = jsonEncode(model.toJson());
+      final Map<String, dynamic> payload = model.toJson();
+      // Don't send vehicleId/vehicleNumber when invalid to avoid backend 500
+      if (payload['vehicleId'] == null || payload['vehicleId'] == 0) {
+        payload.remove('vehicleId');
+      }
+      final vNum = payload['vehicleNumber'] as String?;
+      if (vNum == null || vNum.isEmpty) {
+        payload.remove('vehicleNumber');
+      }
+      final body = jsonEncode(payload);
       print("🟡 REQUEST BODY => $body");
 
       final response = await http.put(

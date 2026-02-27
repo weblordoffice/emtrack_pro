@@ -1,3 +1,4 @@
+import 'package:emtrack/utils/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -70,62 +71,57 @@ class Step1View extends StatelessWidget {
             onTap: () => pickDate(context),
           ),
 
-          Row(children: [Text("Evaluation Number ")]),
-          _tf(label: "Enter Evaluation Number", controller: c.evaluationNo),
-          Row(children: [Text("Lot Number ")]),
-          _tf(label: "Enter Lot Number", controller: c.lotNo),
-          Row(children: [Text("Purchase Order Number")]),
-          _tf(label: "Enter Purchase Order Number", controller: c.poNo),
-          Row(
-            children: [
-              Text("Disposition "),
-              Text("*", style: TextStyle(color: Colors.red)),
-            ],
-          ),
-          _tf(
-            label: "Enter Disposition",
-            value: c.dispositionText.value,
-            enabled: false,
-          ),
-          Row(children: [Text("Status ")]),
-          _dropdownTFStatus(
-            label: "Status",
-            value: c.selectedstatus.value,
-            items: c.statusList,
-          ),
-          Row(children: [Text("Tracking Method ")]),
-          _dropdownTF(
-            label: "Tracking Method",
-            value: c.selectedTrackingMethod.value,
-            items: ["Hours", "Distance", "Both"],
-          ),
-          Row(
-            children: [
-              Text("Current Hours "),
-              Text("*", style: TextStyle(color: Colors.red)),
-            ],
-          ),
-          _tf(
-            label: "Enter Current Hours",
-            controller: c.currentHours,
-            focusNode: _focusNode,
-            keyboard: TextInputType.datetime,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d{0,1}')),
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return "Enter Valid Details";
-              }
+        Row(children: [Text("Evaluation Number ")]),
+        _tf(label: "Enter Evaluation Number", controller: c.evaluationNo),
+        Row(children: [Text("Lot Number ")]),
+        _tf(label: "Enter Lot Number", controller: c.lotNo),
+        Row(children: [Text("Purchase Order Number")]),
+        _tf(label: "Enter Purchase Order Number", controller: c.poNo),
+        Row(
+          children: [
+            Text("Disposition "),
+            Text("*", style: TextStyle(color: Colors.red)),
+          ],
+        ),
+        _tf(
+          label: "Enter Disposition",
+          value: c.dispositionText.value,
+          enabled: false,
+        ),
+        Row(children: [Text("Status ")]),
+        _dropdownTFStatus(
+          label: "Status",
+          value: c.selectedstatus.value,
+          items: c.statusList,
+        ),
+        Row(children: [Text("Tracking Method ")]),
+        _dropdownTF(
+          label: "Tracking Method",
+          value: c.trackingMethodText.value,
+          items: ["Hours", "Distance", "Both"],
+        ),
+        Row(
+          children: [
+            Text("Current Hours "),
+            Text("*", style: TextStyle(color: Colors.red)),
+          ],
+        ),
+        _tf(
+          label: "Enter Current Hours",
+          controller: c.currentHours,
+          keyboard: TextInputType.number,
+          showClear: true,
+          validator: (value) {,
+        
 
-              if (!RegExp(r'^-?\d+(\.\d{1,2})?$').hasMatch(value)) {
+              if (!RegExp(r'^-?\d+(\.\d{1,2})?$').hasMatch(value!)) {
                 return "Enter valid number";
               }
 
               return null;
-            },
-            showClear: true,
-          ),
+            
+          },    
+          
 
           const SizedBox(height: 24),
 

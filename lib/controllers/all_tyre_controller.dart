@@ -1,3 +1,4 @@
+import 'package:emtrack/inspection/vehicle_inspe_view.dart';
 import 'package:emtrack/routes/app_pages.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
@@ -170,7 +171,7 @@ class AllTyreController extends GetxController
                 onTap: () {
                   Get.back();
                   Get.to(
-                    () => EditVehicleInspectionView(),
+                    () => VehicleInspeView(),
                     arguments: tyre.tireId,
                   );
                 },

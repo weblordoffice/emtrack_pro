@@ -60,6 +60,15 @@ class CreateTyreController extends GetxController {
   // STEP 4
   final fillTypeList = <String>[].obs;
 
+  void setStatusList(List<String> list) {
+    statusList.assignAll(list);
+
+    if (statusList.isNotEmpty) {
+      selectedstatus.value = statusList.last;
+    }
+  } 
+ 
+
   void nextStep() {
     if (!formKey.currentState!.validate()) return;
 

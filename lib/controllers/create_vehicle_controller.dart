@@ -253,6 +253,12 @@ class VehicleController extends GetxController {
 
     print("📦 ParentAccountId BODY: ${int.parse(parentAccountId.toString())}");
 
+    // 🔍 DEBUG: Axle / config values before creating vehicle
+    print("🛞 axleCount => $axleCount");
+    print("🛞 installedTyreCount => $installedTyreCount");
+    print("🛞 axleConfigValue (sending) => $axleConfigValue");
+    print("🛞 axleConfigIdValue (sending) => $axleConfigIdValue");
+
     final vehicle = VehicleModel(
       locationId: locationId.value,
       manufacturerId: manufacturerId.value,

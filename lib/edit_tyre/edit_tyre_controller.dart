@@ -349,104 +349,50 @@ class EditTyreController extends GetxController {
     try {
       final data = await _masterService.fetchMasterData();
 
-      /// 🔹 STATUS
-      statusList.assignAll(
-        (data['tireStatus'] as List)
-            .map((e) => e['statusName'].toString())
-            .toList()
-            .toSet(),
-      );
-      statusIdList.assignAll(
-        (data['tireStatus'] as List).map((e) => e['statusId']),
-      );
+      /// 🔹 STATUS (name+id same length to avoid RangeError)
+      final statusRaw = (data['tireStatus'] as List);
+      statusList.assignAll(statusRaw.map((e) => e['statusName'].toString()));
+      statusIdList.assignAll(statusRaw.map((e) => (e['statusId'] as num).toInt()));
 
-      /// 🔹 MANUFACTURER
-      manufacturerList.assignAll(
-        (data['tireManufacturers'] as List)
-            .map((e) => e['manufacturerName'].toString().toUpperCase())
-            .toList()
-            .toSet(),
-      );
-      manufacturerIdList.assignAll(
-        (data['tireManufacturers'] as List).map((e) => e['manufacturerId']),
-      );
+      /// 🔹 MANUFACTURER (name+id same length to avoid RangeError in setDropdownById)
+      final manufRaw = (data['tireManufacturers'] as List);
+      manufacturerList.assignAll(manufRaw.map((e) => e['manufacturerName'].toString().toUpperCase()));
+      manufacturerIdList.assignAll(manufRaw.map((e) => (e['manufacturerId'] as num).toInt()));
 
       /// 🔹 SIZE
-      tireSizeList.assignAll(
-        (data['tireSizes'] as List)
-            .map((e) => e['tireSizeName'].toString())
-            .toList()
-            .toSet(),
-      );
-      tireSizeIdList.assignAll(
-        (data['tireSizes'] as List).map((e) => e['tireSizeId']),
-      );
+      final sizeRaw = (data['tireSizes'] as List);
+      tireSizeList.assignAll(sizeRaw.map((e) => e['tireSizeName'].toString()));
+      tireSizeIdList.assignAll(sizeRaw.map((e) => (e['tireSizeId'] as num).toInt()));
 
-      /// 🔹 TYPE (NAME + ID)
-      typeList.assignAll(
-        (data['tireTypes'] as List)
-            .map((e) => e['typeName'].toString())
-            .toList()
-            .toSet(),
-      );
-
-      typeIdList.assignAll(
-        (data['tireTypes'] as List).map((e) => e['typeId'] as int),
-      );
+      /// 🔹 TYPE
+      final typeRaw = (data['tireTypes'] as List);
+      typeList.assignAll(typeRaw.map((e) => e['typeName'].toString()));
+      typeIdList.assignAll(typeRaw.map((e) => (e['typeId'] as num).toInt()));
 
       /// 🔹 INDUSTRY CODE
-      indCodeList.assignAll(
-        (data['tireIndCodes'] as List)
-            .map((e) => e['codeName'].toString())
-            .toList()
-            .toSet(),
-      );
-      indCodeIdList.assignAll(
-        (data['tireIndCodes'] as List).map((e) => e['codeId']),
-      );
+      final indRaw = (data['tireIndCodes'] as List);
+      indCodeList.assignAll(indRaw.map((e) => e['codeName'].toString()));
+      indCodeIdList.assignAll(indRaw.map((e) => (e['codeId'] as num).toInt()));
 
       /// 🔹 COMPOUND
-      compoundList.assignAll(
-        (data['tireCompounds'] as List)
-            .map((e) => e['compoundName'].toString())
-            .toList()
-            .toSet(),
-      );
-      compoundIdList.assignAll(
-        (data['tireCompounds'] as List).map((e) => e['compoundId']),
-      );
+      final compRaw = (data['tireCompounds'] as List);
+      compoundList.assignAll(compRaw.map((e) => e['compoundName'].toString()));
+      compoundIdList.assignAll(compRaw.map((e) => (e['compoundId'] as num).toInt()));
 
       /// 🔹 LOAD RATING
-      loadRatingList.assignAll(
-        (data['tireLoadRatings'] as List)
-            .map((e) => e['ratingName'].toString())
-            .toList()
-            .toSet(),
-      );
-      loadRatingIdList.assignAll(
-        (data['tireLoadRatings'] as List).map((e) => e['ratingId']),
-      );
+      final loadRaw = (data['tireLoadRatings'] as List);
+      loadRatingList.assignAll(loadRaw.map((e) => e['ratingName'].toString()));
+      loadRatingIdList.assignAll(loadRaw.map((e) => (e['ratingId'] as num).toInt()));
 
       /// 🔹 SPEED RATING
-      speedRatingList.assignAll(
-        (data['tireSpeedRatings'] as List)
-            .map((e) => e['speedRatingName'].toString())
-            .toList()
-            .toSet(),
-      );
-      speedRatingIdList.assignAll(
-        (data['tireSpeedRatings'] as List).map((e) => e['speedRatingId']),
-      );
+      final speedRaw = (data['tireSpeedRatings'] as List);
+      speedRatingList.assignAll(speedRaw.map((e) => e['speedRatingName'].toString()));
+      speedRatingIdList.assignAll(speedRaw.map((e) => (e['speedRatingId'] as num).toInt()));
 
       /// 🔹 FILL TYPE
-      fillTypeList.assignAll(
-        (data['tireFillTypes'] as List)
-            .map((e) => e['fillTypeName'].toString())
-            .toSet(),
-      );
-      fillTypeIdList.assignAll(
-        (data['tireFillTypes'] as List).map((e) => e['fillTypeId']),
-      );
+      final fillRaw = (data['tireFillTypes'] as List);
+      fillTypeList.assignAll(fillRaw.map((e) => e['fillTypeName'].toString()));
+      fillTypeIdList.assignAll(fillRaw.map((e) => (e['fillTypeId'] as num).toInt()));
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }
@@ -628,7 +574,7 @@ class EditTyreController extends GetxController {
       if (selectedId != null) {
         selectedId.value = 0;
       }
-      return; // 👈 ADD THIS
+      return;
     }
 
     final index = idList.indexOf(id);
@@ -636,6 +582,14 @@ class EditTyreController extends GetxController {
     if (index == -1) {
       controller.clear();
       print("⚠️ setDropdownById: ID $id not found in idList");
+      return;
+    }
+
+    // 🔒 Bounds check: avoid RangeError when idList and nameList length differ
+    if (index >= nameList.length) {
+      controller.clear();
+      if (selectedId != null) selectedId.value = 0;
+      print("⚠️ setDropdownById: index $index out of range for nameList (length ${nameList.length}). idList.length=${idList.length}, id=$id");
       return;
     }
 
