@@ -41,6 +41,7 @@ class _Step2ViewState extends State<Step2View> {
           nameList: c.manufacturerList,
           idList: c.manufacturerIdList,
           selectedId: c.selectedManufacturerId,
+          validator: _required,
           context: context,
         ),
         Row(
@@ -56,7 +57,7 @@ class _Step2ViewState extends State<Step2View> {
           idList: c.tireSizeIdList,
           selectedId: c.selectedSizeId,
           context: context,
-          // validator: _required,
+          validator: _required,
         ),
 
         Row(children: [Text("Star Rating")]),
@@ -81,7 +82,7 @@ class _Step2ViewState extends State<Step2View> {
           idList: c.typeIdList,
           context: context,
           selectedId: c.selectedTypeId,
-          //validator: _required,
+          validator: _required,
         ),
         Row(children: [Text("Ind. Code")]),
         searchDropdownDialog(
@@ -140,6 +141,7 @@ class _Step2ViewState extends State<Step2View> {
     required TextEditingController controller,
     required List<String> nameList,
     required List<int> idList,
+    String? Function(String?)? validator,
     required RxInt selectedId,
     required BuildContext context,
   }) {
@@ -148,6 +150,7 @@ class _Step2ViewState extends State<Step2View> {
       child: TextFormField(
         controller: controller,
         readOnly: true,
+        validator: validator,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           hintText: hintText,

@@ -46,7 +46,7 @@ class CreateTyreController extends GetxController {
   String? registeredDateApi; // Backend
   //========selected value=========//
   RxString selectedstatus = "".obs;
-  RxString selectedTrackingMethod = "".obs;
+  RxString selectedTrackingMethod = "Hours".obs;
 
   // STEP 2
   final manufacturerList = <String>[].obs;
@@ -81,7 +81,8 @@ class CreateTyreController extends GetxController {
   final lotNo = TextEditingController();
   final poNo = TextEditingController();
   final dispositionText = "Inventory".obs;
-  final statusText = "New".obs;
+  //  final statusText = "New".obs;
+
   final trackingMethodText = "Hours".obs;
   final currentHours = TextEditingController(text: "0");
 
@@ -148,7 +149,6 @@ class CreateTyreController extends GetxController {
     dispositionText.value = "Inventory";
 
     model.tireStatusId = 7;
-    statusText.value = "New";
 
     model.trackingMethod = "Hours"; // Updated for model
     trackingMethodText.value = "Hours";
@@ -366,6 +366,8 @@ class CreateTyreController extends GetxController {
     model.locationId = int.tryParse(storedLocation ?? "") ?? 0;
   }
 
+
+
   // ================= SUBMIT =================
   Future<void> submitTyre() async {
     if (!formKey.currentState!.validate()) {
@@ -423,10 +425,7 @@ class CreateTyreController extends GetxController {
         Get.back();
         Get.back();
       },
-      onCancel: () {
-        Get.back();
-        Get.back();
-      },
+      onCancel: () {},
     );
   }
 
@@ -445,9 +444,14 @@ class CreateTyreController extends GetxController {
       statusList.assignAll(
         (data['tireStatus'] as List)
             .map((e) => e['statusName'].toString())
-            .toList()
-            .toSet(),
+            .toSet()
+            .toList(),
       );
+
+      // 👇 SET DEFAULT AFTER LIST LOADS
+      if (statusList.isNotEmpty && selectedstatus.value.isEmpty) {
+        selectedstatus.value = statusList.last; // safer than last
+      }
       statusIdList.assignAll(
         (data['tireStatus'] as List).map((e) => e['statusId']),
       );

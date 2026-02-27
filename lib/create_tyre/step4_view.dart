@@ -7,6 +7,8 @@ class Step4View extends StatelessWidget {
 
   final CreateTyreController c = Get.find<CreateTyreController>();
 
+  final FocusNode _focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -23,6 +25,7 @@ class Step4View extends StatelessWidget {
         _tf(
           hintText: "0",
           controller: c.purchaseCost,
+          focusNode: _focusNode,
           clearIcon: true,
           onChanged: (_) => c.calculateNetCost(),
         ),
@@ -166,6 +169,7 @@ class Step4View extends StatelessWidget {
     bool enabled = true,
     bool clearIcon = false,
     TextInputType keyboardType = TextInputType.text,
+    FocusNode? focusNode,
     String? Function(String?)? validator,
     Function(String value)? onChanged,
   }) {
@@ -178,6 +182,7 @@ class Step4View extends StatelessWidget {
             : null, // 🔥 KEY LINE
         enabled: enabled,
         keyboardType: TextInputType.number,
+        focusNode: focusNode,
         validator: validator,
         onChanged: onChanged,
         decoration: InputDecoration(
@@ -187,27 +192,43 @@ class Step4View extends StatelessWidget {
           ),
 
           hintText: hintText,
-          suffixIcon:
-              clearIcon && controller != null && controller.text.isNotEmpty
-              ? IconButton(
-                  icon: Wrap(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2.0),
-                        child: Text(
-                          "INR",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      const Icon(Icons.close),
-                    ],
-                  ),
-                  onPressed: () {
-                    controller.clear();
-                    onChanged?.call('');
+          suffixIcon: clearIcon && controller != null
+              ? ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: controller,
+                  builder: (context, value, _) {
+                    if (value.text.trim().isEmpty) {
+                      return const SizedBox.shrink(); // 🔥 nothing when empty
+                    }
+
+                    return IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        controller.clear();
+                        onChanged?.call('');
+                        focusNode?.requestFocus();
+                      },
+                    );
                   },
                 )
+              //  IconButton(
+              //     icon: Wrap(
+              //       children: [
+              //         Padding(
+              //           padding: const EdgeInsets.only(top: 2.0),
+              //           child: Text(
+              //             "INR",
+              //             style: TextStyle(fontWeight: FontWeight.bold),
+              //           ),
+              //         ),
+              //         SizedBox(width: 10),
+              //         const Icon(Icons.close),
+              //       ],
+              //     ),
+              //     onPressed: () {
+              //       controller.clear();
+              //       onChanged?.call('');
+              //     },
+              //   )
               : Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: Text(
