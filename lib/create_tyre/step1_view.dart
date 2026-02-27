@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'create_tyre_controller.dart';
 
@@ -24,96 +25,115 @@ class Step1View extends StatelessWidget {
   String _weekday(int d) =>
       const ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][d - 1];
 
+  final FocusNode _focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 15),
-        const Text(
-          "Identification Details",
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 15),
+          const Text(
+            "Identification Details",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        SizedBox(height: 10),
-        Row(
-          children: [
-            Text("Tire Serial Number "),
-            Text("*", style: TextStyle(color: Colors.red)),
-          ],
-        ),
-        _tf(
-          label: "Enter Tire Serial Number",
-          controller: c.tireSerialNo,
-          validator: (v) => _required(v),
-        ),
-        Row(children: [Text("Enter Brand Number ")]),
-        _tf(label: "Enter Brand No.", controller: c.brandNo),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Text("Tire Serial Number "),
+              Text("*", style: TextStyle(color: Colors.red)),
+            ],
+          ),
+          _tf(
+            label: "Enter Tire Serial Number",
+            controller: c.tireSerialNo,
+            validator: (v) => _required(v),
+          ),
+          Row(children: [Text("Enter Brand Number ")]),
+          _tf(label: "Enter Brand No.", controller: c.brandNo),
 
-        Row(
-          children: [
-            Text("Register Date "),
-            Text("*", style: TextStyle(color: Colors.red)),
-          ],
-        ),
-        _tf(
-          label: "Registered Date",
-          controller: c.registeredDate,
+          Row(
+            children: [
+              Text("Register Date "),
+              Text("*", style: TextStyle(color: Colors.red)),
+            ],
+          ),
+          _tf(
+            label: "Registered Date",
+            controller: c.registeredDate,
 
-          onTap: () => pickDate(context),
-        ),
+            onTap: () => pickDate(context),
+          ),
 
-        Row(children: [Text("Evaluation Number ")]),
-        _tf(label: "Enter Evaluation Number", controller: c.evaluationNo),
-        Row(children: [Text("Lot Number ")]),
-        _tf(label: "Enter Lot Number", controller: c.lotNo),
-        Row(children: [Text("Purchase Order Number")]),
-        _tf(label: "Enter Purchase Order Number", controller: c.poNo),
-        Row(
-          children: [
-            Text("Disposition "),
-            Text("*", style: TextStyle(color: Colors.red)),
-          ],
-        ),
-        _tf(
-          label: "Enter Disposition",
-          value: c.dispositionText.value,
-          enabled: false,
-        ),
-        Row(children: [Text("Status ")]),
-        _dropdownTFStatus(
-          label: "Status",
-          value: c.statusText.value,
-          items: c.statusList,
-        ),
-        Row(children: [Text("Tracking Method ")]),
-        _dropdownTF(
-          label: "Tracking Method",
-          value: c.trackingMethodText.value,
-          items: ["Hours", "Distance", "Both"],
-        ),
-        Row(
-          children: [
-            Text("Current Hours "),
-            Text("*", style: TextStyle(color: Colors.red)),
-          ],
-        ),
-        _tf(
-          label: "Enter Current Hours",
-          controller: c.currentHours,
-          keyboard: TextInputType.number,
-          showClear: true,
-        ),
+          Row(children: [Text("Evaluation Number ")]),
+          _tf(label: "Enter Evaluation Number", controller: c.evaluationNo),
+          Row(children: [Text("Lot Number ")]),
+          _tf(label: "Enter Lot Number", controller: c.lotNo),
+          Row(children: [Text("Purchase Order Number")]),
+          _tf(label: "Enter Purchase Order Number", controller: c.poNo),
+          Row(
+            children: [
+              Text("Disposition "),
+              Text("*", style: TextStyle(color: Colors.red)),
+            ],
+          ),
+          _tf(
+            label: "Enter Disposition",
+            value: c.dispositionText.value,
+            enabled: false,
+          ),
+          Row(children: [Text("Status ")]),
+          _dropdownTFStatus(
+            label: "Status",
+            value: c.selectedstatus.value,
+            items: c.statusList,
+          ),
+          Row(children: [Text("Tracking Method ")]),
+          _dropdownTF(
+            label: "Tracking Method",
+            value: c.selectedTrackingMethod.value,
+            items: ["Hours", "Distance", "Both"],
+          ),
+          Row(
+            children: [
+              Text("Current Hours "),
+              Text("*", style: TextStyle(color: Colors.red)),
+            ],
+          ),
+          _tf(
+            label: "Enter Current Hours",
+            controller: c.currentHours,
+            focusNode: _focusNode,
+            keyboard: TextInputType.datetime,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d{0,1}')),
+            ],
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Enter Valid Details";
+              }
 
-        const SizedBox(height: 24),
+              if (!RegExp(r'^-?\d+(\.\d{1,2})?$').hasMatch(value)) {
+                return "Enter valid number";
+              }
 
-        _primaryBtn("Next", () => c.nextStep()),
-        const SizedBox(height: 12),
-        _outlineBtn("Cancel", c.cancelDialog),
-      ],
+              return null;
+            },
+            showClear: true,
+          ),
+
+          const SizedBox(height: 24),
+
+          _primaryBtn("Next", () => c.nextStep()),
+          const SizedBox(height: 12),
+          _outlineBtn("Cancel", c.cancelDialog),
+        ],
+      ),
     );
   }
 
@@ -125,7 +145,9 @@ class Step1View extends StatelessWidget {
     dynamic value,
     bool enabled = true,
     TextInputType keyboard = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
+    FocusNode? focusNode,
     VoidCallback? onTap,
 
     bool showClear = false, // ✅ NEW (optional)
@@ -141,7 +163,10 @@ class Step1View extends StatelessWidget {
         enabled: enabled,
         readOnly: onTap != null,
         onTap: onTap,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        focusNode: focusNode,
         keyboardType: keyboard,
+        inputFormatters: inputFormatters,
         validator: validator,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
@@ -163,9 +188,12 @@ class Step1View extends StatelessWidget {
                       onPressed: () {
                         if (onClear != null) {
                           onClear(); // custom clear
+                          // 🔥 keep focus + cursor
+                          _focusNode.requestFocus();
                         } else {
                           effectiveController.clear(); // default clear
                         }
+                        focusNode?.requestFocus();
                       },
                     );
                   },
