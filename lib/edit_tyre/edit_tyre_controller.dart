@@ -1,15 +1,11 @@
-import 'dart:convert';
-import 'dart:ffi';
 import 'package:emtrack/create_tyre/app_loader.dart';
 import 'package:emtrack/edit_tyre/edit_tyre_model.dart';
 import 'package:emtrack/edit_tyre/edit_tyre_service.dart';
-import 'package:emtrack/services/api_constants.dart';
 import 'package:emtrack/services/master_data_service.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:emtrack/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
 class EditTyreController extends GetxController {
   // ================= STEPPER =================
@@ -352,17 +348,25 @@ class EditTyreController extends GetxController {
       /// 🔹 STATUS (name+id same length to avoid RangeError)
       final statusRaw = (data['tireStatus'] as List);
       statusList.assignAll(statusRaw.map((e) => e['statusName'].toString()));
-      statusIdList.assignAll(statusRaw.map((e) => (e['statusId'] as num).toInt()));
+      statusIdList.assignAll(
+        statusRaw.map((e) => (e['statusId'] as num).toInt()),
+      );
 
       /// 🔹 MANUFACTURER (name+id same length to avoid RangeError in setDropdownById)
       final manufRaw = (data['tireManufacturers'] as List);
-      manufacturerList.assignAll(manufRaw.map((e) => e['manufacturerName'].toString().toUpperCase()));
-      manufacturerIdList.assignAll(manufRaw.map((e) => (e['manufacturerId'] as num).toInt()));
+      manufacturerList.assignAll(
+        manufRaw.map((e) => e['manufacturerName'].toString().toUpperCase()),
+      );
+      manufacturerIdList.assignAll(
+        manufRaw.map((e) => (e['manufacturerId'] as num).toInt()),
+      );
 
       /// 🔹 SIZE
       final sizeRaw = (data['tireSizes'] as List);
       tireSizeList.assignAll(sizeRaw.map((e) => e['tireSizeName'].toString()));
-      tireSizeIdList.assignAll(sizeRaw.map((e) => (e['tireSizeId'] as num).toInt()));
+      tireSizeIdList.assignAll(
+        sizeRaw.map((e) => (e['tireSizeId'] as num).toInt()),
+      );
 
       /// 🔹 TYPE
       final typeRaw = (data['tireTypes'] as List);
@@ -377,22 +381,32 @@ class EditTyreController extends GetxController {
       /// 🔹 COMPOUND
       final compRaw = (data['tireCompounds'] as List);
       compoundList.assignAll(compRaw.map((e) => e['compoundName'].toString()));
-      compoundIdList.assignAll(compRaw.map((e) => (e['compoundId'] as num).toInt()));
+      compoundIdList.assignAll(
+        compRaw.map((e) => (e['compoundId'] as num).toInt()),
+      );
 
       /// 🔹 LOAD RATING
       final loadRaw = (data['tireLoadRatings'] as List);
       loadRatingList.assignAll(loadRaw.map((e) => e['ratingName'].toString()));
-      loadRatingIdList.assignAll(loadRaw.map((e) => (e['ratingId'] as num).toInt()));
+      loadRatingIdList.assignAll(
+        loadRaw.map((e) => (e['ratingId'] as num).toInt()),
+      );
 
       /// 🔹 SPEED RATING
       final speedRaw = (data['tireSpeedRatings'] as List);
-      speedRatingList.assignAll(speedRaw.map((e) => e['speedRatingName'].toString()));
-      speedRatingIdList.assignAll(speedRaw.map((e) => (e['speedRatingId'] as num).toInt()));
+      speedRatingList.assignAll(
+        speedRaw.map((e) => e['speedRatingName'].toString()),
+      );
+      speedRatingIdList.assignAll(
+        speedRaw.map((e) => (e['speedRatingId'] as num).toInt()),
+      );
 
       /// 🔹 FILL TYPE
       final fillRaw = (data['tireFillTypes'] as List);
       fillTypeList.assignAll(fillRaw.map((e) => e['fillTypeName'].toString()));
-      fillTypeIdList.assignAll(fillRaw.map((e) => (e['fillTypeId'] as num).toInt()));
+      fillTypeIdList.assignAll(
+        fillRaw.map((e) => (e['fillTypeId'] as num).toInt()),
+      );
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }
@@ -589,7 +603,9 @@ class EditTyreController extends GetxController {
     if (index >= nameList.length) {
       controller.clear();
       if (selectedId != null) selectedId.value = 0;
-      print("⚠️ setDropdownById: index $index out of range for nameList (length ${nameList.length}). idList.length=${idList.length}, id=$id");
+      print(
+        "⚠️ setDropdownById: index $index out of range for nameList (length ${nameList.length}). idList.length=${idList.length}, id=$id",
+      );
       return;
     }
 

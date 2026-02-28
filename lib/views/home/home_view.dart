@@ -127,7 +127,14 @@ class _HomeViewState extends State<HomeView> {
         Get.back(); // Close dialog
 
         if (!isTyre && vehicleId != null) {
-          Get.offAll(() => VehicleInspeView(), arguments: vehicleId);
+          Get.offAll(
+            () => VehicleInspeView(),
+            arguments: vehicleId,
+            //  {
+            //   "vehicleId": vehicleId,
+            //   "inspectionId": args['vehicleNo'],
+            // },
+          );
         }
       });
     });

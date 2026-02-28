@@ -1,7 +1,5 @@
-import 'package:emtrack/controllers/search_install_tire_controller.dart';
+import 'dart:convert';
 import 'package:emtrack/inspection/vehicle_inspe_controller.dart';
-import 'package:emtrack/inspection/vehicle_inspe_model.dart';
-import 'package:emtrack/inspection/vehicle_inspe_view.dart';
 import 'package:emtrack/models/install_tyre_model.dart';
 import 'package:emtrack/services/install_tyre_service.dart';
 import 'package:emtrack/services/master_data_service.dart';
@@ -301,6 +299,7 @@ class InstallTyreController extends GetxController {
 
       print("🚨 FINAL PAYLOAD: jsonInCode($payload");
 
+      print(jsonEncode(payload));
       //============================
 
       //==============================

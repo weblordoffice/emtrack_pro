@@ -43,7 +43,8 @@ class UpdateHoursView extends StatelessWidget {
               _label("Vehicle ID"),
               Obx(
                 () => Text(
-                  updatectrl.vehicleId.toString(),
+                  //    updatectrl.vehicleId.toString(),
+                  updatectrl.vehicleNumber.toString(),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
