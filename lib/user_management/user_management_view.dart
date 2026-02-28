@@ -2,7 +2,6 @@ import 'package:emtrack/color/app_color.dart';
 import 'package:emtrack/user_management/user_management_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 class UserManagementView extends StatelessWidget {
   final c = Get.put(UserManagementController());
   UserManagementView({super.key});

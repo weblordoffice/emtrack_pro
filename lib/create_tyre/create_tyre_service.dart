@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:emtrack/create_tyre/create_tyre_model.dart';
 import 'package:emtrack/services/api_constants.dart';
 import 'package:emtrack/utils/secure_storage.dart';
@@ -20,7 +21,7 @@ class CreateTyreService {
       body.remove("tireId");
       body.remove("vehicleId");
       body.remove("mountedRimId");
-      print(jsonEncode(model.toJson()));
+      log(jsonEncode(body));
 
       print("COOKIE => $cookie");
       print("REQUEST => ${jsonEncode(body)}");
@@ -37,7 +38,6 @@ class CreateTyreService {
 
       print("STATUS => ${response.statusCode}");
       print("BODY => ${response.body}");
-
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;

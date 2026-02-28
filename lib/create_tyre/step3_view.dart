@@ -18,6 +18,7 @@ class _Step3ViewState extends State<Step3View> {
   bool outsideWarn = false;
   bool insideWarn = false;
 
+  final FocusNode _focusNode = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -91,6 +92,7 @@ class _Step3ViewState extends State<Step3View> {
           label: "Remove At",
           controller: c.removeAt,
           validator: _required,
+          focusNode: _focusNode,
           clearIcon: true,
           onChanged: (_) {
             setState(() {});
@@ -150,6 +152,7 @@ class _Step3ViewState extends State<Step3View> {
     required TextEditingController controller,
     String? Function(String?)? validator,
     void Function(String)? onChanged,
+    FocusNode? focusNode,
     bool clearIcon = false,
   }) {
     return Padding(
@@ -159,6 +162,7 @@ class _Step3ViewState extends State<Step3View> {
         keyboardType: TextInputType.number,
         validator: validator,
         onChanged: onChanged,
+        focusNode: focusNode,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
@@ -170,6 +174,7 @@ class _Step3ViewState extends State<Step3View> {
                   icon: const Icon(Icons.close),
                   onPressed: () {
                     controller.clear();
+                    focusNode?.requestFocus();
                     setState(() {});
                     _calculate();
                   },

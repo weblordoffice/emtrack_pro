@@ -366,8 +366,6 @@ class CreateTyreController extends GetxController {
     model.locationId = int.tryParse(storedLocation ?? "") ?? 0;
   }
 
-
-
   // ================= SUBMIT =================
   Future<void> submitTyre() async {
     if (!formKey.currentState!.validate()) {
