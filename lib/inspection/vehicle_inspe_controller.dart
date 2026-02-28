@@ -34,7 +34,10 @@ class VehicleInspeController extends GetxController {
     super.onInit();
 
     final int argVehicleId = Get.arguments as int;
-    print("🆔 vehicle VEHICLE ID => $argVehicleId");
+    // print("🆔 vehicle VEHICLE ID => $argVehicleId");
+
+    vehicleId.value = argVehicleId.toString();
+    vehicleIdCtrl.text = argVehicleId.toString();
 
     vehicleId.value = argVehicleId.toString();
     vehicleIdCtrl.text = argVehicleId.toString();

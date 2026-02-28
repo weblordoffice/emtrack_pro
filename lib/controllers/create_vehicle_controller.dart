@@ -1,8 +1,7 @@
 import 'package:emtrack/routes/app_pages.dart';
 import 'package:emtrack/utils/secure_storage.dart';
-import 'package:emtrack/views/all_vehicles_list_view.dart';
 import 'package:emtrack/controllers/all_vehicles_controller.dart';
-import 'package:emtrack/views/home/home_view.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/masterDataMobileModel/tire_size_model.dart';

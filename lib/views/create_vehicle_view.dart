@@ -2,8 +2,7 @@ import 'package:emtrack/color/app_color.dart';
 import 'package:emtrack/controllers/all_vehicles_controller.dart';
 import 'package:emtrack/controllers/create_vehicle_controller.dart';
 import 'package:emtrack/controllers/selected_account_controller.dart';
-import 'package:emtrack/utils/secure_storage.dart';
-import 'package:emtrack/widgets/vehicle_daigram_Rotate_tyres.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,6 +15,8 @@ class CreateVehicleView extends StatelessWidget {
   final selectedCtrl = Get.put(SelectedAccountController());
 
   CreateVehicleView({super.key});
+
+  final FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -222,6 +223,7 @@ class CreateVehicleView extends StatelessWidget {
               () => TextField(
                 controller: vc.currentHoursCtrl,
                 keyboardType: TextInputType.number,
+                focusNode: _focusNode,
                 decoration: InputDecoration(
                   hintText: 'Enter current hours',
                   border: OutlineInputBorder(
@@ -249,6 +251,8 @@ class CreateVehicleView extends StatelessWidget {
                             /// 🔥 Show validation instantly
                             vc.currentHoursError.value =
                                 "This field is required";
+
+                            _focusNode.requestFocus();
                           },
                         )
                       : null,
