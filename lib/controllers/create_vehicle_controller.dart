@@ -280,6 +280,7 @@ class VehicleController extends GetxController {
       modifications: '',
       imagesLocation: '',
       installedTireCount: installedTyreCount,
+      installedTires: [],
       axleConfigId: axleConfigIdValue,
       currentMiles: 0,
       currentHours: double.parse(currentHours.value),

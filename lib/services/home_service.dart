@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:emtrack/models/statical_model.dart';
 import 'package:emtrack/services/api_constants.dart';
+import 'package:emtrack/services/api_service.dart';
 import 'package:emtrack/services/global_logout_handler.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:http/http.dart' as http;
+import '../controllers/home_controller.dart';
 import '../models/home_model.dart';
 
 class HomeService {
@@ -168,6 +170,41 @@ class HomeService {
     } catch (e) {
       print("🔥 Vehicle API exception => $e");
       return 0;
+    }
+  }
+
+  static Future<DashboardModel?> fetchReportDashboardHomeData() async {
+    final parentAccountId = await SecureStorage.getParentAccountId();
+    final getLocationId = await SecureStorage.getLocationId();
+
+    try {
+      final cookie = await SecureStorage.getCookie();
+
+      if (cookie == null || cookie.isEmpty) {
+        throw Exception("Session expired. Please login again.");
+      }
+
+      final resp = await ApiService.postApi(
+        endpoint: "/api/Report/GetReportDashboardData",
+        body: {"accountIds": parentAccountId, "locationIds": getLocationId},
+      );
+
+      if (resp['model'] != null) {
+        final model = resp["model"];
+        return DashboardModel.fromJson(model);
+      }
+
+      if (resp.statusCode == 401 || resp.statusCode == 403) {
+        await SecureStorage.clearCookie();
+        print("🔐 SESSION EXPIRED");
+        Get.find<GlobalLogoutHandler>().forceLogout();
+        return null;
+      }
+
+      return null;
+    } catch (e) {
+      print('HomeService.fetchHomeData error: $e');
+      return null;
     }
   }
 }

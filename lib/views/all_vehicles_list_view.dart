@@ -102,7 +102,7 @@ class AllVehicleListView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${vehicle.vehicleId ?? 0}',
+                        '${vehicle.vehicleNumber ?? ''}',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.red,
@@ -111,14 +111,14 @@ class AllVehicleListView extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Text("Make: "),
-                          Text(
-                            vehicle.manufacturer ?? "",
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          Text("Make: ${vehicle.manufacturerName} "),
+                          // Text(
+                          //   vehicle.manufacturer ?? "",
+                          //   style: TextStyle(
+                          //     color: AppColors.primary,
+                          //     fontWeight: FontWeight.bold,
+                          //   ),
+                          // ),
                         ],
                       ),
                       Row(
@@ -149,7 +149,7 @@ class AllVehicleListView extends StatelessWidget {
                   ),
                   // Image.network(vehicle.vehicleIcon, height: 40),
                   Image.network(
-                    Uri.encodeFull(vehicle.vehicleIcon ?? ""),
+                    Uri.encodeFull(vehicle.assetNumber ?? ""),
                     height: 40,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
