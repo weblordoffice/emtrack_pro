@@ -167,43 +167,41 @@ class VehicleModel {
     final dateFormat = DateFormat("MM/dd/yyyy");
 
     return {
-      "locationId": locationId,
-
-      "manufacturerId": manufacturerId.toString(),
-      "modelId": modelId.toString(),
-      "parentAccountId": parentAccountId.toString(),
-      "tireSizeId": tireSizeId.toString(),
-      "typeId": typeId.toString(),
-
-      "vehicleNumber": vehicleNumber,
-      "assetNumber": assetNumber ?? "",
-
-      "mileageType": mileageType.toString(),
-      "trackingMethod": trackingMethod.toString(),
-
-      "registeredDate": dateFormat.format(registeredDate!),
-
-      "currentMiles": currentMiles ?? 0,
-      "currentHours": currentHours ?? 0,
-
+      "areaOfOperation": areaOfOperation ?? "",
+      "averageLoadingReqId": averageLoadingReqId ?? 0,
       "axleConfig": axleConfig ?? "",
       "axleConfigId": axleConfigId,
-
-      "installedTires": [],
-      "installedTireCount": installedTireCount ?? 0,
-
-      "areaOfOperation": areaOfOperation ?? "",
-      "modifications": modifications ?? "",
-
-      "recommendedPressure": recommendedPressure ?? "0,0,0,0,0",
-      "multipleTireSizeIds": "",
-
-      "siteSeverityIndex": "",
-      "severityComments": severityComments ?? "",
-
       "comments": "",
+      "currentHours": currentHours ?? 0,
+      "currentMiles": currentMiles ?? 0,
+      "cuttingId": cuttingId ?? 0,
+      "event": "",
+      "hasMultipleTireSizes": false,
+      "imagesLocation": "",
+      "imgsrc": [],
+      "installedTireCount": installedTireCount ?? 0,
+      "installedTires": [],
+      "locationId": locationId,
+      "manufacturerId": manufacturerId.toString(),
+      "mileageType": mileageType.toString(),
+      "modelId": modelId.toString(),
+      "modifications": modifications ?? "",
+      "multipleTireSizeIds": "",
+      "parentAccountId": parentAccountId.toString(),
+      "recommendedPressure": recommendedPressure ?? "0,0,0,0",
+      "registeredDate": dateFormat.format(registeredDate!),
+      "removalTread": removalTread ?? 0,
+      "severityComments": severityComments ?? "",
+      "siteSeverityIndex": "3",
+      "speedId": speedId ?? 0,
+      "tireSizeId": tireSizeId.toString(),
+      "trackingMethod": trackingMethod ?? 1,
+      "typeId": typeId.toString(),
+      "vehicleNumber": vehicleNumber,
+      "assetNumber": assetNumber,
     };
   }
+
   // Map<String, dynamic> toJson() {
   //   return {
   //     "locationId": locationId,

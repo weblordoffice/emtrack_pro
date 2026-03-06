@@ -99,9 +99,9 @@ class VehicleInspeController extends GetxController {
         return;
       }
 
-      final isHoursBased =
-          (model!.installedTires!.first.mileageType ?? "").toLowerCase() ==
-          "hours";
+      // final isHoursBased =
+      //     (model!.installedTires!.first.mileageType ?? "").toLowerCase() ==
+      //     "hours";
 
       for (var tire in tires) {
         final vehicleData = {
