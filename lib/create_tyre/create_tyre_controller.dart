@@ -66,8 +66,7 @@ class CreateTyreController extends GetxController {
     if (statusList.isNotEmpty) {
       selectedstatus.value = statusList.last;
     }
-  } 
- 
+  }
 
   void nextStep() {
     if (!formKey.currentState!.validate()) return;

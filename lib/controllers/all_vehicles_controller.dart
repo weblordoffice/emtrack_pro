@@ -1,8 +1,9 @@
-import 'package:emtrack/models/all_vehicles_model.dart';
 import 'package:emtrack/services/all_vehicles_services.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../models/all_vehicle_account_model.dart';
 
 class AllVehicleController extends GetxController {
   final AllVehicleService _service = AllVehicleService();
@@ -10,8 +11,8 @@ class AllVehicleController extends GetxController {
   // ==================================================
   // 📦 DATA LISTS
   // ==================================================
-  final RxList<AllVehicleModel> vehicleList = <AllVehicleModel>[].obs;
-  final RxList<AllVehicleModel> filteredList = <AllVehicleModel>[].obs;
+  final RxList<AccountVehicleModel> vehicleList = <AccountVehicleModel>[].obs;
+  final RxList<AccountVehicleModel> filteredList = <AccountVehicleModel>[].obs;
 
   // ==================================================
   // 🔍 SEARCH
@@ -58,7 +59,9 @@ class AllVehicleController extends GetxController {
         return;
       }
 
-      final data = await _service.getVehiclesByUser(parentAccountId: parentId);
+      final data = await _service.getVehiclesByAccount(
+        parentAccountId: parentId,
+      );
 
       vehicleList.assignAll(data);
       filteredList.assignAll(data);
@@ -89,7 +92,7 @@ class AllVehicleController extends GetxController {
       vehicleList.where((v) {
         return v.vehicleId.toString().contains(searchText.value) ||
             (v.vehicleNumber ?? '').toLowerCase().contains(searchText.value) ||
-            (v.manufacturer ?? '').toLowerCase().contains(searchText.value) ||
+            (v.manufacturerName ?? '').toLowerCase().contains(searchText.value) ||
             (v.modelName ?? '').toLowerCase().contains(searchText.value) ||
             (v.axleConfig ?? '').toLowerCase().contains(searchText.value) ||
             (v.typeName ?? '').toLowerCase().contains(searchText.value);
@@ -111,7 +114,7 @@ class AllVehicleController extends GetxController {
 
         final makeMatch =
             selectedMake.value.isEmpty ||
-            (v.manufacturer ?? '') == selectedMake.value;
+            (v.manufacturerName ?? '') == selectedMake.value;
 
         final modelMatch =
             selectedModel.value.isEmpty ||
@@ -189,7 +192,7 @@ class AllVehicleController extends GetxController {
       vehicleList.map((e) => e.typeName ?? '').toSet().toList();
 
   List<String> get makeList =>
-      vehicleList.map((e) => e.manufacturer ?? '').toSet().toList();
+      vehicleList.map((e) => e.manufacturerName ?? '').toSet().toList();
 
   List<String> get modelList =>
       vehicleList.map((e) => e.modelName ?? '').toSet().toList();

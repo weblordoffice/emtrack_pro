@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../models/home_model.dart';
+import '../models/statical_model.dart';
 import '../services/home_service.dart';
 import '../utils/secure_storage.dart';
 
@@ -9,6 +10,7 @@ class HomeController extends GetxController {
   RxBool isCreateOpen = false.obs;
 
   var homeData = Rxn<HomeModel>();
+  var homeCount = Rxn<DashboardModel>();
 
   // 🔹 GLOBAL CHANGE ACCOUNT DATA
   RxString selectedParentAccountName = ''.obs;
@@ -37,6 +39,7 @@ class HomeController extends GetxController {
     loadUserName();
     loadSelectedAccountData();
     fetchHome();
+    fetchReportDashboardDataHome();
     loadTyreCountByAccount();
     loadVehicleCountByAccount();
   }
@@ -62,9 +65,22 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<void> fetchReportDashboardDataHome() async {
+    isLoading.value = true;
+    try {
+      final response = await HomeService.fetchReportDashboardHomeData();
+      homeCount.value = response;
+    } catch (e) {
+      print("Home fetch error: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   // ---------------- PULL TO REFRESH ----------------
   Future<void> refreshHome() async {
     await fetchHome();
+    await fetchReportDashboardDataHome();
   }
 
   // ---------------- SYNC ----------------

@@ -16,6 +16,8 @@ class VehicleService {
       throw Exception('Unauthorized: No cookie found.');
     }
 
+    print(jsonEncode(vehicle.toJson()));
+
     final body = jsonEncode(vehicle.toJson());
     print("📤 REQUEST BODY: $body");
 

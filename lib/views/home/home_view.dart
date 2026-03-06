@@ -338,7 +338,14 @@ class _HomeViewState extends State<HomeView> {
                                                   ),
                                                   SizedBox(height: 6),
                                                   Text(
-                                                    '${ctrl.tyreCount.value}',
+                                                    ctrl
+                                                            .homeCount
+                                                            .value
+                                                            ?.totalTiresCount
+                                                            .toString() ??
+                                                        "0",
+
+                                                    //    '${ctrl.tyreCount.value}',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 26,
@@ -422,7 +429,13 @@ class _HomeViewState extends State<HomeView> {
                                                   ),
                                                   SizedBox(height: 6),
                                                   Text(
-                                                    '${ctrl.vehicleCount.value}',
+                                                    ctrl
+                                                            .homeCount
+                                                            .value
+                                                            ?.vehicleCount
+                                                            .toString() ??
+                                                        "0",
+                                                    //   '${ctrl.vehicleCount.value}',
                                                     style: TextStyle(
                                                       color:
                                                           AppColors.textWhite,

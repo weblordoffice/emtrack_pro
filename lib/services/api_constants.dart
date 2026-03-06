@@ -25,6 +25,10 @@ class ApiConstants {
     return "/api/Vehicle/GetVehicleByUser/$parentAccountId/$pageNumber?timeStamp=$timeStamp";
   }
 
+  static String getVehicleByAccount(int parentAccountId) {
+    return "/api/ParentAccount/GetDetailsByAccount/$parentAccountId";
+  }
+
   //=================== MASTER DATA GET All COUNTRY==============
   static const String getAllCountryName = "/api/MasterData/GetCountryList";
   // ================= USER =================
