@@ -92,7 +92,9 @@ class AllVehicleController extends GetxController {
       vehicleList.where((v) {
         return v.vehicleId.toString().contains(searchText.value) ||
             (v.vehicleNumber ?? '').toLowerCase().contains(searchText.value) ||
-            (v.manufacturerName ?? '').toLowerCase().contains(searchText.value) ||
+            (v.manufacturerName ?? '').toLowerCase().contains(
+              searchText.value,
+            ) ||
             (v.modelName ?? '').toLowerCase().contains(searchText.value) ||
             (v.axleConfig ?? '').toLowerCase().contains(searchText.value) ||
             (v.typeName ?? '').toLowerCase().contains(searchText.value);
