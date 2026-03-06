@@ -249,6 +249,7 @@ class VehicleController extends GetxController {
 
     /// ✅ GET parentAccountId FROM SECURE STORAGE
     final String? parentAccountId = await SecureStorage.getParentAccountId();
+    final String? locationId = await SecureStorage.getLocationId();
 
     print("📦 ParentAccountId BODY: ${int.parse(parentAccountId.toString())}");
 
@@ -259,7 +260,7 @@ class VehicleController extends GetxController {
     print("🛞 axleConfigIdValue (sending) => $axleConfigIdValue");
 
     final vehicle = VehicleModel(
-      locationId: locationId.value,
+      locationId: int.parse(locationId.toString()),
       manufacturerId: manufacturerId.value,
       modelId: modelId.value,
       parentAccountId: int.parse(parentAccountId.toString()),

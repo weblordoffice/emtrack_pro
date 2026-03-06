@@ -3,8 +3,7 @@ import 'package:emtrack/services/global_logout_handler.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../models/all_vehicle_account_model.dart';
-import '../models/all_vehicles_model.dart';
-import '../models/vehicle_model.dart';
+
 import '../utils/secure_storage.dart';
 import 'api_constants.dart';
 

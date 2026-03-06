@@ -6,7 +6,6 @@ import 'package:emtrack/services/global_logout_handler.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import '../controllers/home_controller.dart';
 import '../models/home_model.dart';
 
 class HomeService {
