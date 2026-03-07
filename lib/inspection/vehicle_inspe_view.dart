@@ -129,7 +129,7 @@ class VehicleInspeView extends StatelessWidget {
 
             const SizedBox(height: 8),
             TextField(
-              controller: c.vehicleIdCtrl,
+              controller: c.vehicleNumberCtrl,
               readOnly: true,
               decoration: _inputDecoration(),
             ),

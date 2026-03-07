@@ -4,9 +4,7 @@ import 'package:emtrack/inspection/vehicle_inspe_controller.dart';
 import 'package:emtrack/inspection/vehicle_inspe_model.dart';
 import 'package:emtrack/inspection/vehicle_inspe_view.dart';
 import 'package:emtrack/services/update_vehicle_service.dart';
-import 'package:emtrack/widgets/vehicle_daigram.dart';
 import 'package:emtrack/widgets/vehicle_daigram_for_view.dart';
-import 'package:emtrack/widgets/vehicle_daigram_Rotate_tyres.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/vehicle_model.dart';
@@ -87,7 +85,7 @@ class _VehicleViewState extends State<VehicleView> {
                       ),
                     ),
                   ),
-                  _buildInfoRow("Vehicle ID", "#${vehicle!.vehicleId ?? '-'}"),
+                  _buildInfoRow("Vehicle ID", vehicle!.vehicleNumber ?? '-'),
                   _buildInfoRow(
                     "Tracking Method",
                     vehicle!.mileageType == 1

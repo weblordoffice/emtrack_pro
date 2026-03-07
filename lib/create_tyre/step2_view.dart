@@ -43,6 +43,14 @@ class _Step2ViewState extends State<Step2View> {
           selectedId: c.selectedManufacturerId,
           validator: _required,
           context: context,
+          onChanged: (id, name) {
+            // load tire sizes based on manufacturer
+            c.filterTireSizesByManufacturer(id);
+
+            // clear tire size
+            c.sizeId.clear();
+            c.selectedSizeId.value = 0;
+          },
         ),
         Row(
           children: [
@@ -58,6 +66,11 @@ class _Step2ViewState extends State<Step2View> {
           selectedId: c.selectedSizeId,
           context: context,
           validator: _required,
+          onChanged: (id, name) {
+            c.getTireTypes(id);
+            c.typeId.clear();
+            c.selectedTypeId.value = 0;
+          },
         ),
 
         Row(children: [Text("Star Rating")]),
@@ -144,6 +157,7 @@ class _Step2ViewState extends State<Step2View> {
     String? Function(String?)? validator,
     required RxInt selectedId,
     required BuildContext context,
+    Function(int id, String name)? onChanged,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
@@ -284,6 +298,12 @@ class _Step2ViewState extends State<Step2View> {
                                         tempSelectedId != null) {
                                       controller.text = tempSelectedName!;
                                       selectedId.value = tempSelectedId!;
+                                    }
+                                    if (onChanged != null) {
+                                      onChanged(
+                                        tempSelectedId!,
+                                        tempSelectedName!,
+                                      );
                                     }
                                     Navigator.pop(context);
                                   },

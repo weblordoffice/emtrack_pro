@@ -2,11 +2,8 @@ import 'package:emtrack/color/app_color.dart';
 import 'package:emtrack/controllers/all_vehicles_controller.dart';
 import 'package:emtrack/controllers/selected_account_controller.dart';
 import 'package:emtrack/controllers/update_vehicle_controller.dart';
-import 'package:emtrack/utils/secure_storage.dart';
-import 'package:emtrack/widgets/vehicle_daigram_Rotate_tyres.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/create_vehicle_controllerwwww.dart';
 
 class UpdateVehicleView extends StatelessWidget {
   final vc = Get.put(UpdateVehicleController());
@@ -52,7 +49,8 @@ class UpdateVehicleView extends StatelessWidget {
             label("Vehicle ID"),
             Obx(
               () => TextField(
-                controller: vc.vehicleIdCtrl, // 🔥 THIS
+                controller: vc.vehicleNumberCtrl, // 🔥 THIS
+
                 decoration: InputDecoration(
                   hintText: 'Enter Vehicle Number', // (label galat tha)
                   border: OutlineInputBorder(

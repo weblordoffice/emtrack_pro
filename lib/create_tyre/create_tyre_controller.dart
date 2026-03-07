@@ -57,8 +57,11 @@ class CreateTyreController extends GetxController {
   final loadRatingList = <String>[].obs;
   final speedRatingList = <String>[].obs;
 
+  List allTireSizes = [];
+
   // STEP 4
   final fillTypeList = <String>[].obs;
+  List allTypeList = [];
 
   void setStatusList(List<String> list) {
     statusList.assignAll(list);
@@ -439,6 +442,12 @@ class CreateTyreController extends GetxController {
     try {
       final data = await _masterService.fetchMasterData();
 
+      /// SIZE
+      allTireSizes = data['tireSizes'];
+      allTypeList = data['tireTypes'];
+
+      print('allTypeList$typeList');
+
       // /// STATUS
       // statusList.assignAll(
       //   (data['tireStatus'] as List)
@@ -479,38 +488,38 @@ class CreateTyreController extends GetxController {
       final manufacturerIds = manufacturerIdList
           .toSet(); // Set of valid manufacturer IDs
       /// SIZE
-      tireSizeList.assignAll(
-        (data['tireSizes'] as List)
-            .where((e) => manufacturerIds.contains(e['tireManufacturerId']))
-            .map((e) => e['tireSizeName'].toString())
-            .toList()
-            .toSet(),
-      );
+      // tireSizeList.assignAll(
+      //   (data['tireSizes'] as List)
+      //       .where((e) => manufacturerIds.contains(e['tireManufacturerId']))
+      //       .map((e) => e['tireSizeName'].toString())
+      //       .toList()
+      //       .toSet(),
+      // );
 
-      tireSizeIdList.assignAll(
-        (data['tireSizes'] as List)
-            .where((e) => manufacturerIds.contains(e['tireManufacturerId']))
-            .map((e) => e['tireSizeId'] as int)
-            .toList()
-            .toSet(),
-      );
+      // tireSizeIdList.assignAll(
+      //   (data['tireSizes'] as List)
+      //       .where((e) => manufacturerIds.contains(e['tireManufacturerId']))
+      //       .map((e) => e['tireSizeId'] as int)
+      //       .toList()
+      //       .toSet(),
+      // );
 
       /// TYPE
-      typeList.assignAll(
-        (data['tireTypes'] as List)
-            .where((e) => manufacturerIds.contains(e['tireManufacturerId']))
-            .map((e) => e['typeName'].toString())
-            .toList()
-            .toSet(),
-      );
+      // typeList.assignAll(
+      //   (data['tireTypes'] as List)
+      //       .where((e) => manufacturerIds.contains(e['tireManufacturerId']))
+      //       .map((e) => e['typeName'].toString())
+      //       .toList()
+      //       .toSet(),
+      // );
 
-      typeIdList.assignAll(
-        (data['tireTypes'] as List)
-            .where((e) => manufacturerIds.contains(e['tireManufacturerId']))
-            .map((e) => e['typeId'] as int)
-            .toList()
-            .toSet(),
-      );
+      // typeIdList.assignAll(
+      //   (data['tireTypes'] as List)
+      //       .where((e) => manufacturerIds.contains(e['tireManufacturerId']))
+      //       .map((e) => e['typeId'] as int)
+      //       .toList()
+      //       .toSet(),
+      // );
 
       /// INDUSTRY CODE
       indCodeList.assignAll(
@@ -589,6 +598,32 @@ class CreateTyreController extends GetxController {
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }
+  }
+
+  void filterTireSizesByManufacturer(int manufacturerId) {
+    final filtered = allTireSizes
+        .where((e) => e['tireManufacturerId'] == manufacturerId)
+        .toList();
+
+    tireSizeList.assignAll(
+      filtered.map((e) => e['tireSizeName'].toString()).toList(),
+    );
+
+    tireSizeIdList.assignAll(
+      filtered.map((e) => e['tireSizeId'] as int).toList(),
+    );
+  }
+
+  Future<void> getTireTypes(int tireSizeId) async {
+    final filtered = allTypeList
+        .where((e) => e["tireSizeId"] == tireSizeId)
+        .toList();
+
+    typeList.assignAll(filtered.map((e) => e['typeName'].toString()).toList());
+
+    typeIdList.assignAll(filtered.map((e) => e['typeId'] as int).toList());
+
+    // );
   }
 
   void setStarRating(int value) {

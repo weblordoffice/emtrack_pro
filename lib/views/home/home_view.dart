@@ -67,76 +67,92 @@ class _HomeViewState extends State<HomeView> {
 
       print("DEBUG: vehicleId = $vehicleId"); // Debug print
 
-      // Show dialog
-      Get.dialog(
-        AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          title: const Text(
-            "Success",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(message),
-              const SizedBox(height: 12),
-              Text(
-                numberText,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-              ),
-              if (!isTyre && vehicleId != null) ...[
-                const SizedBox(height: 8),
-                /*  Text(
-                  "Vehicle with ID: Vehicle $vehicleId Created Successfuly.",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                    fontSize: 16,
-                  ),
-                ),*/
-                Text("Redirecting to Vehicle Inspection Now."),
-              ],
-            ],
-          ),
-          /* actions: [
-            /* TextButton(
-              onPressed: () {
-                if (isTyre) {
-                  Get.back();
-                } else {
-                  // ✅ Correctly pass vehicleId as a Map
-                  Get.offAll(() => VehicleInspeView(), arguments: vehicleId);
-                }
-              },
-              child: const Text("OK"),
-            ),*/
-          ],*/
-        ),
-        barrierDismissible: false,
+      Get.snackbar(
+        "Success",
+        "$message\n$numberText",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+        duration: const Duration(seconds: 3),
       );
 
-      /// 🔥 AUTO REDIRECT AFTER 2 SECONDS
-      Future.delayed(const Duration(seconds: 10), () {
-        Get.back(); // Close dialog
-
+      Future.delayed(const Duration(seconds: 3), () {
         if (!isTyre && vehicleId != null) {
-          Get.offAll(
-            () => VehicleInspeView(),
-            arguments: vehicleId,
-            //  {
-            //   "vehicleId": vehicleId,
-            //   "inspectionId": args['vehicleNo'],
-            // },
-          );
+          Get.offAll(() => VehicleInspeView(), arguments: vehicleId);
         }
       });
+
+      // Show dialog
+      // Get.dialog(
+      //   AlertDialog(
+      //     shape: RoundedRectangleBorder(
+      //       borderRadius: BorderRadius.circular(12),
+      //     ),
+      //     title: const Text(
+      //       "Success",
+      //       style: TextStyle(fontWeight: FontWeight.bold),
+      //     ),
+      //     content: Column(
+      //       mainAxisSize: MainAxisSize.min,
+      //       crossAxisAlignment: CrossAxisAlignment.start,
+      //       children: [
+      //         Text(message),
+      //         const SizedBox(height: 12),
+      //         Text(
+      //           numberText,
+      //           style: const TextStyle(
+      //             fontWeight: FontWeight.bold,
+      //             color: Colors.black,
+      //             fontSize: 16,
+      //           ),
+      //         ),
+      //         if (!isTyre && vehicleId != null) ...[
+      //           const SizedBox(height: 8),
+      //           /*  Text(
+      //             "Vehicle with ID: Vehicle $vehicleId Created Successfuly.",
+      //             style: const TextStyle(
+      //               fontWeight: FontWeight.bold,
+      //               color: Colors.blue,
+      //               fontSize: 16,
+      //             ),
+      //           ),*/
+      //           Text("Redirecting to Vehicle Inspection Now."),
+      //         ],
+      //       ],
+      //     ),
+      //     /* actions: [
+      //       /* TextButton(
+      //         onPressed: () {
+      //           if (isTyre) {
+      //             Get.back();
+      //           } else {
+      //             // ✅ Correctly pass vehicleId as a Map
+      //             Get.offAll(() => VehicleInspeView(), arguments: vehicleId);
+      //           }
+      //         },
+      //         child: const Text("OK"),
+      //       ),*/
+      //     ],*/
+      //   ),
+      //   barrierDismissible: false,
+      // );
+
+      // /// 🔥 AUTO REDIRECT AFTER 2 SECONDS
+      // Future.delayed(const Duration(seconds: 10), () {
+      //   Get.back(); // Close dialog
+
+      //   if (!isTyre && vehicleId != null) {
+      //     Get.offAll(
+      //       () => VehicleInspeView(),
+      //       arguments: vehicleId,
+      //       //  {
+      //       //   "vehicleId": vehicleId,
+      //       //   "inspectionId": args['vehicleNo'],
+      //       // },
+      //     );
+      //   }
     });
   }
 

@@ -1,4 +1,3 @@
-import 'package:emtrack/utils/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -109,6 +108,7 @@ class Step1View extends StatelessWidget {
           _tf(
             label: "Enter Current Hours",
             controller: c.currentHours,
+            focusNode: _focusNode,
             keyboard: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d{0,1}')),
@@ -187,13 +187,12 @@ class Step1View extends StatelessWidget {
                       icon: const Icon(Icons.close),
                       onPressed: () {
                         if (onClear != null) {
-                          onClear(); // custom clear
-                          // 🔥 keep focus + cursor
-                          _focusNode.requestFocus();
+                          onClear();
                         } else {
-                          effectiveController.clear(); // default clear
+                          effectiveController.clear();
                         }
-                        focusNode?.requestFocus();
+
+                        FocusScope.of(context).requestFocus(_focusNode);
                       },
                     );
                   },

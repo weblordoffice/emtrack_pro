@@ -1,5 +1,6 @@
 import 'package:emtrack/create_tyre/create_tyre_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class Step3View extends StatefulWidget {
@@ -79,6 +80,7 @@ class _Step3ViewState extends State<Step3View> {
           label: "Enter Original Tread",
           controller: c.originalTread,
           validator: _required,
+
           // onChanged: (_) => _calculate(),
         ),
 
@@ -91,6 +93,7 @@ class _Step3ViewState extends State<Step3View> {
         _tf(
           label: "Remove At",
           controller: c.removeAt,
+
           validator: _required,
           focusNode: _focusNode,
           clearIcon: true,
@@ -163,6 +166,10 @@ class _Step3ViewState extends State<Step3View> {
         validator: validator,
         onChanged: onChanged,
         focusNode: focusNode,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+        ],
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
@@ -247,6 +254,12 @@ class _Step3ViewState extends State<Step3View> {
     if (num.tryParse(v) == null) {
       return "Only numeric values are allowed";
     }
+
+    final regex = RegExp(r'^\d+(\.\d+)?$');
+    if (!regex.hasMatch(v)) {
+      return "Only numeric values allowed";
+    }
+
     return null;
   }
 

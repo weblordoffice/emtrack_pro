@@ -17,6 +17,7 @@ class VehicleInspeController extends GetxController {
   VehicleInspectionModel? model;
 
   final TextEditingController commentsCtrl = TextEditingController();
+  final TextEditingController vehicleNumberCtrl = TextEditingController();
   final TextEditingController vehicleIdCtrl = TextEditingController();
   final TextEditingController hoursCtrl = TextEditingController();
 
@@ -33,14 +34,14 @@ class VehicleInspeController extends GetxController {
   void onInit() {
     super.onInit();
 
-    final int argVehicleId = Get.arguments as int;
+    var argVehicleId = Get.arguments;
     // print("🆔 vehicle VEHICLE ID => $argVehicleId");
 
     vehicleId.value = argVehicleId.toString();
     vehicleIdCtrl.text = argVehicleId.toString();
 
-    vehicleId.value = argVehicleId.toString();
-    vehicleIdCtrl.text = argVehicleId.toString();
+    // vehicleId.value = argVehicleId.toString();
+    // vehicleIdCtrl.text = argVehicleId.toString();
 
     /// 🔥 CALL GET API HERE
     fetchInspectionData();
@@ -63,7 +64,7 @@ class VehicleInspeController extends GetxController {
       for (var t in tires) {
         print("Serial => ${t.tireSerialNo}");
       }
-
+      vehicleNumberCtrl.text = model!.vehicleNumber.toString();
       hours.value = model?.lastRecordedHours?.toString() ?? "";
       hoursCtrl.text = hours.value;
       commentsCtrl.text = model?.comments ?? "";

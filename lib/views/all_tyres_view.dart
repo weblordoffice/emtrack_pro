@@ -1,6 +1,6 @@
-import 'package:emtrack/create_tyre/create_tyre_screen.dart';
 import 'package:emtrack/routes/app_pages.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../controllers/all_tyre_controller.dart';
 import '../color/app_color.dart';
@@ -119,9 +119,9 @@ class AllTyresView extends StatelessWidget {
                                       'Vehicle Id:',
                                       style: TextStyle(fontSize: 12),
                                     ),
-                                    SizedBox(width: 10),
+                                    SizedBox(width: 3),
                                     Text(
-                                      '#${tyre.vehicleId ?? '-'}',
+                                      tyre.vehicleNumber ?? '-',
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
@@ -157,7 +157,7 @@ class AllTyresView extends StatelessWidget {
                                         Text(
                                           ' ${tyre.typeName ?? '-'}',
                                           style: TextStyle(
-                                            fontSize: 8,
+                                            fontSize: 12,
                                             fontWeight: FontWeight.bold,
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -185,12 +185,17 @@ class AllTyresView extends StatelessWidget {
                             ),
                             trailing: Column(
                               children: [
-                                const Icon(
-                                  Icons.settings,
-                                  color: AppColors.buttonDanger,
-                                  size: 34,
+                                SvgPicture.asset(
+                                  'assets/svgImage/tire.svg',
+                                  color: Colors.red,
+                                  height: 30,
                                 ),
 
+                                // const Icon(
+                                //   Icons.settings,
+                                //   color: AppColors.buttonDanger,
+                                //   size: 34,
+                                // ),
                                 Text(
                                   "${formatNum(tyre.currentTreadDepth)}/${formatNum(tyre.percentageWorn)}",
                                   style: TextStyle(
@@ -253,10 +258,28 @@ class AllTyresView extends StatelessWidget {
           onPressed: () {
             Get.toNamed(AppPages.CREATE_TYRE);
           },
-          child: const Icon(
-            Icons.car_crash_outlined,
-            color: Colors.white,
-            size: 30,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              const Icon(
+                Icons.trip_origin, // tire
+                color: Colors.white,
+                size: 30,
+              ),
+
+              Positioned(
+                top: -4,
+                right: -4,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  padding: const EdgeInsets.all(2),
+                  child: const Icon(Icons.add, color: Colors.white, size: 14),
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(width: 10),

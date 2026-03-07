@@ -151,7 +151,7 @@ class AllTyreController extends GetxController
   // 📌 BOTTOM SHEET
   // ==================================================
   void openBottomSheet(TyreModel tyre) {
-    final String currentTab = tabs[tabController!.index];
+    //   final String currentTab = tabs[tabController!.index];
 
     Get.bottomSheet(
       Container(
@@ -164,12 +164,13 @@ class AllTyreController extends GetxController
           mainAxisSize: MainAxisSize.min,
           children: [
             /// ✅ ONLY FOR INSTALLED TAB
-            if (currentTab.toLowerCase() == 'installed')
+            //     if (currentTab.toLowerCase() == 'installed')
+            if ((tyre.vehicleNumber ?? "").isNotEmpty)
               ListTile(
                 title: const Center(child: Text('Inspect')),
                 onTap: () {
                   Get.back();
-                  Get.to(() => VehicleInspeView(), arguments: tyre.tireId);
+                  Get.to(() => VehicleInspeView(), arguments: tyre.vehicleId);
                 },
               ),
 

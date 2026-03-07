@@ -23,7 +23,6 @@ class Step4View extends StatelessWidget {
         /// A
         Row(children: [Text("Purchase Cost (a)")]),
         _tf(
-          hintText: "0",
           controller: c.purchaseCost,
           focusNode: _focusNode,
           clearIcon: true,
@@ -33,7 +32,7 @@ class Step4View extends StatelessWidget {
 
         /// B
         _tf(
-          hintText: "0",
+          //    hintText: "0",
           controller: c.casingValue,
           onChanged: (_) => c.calculateNetCost(),
         ),
@@ -158,7 +157,7 @@ class Step4View extends StatelessWidget {
   // ================= COMMON TEXTFIELD =================
 
   Widget _tf({
-    required String hintText,
+    String? hintText,
 
     /// For editable fields
     TextEditingController? controller,

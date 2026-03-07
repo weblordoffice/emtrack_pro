@@ -20,6 +20,7 @@ class UpdateVehicleController extends GetxController {
   final modelCtrl = TextEditingController();
   final tyreSizeCtrl = TextEditingController();
   final TextEditingController vehicleIdCtrl = TextEditingController();
+  final TextEditingController vehicleNumberCtrl = TextEditingController();
   final TextEditingController removalTreadCtrl = TextEditingController();
   final TextEditingController commentsCtrl = TextEditingController();
   final TextEditingController currentHoursCtrl = TextEditingController();
@@ -120,6 +121,7 @@ class UpdateVehicleController extends GetxController {
 
     /// 🔥 BASIC
     vehicleNumber.value = vehicle.vehicleNumber ?? '';
+    vehicleNumberCtrl.text = vehicleNumber.value;
     trackingMethodText.value = _trackingTextFromValue(vehicle.mileageType);
 
     removalTread.value = vehicle.removalTread?.toString() ?? '';
