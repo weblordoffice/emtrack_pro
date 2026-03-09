@@ -374,6 +374,7 @@ class Step1View extends StatelessWidget {
           );
           if (selected != null) {
             effectiveController.text = selected;
+            c.selectedTrackingMethod.value = selected.toString();
           }
         },
         child: AbsorbPointer(

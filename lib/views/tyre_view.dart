@@ -154,8 +154,8 @@ class TyreView extends StatelessWidget {
         _row("Purchase Order Number", tyre.purchaseCost.toString()),
         _row("Lot Number", tyre.lotNo.toString()),
         _row("Disposition", tyre.dispositionId.toString()),
-        _row("Status", "New"),
-        _row("Tracking Method", "Both"),
+        _row("Status", controller.getTireStatusName(tyre.tireStatusId)),
+        _row("Tracking Method", controller.getTrackingMethod(tyre.mileageType)),
       ],
     );
   }

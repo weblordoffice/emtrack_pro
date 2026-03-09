@@ -6,7 +6,7 @@ class Step4View extends StatelessWidget {
   Step4View({super.key});
 
   final EditTyreController c = Get.find<EditTyreController>();
-
+  final FocusNode _focusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -23,6 +23,7 @@ class Step4View extends StatelessWidget {
         _tf(
           hintText: "0",
           controller: c.purchaseCost,
+          focusNode: _focusNode,
           clearIcon: true,
           onChanged: (_) => c.calculateNetCost(),
           // validator: _required,
@@ -179,6 +180,7 @@ class Step4View extends StatelessWidget {
     bool enabled = true,
     bool clearIcon = false,
     TextInputType keyboardType = TextInputType.text,
+    FocusNode? focusNode,
     // String? Function(String?)? validator,
     Function(String value)? onChanged,
   }) {
@@ -201,14 +203,62 @@ class Step4View extends StatelessWidget {
           hintText: hintText,
           suffixIcon:
               clearIcon && controller != null && controller.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    controller.clear();
-                    onChanged?.call('');
-                  },
+              ? IntrinsicWidth(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ValueListenableBuilder<TextEditingValue>(
+                        valueListenable: controller,
+                        builder: (context, value, _) {
+                          if (value.text.trim().isEmpty) {
+                            return const SizedBox.shrink(); // 🔥 nothing when empty
+                          }
+
+                          return IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              controller.clear();
+                              onChanged?.call('');
+                              focusNode?.requestFocus();
+                            },
+                          );
+                        },
+                      ),
+
+                      Padding(
+                        padding: EdgeInsetsGeometry.only(right: 25, left: 10),
+                        child: Text(
+                          "INR",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 )
-              : null,
+              : Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    "INR",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: enabled == true && clearIcon == false
+                          ? Colors.black
+                          : Colors.grey,
+                    ),
+                  ),
+                ),
+
+          // IconButton(
+          //     icon: const Icon(Icons.close),
+          //     onPressed: () {
+          //       controller.clear();
+          //       onChanged?.call('');
+          //     },
+          //   )
+          // : null,
         ),
       ),
     );

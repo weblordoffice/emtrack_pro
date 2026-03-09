@@ -9,10 +9,12 @@ import 'package:get/get.dart';
 
 class SearchInstallView extends StatelessWidget {
   final int vehicleId;
+  final String vehicleNumber;
   final String wheelPosition;
 
   SearchInstallView({super.key})
     : vehicleId = Get.arguments["vehicleId"],
+      vehicleNumber = Get.arguments['vehicleNumber'],
       wheelPosition = Get.arguments["wheelPosition"];
 
   final SearchInstallTireController controller = Get.put(
@@ -49,7 +51,9 @@ class SearchInstallView extends StatelessWidget {
               children: [
                 Text("Vehicle ID:"),
                 Text(
-                  "#$vehicleId",
+                  vehicleNumber,
+
+                  //   "#$vehicleId",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Divider(),
@@ -123,6 +127,7 @@ class SearchInstallView extends StatelessWidget {
                         AppPages.INSTALL_TYRE_VIEW,
                         arguments: {
                           "vehicleId": vehicleId, // from this page
+                          "vehicleNumber": vehicleNumber, // from this page
                           "wheelPosition": wheelPosition, // from this page
                           "tireId": tyre.tireId,
                           "serialNo": tyre.tireSerialNo,

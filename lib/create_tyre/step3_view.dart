@@ -209,6 +209,7 @@ class _Step3ViewState extends State<Step3View> {
             keyboardType: TextInputType.number,
             validator: validator,
             onChanged: onChanged,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: warn ? Colors.red : Colors.grey),

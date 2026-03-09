@@ -192,22 +192,40 @@ class Step4View extends StatelessWidget {
 
           hintText: hintText,
           suffixIcon: clearIcon && controller != null
-              ? ValueListenableBuilder<TextEditingValue>(
-                  valueListenable: controller,
-                  builder: (context, value, _) {
-                    if (value.text.trim().isEmpty) {
-                      return const SizedBox.shrink(); // 🔥 nothing when empty
-                    }
+              ? IntrinsicWidth(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ValueListenableBuilder<TextEditingValue>(
+                        valueListenable: controller,
+                        builder: (context, value, _) {
+                          if (value.text.trim().isEmpty) {
+                            return const SizedBox.shrink(); // 🔥 nothing when empty
+                          }
 
-                    return IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        controller.clear();
-                        onChanged?.call('');
-                        focusNode?.requestFocus();
-                      },
-                    );
-                  },
+                          return IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              controller.clear();
+                              onChanged?.call('');
+                              focusNode?.requestFocus();
+                            },
+                          );
+                        },
+                      ),
+
+                      Padding(
+                        padding: EdgeInsetsGeometry.only(right: 25, left: 10),
+                        child: Text(
+                          "INR",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               //  IconButton(
               //     icon: Wrap(

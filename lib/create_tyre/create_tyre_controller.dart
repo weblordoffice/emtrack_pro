@@ -335,7 +335,7 @@ class CreateTyreController extends GetxController {
     model.netCost = double.tryParse(netCost.text) ?? 0;
 
     // ================= STEP 5: Fixed / default fields =================
-    model.mileageType = "1";
+    model.mileageType = selectedTrackingMethod.value;
     model.dispositionId = 8;
     model.mountedRimId = 0;
     model.isMountToRim = false;

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:emtrack/inspection/update_hours_view.dart';
 import 'package:emtrack/inspection/vehicle_inspe_controller.dart';
 import 'package:emtrack/routes/app_pages.dart';
+import 'package:emtrack/views/all_vehicles_list_view.dart';
 import 'package:emtrack/widgets/vehicle_daigram.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -216,10 +217,43 @@ class VehicleInspeView extends StatelessWidget {
 
               final tires = response.model?.installedTires ?? [];
 
-              return VehicleDiagram(
-                // tires: tires.obs,
-                tires: c.tires,
-                vehicleId: int.tryParse(c.vehicleId.value) ?? 0,
+              return Column(
+                children: [
+                  /// LEFT RIGHT LABEL
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 10,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text(
+                          "L",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          "R",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  VehicleDiagram(
+                    // tires: tires.obs,
+                    tires: c.tires,
+
+                    vehicleId: int.tryParse(c.vehicleId.value) ?? 0,
+                    vehicleNumber: c.vehicleNumberCtrl.text,
+                  ),
+                ],
               );
             }),
 
@@ -357,7 +391,12 @@ class VehicleInspeView extends StatelessWidget {
                     message:
                         "Are you sure you want to cancel? we wiil loose unsave data.",
                     onOk: () {
-                      Get.to(() => VehicleInspeView(), arguments: c.vehicleId);
+                      Get.back();
+                      Future.delayed(const Duration(milliseconds: 200), () {
+                        Get.back();
+                        //      Get.off(() => AllVehicleListView());
+                      });
+                      // Get.off(() => AllVehicleListView(), arguments: c.vehicleId);
                     },
                   );
                 },
@@ -488,8 +527,7 @@ class VehicleInspeView extends StatelessWidget {
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: () {
-              Get.back();
-              // onOk();
+              onOk();
             },
             child: const Text(
               "OK",

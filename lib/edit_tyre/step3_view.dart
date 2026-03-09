@@ -11,7 +11,7 @@ class Step3View extends StatefulWidget {
 
 class _Step3ViewState extends State<Step3View> {
   final EditTyreController c = Get.find<EditTyreController>();
-
+  final _formKey = GlobalKey<FormState>();
   double outsidePercent = 0;
   double insidePercent = 0;
 
@@ -26,10 +26,18 @@ class _Step3ViewState extends State<Step3View> {
     }
     // 👇 IMPORTANT
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _calculate();
+      loadCloneData();
+
+      //   _calculate();
     });
   }
 
+  void loadCloneData() {
+    c.outsideTread.addListener(_calculate);
+    c.insideTread.addListener(_calculate);
+    _calculate();
+    _formKey.currentState?.validate();
+  }
   // ================= CALCULATION =================
 
   void _calculate() {
@@ -154,6 +162,7 @@ class _Step3ViewState extends State<Step3View> {
     required TextEditingController controller,
     String? Function(String?)? validator,
     void Function(String)? onChanged,
+    FocusNode? focusNode,
     bool clearIcon = false,
   }) {
     return Padding(
@@ -163,6 +172,7 @@ class _Step3ViewState extends State<Step3View> {
         keyboardType: TextInputType.number,
         validator: validator,
         onChanged: onChanged,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
@@ -174,6 +184,7 @@ class _Step3ViewState extends State<Step3View> {
                   icon: const Icon(Icons.close),
                   onPressed: () {
                     controller.clear();
+                    focusNode?.requestFocus();
                     setState(() {});
                     _calculate();
                   },
@@ -196,29 +207,40 @@ class _Step3ViewState extends State<Step3View> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextFormField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            validator: validator,
-            onChanged: onChanged,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderSide: BorderSide(color: warn ? Colors.red : Colors.grey),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: warn ? Colors.red : Colors.grey),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: warn ? Colors.red : Colors.grey),
-              ),
-              suffixText: controller.text.isEmpty
-                  ? "100% worn"
-                  : "${percent.toInt()}% worn",
-              suffixStyle: const TextStyle(
-                color: Colors.black, // ALWAYS BLACK
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          ValueListenableBuilder(
+            valueListenable: controller,
+            builder: (context, value, child) {
+              return TextFormField(
+                controller: controller,
+                keyboardType: TextInputType.number,
+                validator: validator,
+                onChanged: onChanged,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: warn ? Colors.red : Colors.grey,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: warn ? Colors.red : Colors.grey,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: warn ? Colors.red : Colors.grey,
+                    ),
+                  ),
+                  suffixText: controller.text.isEmpty
+                      ? "100% worn"
+                      : "${percent.toInt()}% worn",
+                  suffixStyle: const TextStyle(
+                    color: Colors.black, // ALWAYS BLACK
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            },
           ),
 
           // 🔴 WARNING MESSAGE

@@ -54,7 +54,8 @@ class InstallTyreView extends StatelessWidget {
                       Divider(),
                       Text("Vehicle ID:"),
                       Text(
-                        "#${m.vehicleId}",
+                        "${controller.vehicleNumber}",
+                        //  "#${m.vehicleId}",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Divider(),

@@ -29,6 +29,7 @@ class InstallTyreController extends GetxController {
   final dispositionList = <String>[].obs;
   final dispositionIdList = <int>[].obs;
   final RxInt installedDispositionId = 0.obs;
+  final RxString vehicleNumber = "".obs;
 
   @override
   void onInit() {
@@ -37,6 +38,7 @@ class InstallTyreController extends GetxController {
     final args = Get.arguments ?? {};
     print("install tire $args");
     final int vehicleId = args["vehicleId"] ?? 0;
+    vehicleNumber.value = args["vehicleNumber"] ?? "";
     final String wheelPosition = args["wheelPosition"] ?? "";
     final int tireId = args["tireId"] ?? 0;
     final String serialNo = args["serialNo"] ?? "";

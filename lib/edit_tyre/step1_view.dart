@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'edit_tyre_controller.dart';
 
@@ -24,6 +25,7 @@ class Step1View extends StatelessWidget {
   String _weekday(int d) =>
       const ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][d - 1];
 
+  final FocusNode _focusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -134,10 +136,25 @@ class Step1View extends StatelessWidget {
           label: "Enter Current Hours",
           controller: c.currentHours,
           keyboard: TextInputType.number,
-          //validator: (v) => validateField(v),
+          focusNode: _focusNode,
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d{0,1}')),
+          ],
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Enter Valid Details";
+            }
+
+            if (!RegExp(r'^-?\d+(\.\d{1,2})?$').hasMatch(value)) {
+              return "Enter valid number";
+            }
+
+            return null;
+          },
           showClear: true,
         ),
 
+        //validator: (v) => validateField(v),
         const SizedBox(height: 24),
 
         _primaryBtn("Next", () => c.nextStep()),
@@ -155,7 +172,10 @@ class Step1View extends StatelessWidget {
     dynamic value,
     bool enabled = true,
     TextInputType keyboard = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
+    String? Function(String?)? validator,
     // String? Function(String?)? validator,
+    FocusNode? focusNode,
     VoidCallback? onTap,
 
     bool showClear = false, // ✅ NEW (optional)
@@ -171,8 +191,10 @@ class Step1View extends StatelessWidget {
         enabled: enabled,
         readOnly: onTap != null,
         onTap: onTap,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         keyboardType: keyboard,
-        //validator: validator,
+        validator: validator,
+        inputFormatters: inputFormatters,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
 
@@ -197,6 +219,7 @@ class Step1View extends StatelessWidget {
                         } else {
                           effectiveController.clear(); // default clear
                         }
+                        FocusScope.of(context).requestFocus(_focusNode);
                       },
                     );
                   },

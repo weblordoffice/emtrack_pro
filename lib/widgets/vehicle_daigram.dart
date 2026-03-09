@@ -9,11 +9,13 @@ class VehicleDiagram extends StatefulWidget {
   final RxList<InstalledTire> tires;
 
   final int vehicleId;
+  final String vehicleNumber;
 
   const VehicleDiagram({
     super.key,
     required this.tires,
     required this.vehicleId,
+    required this.vehicleNumber,
   });
 
   @override
@@ -115,7 +117,7 @@ class _VehicleDiagramState extends State<VehicleDiagram> {
           /// AXLES
           Column(
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 15),
 
               /// AXLE 1
               _axleRow(
@@ -201,6 +203,7 @@ class _VehicleDiagramState extends State<VehicleDiagram> {
         Get.to(
           () => SearchInstallView(),
           arguments: {
+            "vehicleNumber": widget.vehicleNumber,
             "vehicleId": widget.vehicleId,
             "wheelPosition": "$axleNo$side",
           },

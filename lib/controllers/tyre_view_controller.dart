@@ -175,6 +175,34 @@ class TyreViewController extends GetxController
     return match.first.fillTypeName;
   }
 
+  String getTireStatusName(int? id) {
+    if (masterData.value == null || id == null) return "";
+
+    final list = masterData.value!.tireStatus;
+
+    final match = list.where((e) => e.statusId == id);
+
+    if (match.isEmpty) {
+      print("❌ TireFillType not found for id: $id");
+      return "";
+    }
+
+    return match.first.statusName.toString();
+  }
+
+  String getTrackingMethod(String? mileageType) {
+    switch (mileageType) {
+      case "1":
+        return "Hours";
+      case "2":
+        return "Distance";
+      case "3":
+        return "Both";
+      default:
+        return "";
+    }
+  }
+
   Future<String> getParentAccountName() async {
     final name = await SecureStorage.getParentAccountName();
     final id = await SecureStorage.getParentAccountId();
