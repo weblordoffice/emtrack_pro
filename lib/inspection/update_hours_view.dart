@@ -113,7 +113,8 @@ class UpdateHoursView extends StatelessWidget {
                     onTap: updatectrl.loading.value
                         ? null
                         : () {
-                            updatectrl.submitUpdateHours();
+                            _showConfirmDialog(context);
+                            //    updatectrl.submitUpdateHours();
                           },
                     child: Center(
                       child: updatectrl.loading.value
@@ -147,6 +148,51 @@ class UpdateHoursView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showConfirmDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: const Center(
+            child: Text(
+              "Change Tire Details",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          content: const Text(
+            "These changes will impact tire hours.\nDo you wish to proceed?",
+            textAlign: TextAlign.center,
+          ),
+          actionsAlignment: MainAxisAlignment.spaceEvenly,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Cancel", style: TextStyle(color: Colors.blue)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+
+                /// 🔥 Call your API here
+                updatectrl.submitUpdateHours();
+              },
+              child: const Text(
+                "Proceed",
+                style: TextStyle(color: Colors.blue),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

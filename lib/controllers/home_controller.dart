@@ -45,8 +45,15 @@ class HomeController extends GetxController {
   }
 
   // ---------------- LOAD USERNAME ----------------
+  // Future<void> loadUserName() async {
+  //   final name = await SecureStorage.getUserName();
+  //   if (name != null && name.isNotEmpty) {
+  //     username.value = name;
+  //   }
+  // }
+
   Future<void> loadUserName() async {
-    final name = await SecureStorage.getUserName();
+    final name = await SecureStorage.getUserProfileName();
     if (name != null && name.isNotEmpty) {
       username.value = name;
     }

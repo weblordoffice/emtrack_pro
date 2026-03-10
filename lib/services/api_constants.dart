@@ -70,4 +70,6 @@ class ApiConstants {
 
   // get All user
   static const getAllUserList = "/api/UserProfile/GetAllUsers";
+
+  static const getUserProfile = "/api/UserProfile";
 }

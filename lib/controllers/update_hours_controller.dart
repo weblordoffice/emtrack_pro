@@ -108,7 +108,17 @@ class UpdateHoursController extends GetxController {
       if (result) {
         Get.back(result: updatedHours);
         if (result) {
-          Get.snackbar("Success", "Hours updated successfully");
+          Get.snackbar(
+            "Success",
+            "Hours updated successfully\n Hours updated successfully on Vehicle",
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            margin: const EdgeInsets.all(10),
+            borderRadius: 8,
+            duration: const Duration(seconds: 3),
+          );
+          //   Get.snackbar("Success", "Hours updated successfully");
 
           // 👇 Refresh previous screen
           final vehicleController = Get.find<VehicleInspeController>();

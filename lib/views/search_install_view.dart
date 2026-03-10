@@ -131,6 +131,7 @@ class SearchInstallView extends StatelessWidget {
                           "wheelPosition": wheelPosition, // from this page
                           "tireId": tyre.tireId,
                           "serialNo": tyre.tireSerialNo,
+
                           //   "lastInspection": tyre.lastInspactionDate,
                           "avgTread": tyre.currentTreadDepth,
                         },

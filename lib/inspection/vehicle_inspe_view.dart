@@ -391,7 +391,7 @@ class VehicleInspeView extends StatelessWidget {
                     message:
                         "Are you sure you want to cancel? we wiil loose unsave data.",
                     onOk: () {
-                      Get.back();
+                      Get.back(closeOverlays: true);
                       Future.delayed(const Duration(milliseconds: 200), () {
                         Get.back();
                         //      Get.off(() => AllVehicleListView());

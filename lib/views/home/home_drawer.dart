@@ -220,31 +220,68 @@ class HomeDrawer extends StatelessWidget {
                         Get.to(() => UserManagementView());
                       },
                     ),
-                    DrawerItem(
-                      'User Management List',
-                      color: AppColors.textWhite,
-                      onTap: () {
-                        Get.back();
-                        Get.to(() => UserManagementListView());
-                      },
-                    ),
-                    DrawerItem(
-                      'Grandparent Account',
-                      color: AppColors.textWhite,
-                      onTap: () {
-                        Get.back();
-                        Get.to(() => GrandparentAccountView());
-                      },
-                    ),
-                    DrawerItem(
-                      'Grandparent Account List',
-                      color: AppColors.textWhite,
-                      onTap: () {
-                        Get.back();
-                        Get.to(() => GrandparentAccountListView());
-                      },
-                    ),
 
+                    Obx(() {
+                      if (auth.userRole.value == "EMTSUADMIN") {
+                        return Column(
+                          children: [
+                            DrawerItem(
+                              'User Management List',
+                              color: AppColors.textWhite,
+                              onTap: () {
+                                Get.back();
+                                Get.to(() => UserManagementListView());
+                              },
+                            ),
+
+                            DrawerItem(
+                              'Grandparent Account',
+                              color: AppColors.textWhite,
+                              onTap: () {
+                                Get.back();
+                                Get.to(() => GrandparentAccountView());
+                              },
+                            ),
+
+                            DrawerItem(
+                              'Grandparent Account List',
+                              color: AppColors.textWhite,
+                              onTap: () {
+                                Get.back();
+                                Get.to(() => GrandparentAccountListView());
+                              },
+                            ),
+                          ],
+                        );
+                      } else {
+                        return SizedBox.shrink();
+                      }
+                    }),
+
+                    // DrawerItem(
+                    //   'User Management List',
+                    //   color: AppColors.textWhite,
+                    //   onTap: () {
+                    //     Get.back();
+                    //     Get.to(() => UserManagementListView());
+                    //   },
+                    // ),
+                    // DrawerItem(
+                    //   'Grandparent Account',
+                    //   color: AppColors.textWhite,
+                    //   onTap: () {
+                    //     Get.back();
+                    //     Get.to(() => GrandparentAccountView());
+                    //   },
+                    // ),
+                    // DrawerItem(
+                    //   'Grandparent Account List',
+                    //   color: AppColors.textWhite,
+                    //   onTap: () {
+                    //     Get.back();
+                    //     Get.to(() => GrandparentAccountListView());
+                    //   },
+                    // ),
                     DrawerItem(
                       'Logout',
                       color: AppColors.textWhite,

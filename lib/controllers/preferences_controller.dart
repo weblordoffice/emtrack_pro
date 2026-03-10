@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:emtrack/routes/app_pages.dart';
 import 'package:emtrack/utils/secure_storage.dart';
-
 import '../models/preferences_model.dart';
-import '../models/country/country_model.dart';
-import '../models/country/country_response.dart';
 import '../services/preferences_service.dart';
 
 class PreferencesController extends GetxController {

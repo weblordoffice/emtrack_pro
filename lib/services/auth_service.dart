@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'package:emtrack/services/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:emtrack/models/user_models.dart';
 import 'package:emtrack/services/api_constants.dart';
+
+import '../models/role/profile_model.dart';
 
 class AuthService {
   // ******** LOGIN FUNCTION ********
@@ -56,19 +59,30 @@ class AuthService {
 
     final response = await http.post(
       url,
-      headers: {
-        if (cookie != null) 'Cookie': cookie,
-        // if (xsrfToken != null) 'X-XSRF-TOKEN': xsrfToken,
-      },
+      headers: {if (cookie != null) 'Cookie': cookie},
     );
 
-    // Clear stored auth & XSRF token
     await SecureStorage.clearCookie();
-    // await SecureStorage.clearXsrfToken();
 
     print("LOGOUT STATUS 👉 ${response.statusCode}");
     print("LOGOUT BODY 👉 ${response.body}");
 
     return response.statusCode == 200;
+  }
+
+  static Future<UserProfile?> getUserprofile() async {
+    final response = await ApiService.getApi(
+      endpoint: ApiConstants.getUserProfile,
+    );
+
+    final json = response;
+
+    if (json['model'] != null) {
+      UserProfile user = UserProfile.fromJson(json['model']);
+
+      return user;
+    }
+
+    return null;
   }
 }

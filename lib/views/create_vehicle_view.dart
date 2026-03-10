@@ -4,6 +4,7 @@ import 'package:emtrack/controllers/create_vehicle_controller.dart';
 import 'package:emtrack/controllers/selected_account_controller.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class CreateVehicleView extends StatelessWidget {
@@ -224,6 +225,9 @@ class CreateVehicleView extends StatelessWidget {
                 controller: vc.currentHoursCtrl,
                 keyboardType: TextInputType.number,
                 focusNode: _focusNode,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
+                ],
                 decoration: InputDecoration(
                   hintText: 'Enter current hours',
                   border: OutlineInputBorder(
@@ -433,6 +437,7 @@ class CreateVehicleView extends StatelessWidget {
               () => TextField(
                 decoration: InputDecoration(
                   hintText: 'Removal Tread',
+
                   border: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: vc.removalTreadError.value.isNotEmpty
@@ -446,6 +451,7 @@ class CreateVehicleView extends StatelessWidget {
                   errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
                 keyboardType: TextInputType.number,
+
                 onChanged: (v) {
                   vc.removalTread.value = v;
                   vc.clearRemovalTreadError();
@@ -468,15 +474,15 @@ class CreateVehicleView extends StatelessWidget {
                           : Colors.grey,
                     ),
                   ),
-                  errorText: vc.commentsError.value.isNotEmpty
-                      ? vc.commentsError.value
-                      : null,
-                  errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
+                  // errorText: vc.commentsError.value.isNotEmpty
+                  //     ? vc.commentsError.value
+                  //     : null,
+                  // errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
                 maxLines: null,
                 onChanged: (v) {
                   vc.comments.value = v;
-                  vc.clearCommentsError();
+                  //     vc.clearCommentsError();
                 },
               ),
             ),

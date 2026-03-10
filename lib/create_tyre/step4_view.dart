@@ -140,7 +140,7 @@ class Step4View extends StatelessWidget {
         const SizedBox(height: 12),
         _outlineBtn("Save & Clone", () async {
           await c.saveAndClone();
-          Get.snackbar("Saved", "Data saved & ready to clone");
+          //    Get.snackbar("Saved", "Data saved & ready to clone");
         }),
 
         const SizedBox(height: 12),

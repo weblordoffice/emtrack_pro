@@ -412,13 +412,13 @@ class VehicleController extends GetxController {
     }
 
     /// COMMENTS
-    if (comments.value.trim().isEmpty) {
-      commentsError.value = "Please enter vehicle comments";
-      isValid = false;
-    } else if (comments.value.length > 200) {
-      commentsError.value = "Maximum 200 characters allowed";
-      isValid = false;
-    }
+    // if (comments.value.trim().isEmpty) {
+    //   commentsError.value = "Please enter vehicle comments";
+    //   isValid = false;
+    // } else if (comments.value.length > 200) {
+    //   commentsError.value = "Maximum 200 characters allowed";
+    //   isValid = false;
+    // }
 
     return isValid;
   }

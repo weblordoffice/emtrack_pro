@@ -4,13 +4,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../controllers/all_tyre_controller.dart';
 import '../color/app_color.dart';
+import '../controllers/preferences_controller.dart';
 
 class AllTyresView extends StatelessWidget {
   AllTyresView({super.key});
 
   /// ✅ CONTROLLER INJECTION (MAIN FIX)
   final AllTyreController controller = Get.put(AllTyreController());
-
+  final PreferencesController _preferencesController =
+      Get.find<PreferencesController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,7 +199,9 @@ class AllTyresView extends StatelessWidget {
                                 //   size: 34,
                                 // ),
                                 Text(
-                                  "${formatNum(tyre.currentTreadDepth)}/${formatNum(tyre.percentageWorn)}",
+                                  "${formatNum(tyre.currentTreadDepth)}${_preferencesController.selectedMeasurement.value == "Imperial" ? "/32" : "mm"}",
+
+                                  //${formatNum(tyre.percentageWorn)}",
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,

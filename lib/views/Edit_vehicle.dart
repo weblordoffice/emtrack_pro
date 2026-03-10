@@ -783,155 +783,306 @@ class UpdateVehicleView extends StatelessWidget {
     final RxList<String> filteredList = items.obs;
     final TextEditingController searchCtrl = TextEditingController();
 
-    Get.dialog(
-      Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Get.back(),
-          ),
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: TextField(
-                controller: searchCtrl,
-                decoration: const InputDecoration(
-                  hintText: 'Search...',
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (v) {
-                  filteredList.value = items
-                      .where((e) => e.toLowerCase().contains(v.toLowerCase()))
-                      .toList();
-                },
-              ),
-            ),
-            Expanded(
-              child: Obx(() {
-                List<String> sortedList = List.from(filteredList);
+    String tempSelected = selectedValue.value;
 
-                /// 🔥 Move Selected Item To Top
-                if (selectedValue.value.isNotEmpty &&
-                    sortedList.contains(selectedValue.value)) {
-                  sortedList.remove(selectedValue.value);
-                  sortedList.insert(0, selectedValue.value);
-                }
-
-                return ListView.builder(
-                  itemCount: sortedList.length,
-                  itemBuilder: (_, index) {
-                    final item = sortedList[index];
-                    final isSelected = item == selectedValue.value;
-
-                    return ListTile(
-                      tileColor: isSelected
-                          ? Colors.red.withOpacity(0.08)
-                          : null,
-                      title: Row(
-                        children: [
-                          Text(
-                            item,
-                            style: TextStyle(
-                              color: isSelected ? Colors.red : Colors.black,
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                          const Spacer(),
-                          if (isSelected)
-                            const Icon(
-                              Icons.check_circle,
-                              color: Colors.red,
-                              size: 20,
-                            ),
-                        ],
-                      ),
-                      onTap: () {
-                        selectedValue.value = item;
-                        onSelect(item);
-                        Get.back();
-                      },
-                    );
-                  },
-                );
-              }),
-            ),
-
-            /*  Expanded(
-              child: Obx(
-                () => ListView.builder(
-                  itemCount: filteredList.length,
-                  itemBuilder: (_, index) {
-                    final item = filteredList[index];
-                    final isSelected = item == selectedValue.value;
-                    return ListTile(
-                      title: Row(
-                        children: [
-                          Text(
-                            item,
-                            style: TextStyle(
-                              color: isSelected ? Colors.red : Colors.black,
-                            ),
-                          ),
-                          const Spacer(),
-                          if (isSelected)
-                            const Icon(
-                              Icons.check,
-                              color: Colors.red,
-                              size: 20,
-                            ),
-                        ],
-                      ),
-                      onTap: () {
-                        selectedValue.value = item;
-                        onSelect(item);
-                        Get.back();
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),*/
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  style: ButtonStyle(
-                    side: WidgetStateProperty.all(
-                      const BorderSide(
-                        color: Colors.red, // Border color
-                        width: 2, // Border width
-                      ),
-                    ),
-
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // Border radius
-                      ),
-                    ),
-                  ),
-
-                  onPressed: () => Get.back(),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    showDialog(
+      context: context,
       barrierDismissible: false,
+
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(title),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Get.back(),
+                ),
+              ),
+              body: Column(
+                children: [
+                  /// 🔍 SEARCH
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: TextField(
+                      controller: searchCtrl,
+                      decoration: const InputDecoration(
+                        hintText: 'Search...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (v) {
+                        filteredList.value = items
+                            .where(
+                              (e) => e.toLowerCase().contains(v.toLowerCase()),
+                            )
+                            .toList();
+                      },
+                    ),
+                  ),
+
+                  Expanded(
+                    child: Obx(() {
+                      if (filteredList.isEmpty) {
+                        return const Center(child: Text("No data found"));
+                      }
+
+                      return ListView.builder(
+                        itemCount: filteredList.length,
+                        itemBuilder: (_, index) {
+                          final item = filteredList[index];
+                          final isSelected = item == tempSelected;
+
+                          return ListTile(
+                            trailing: isSelected
+                                ? const Icon(Icons.check, color: Colors.red)
+                                : null,
+                            title: Row(
+                              children: [
+                                Text(
+                                  item,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.red
+                                        : Colors.black,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              setState(() {
+                                tempSelected = item; // ✔ show tick
+                              });
+                            },
+                          );
+                        },
+                      );
+                    }),
+                  ),
+
+                  /// 🔘 ACTION BUTTONS
+                  Container(
+                    height: 56,
+                    decoration: const BoxDecoration(
+                      border: Border(top: BorderSide(color: Colors.grey)),
+                    ),
+                    child: Row(
+                      children: [
+                        /// ❌ CANCEL
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: const Center(
+                              child: Text(
+                                "Cancel",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        Container(width: 0.5, color: Colors.grey),
+
+                        /// ✅ OK
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              selectedValue.value = tempSelected;
+                              onSelect(tempSelected);
+                              Get.back();
+                            },
+
+                            child: const Center(
+                              child: Text(
+                                "OK",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
+
+//   void _openFullScreenDialog({
+//     required BuildContext context,
+//     required String title,
+//     required RxString selectedValue,
+//     required List<String> items,
+//     required Function(String) onSelect,
+//   }) {
+//     final RxList<String> filteredList = items.obs;
+//     final TextEditingController searchCtrl = TextEditingController();
+
+//     Get.dialog(
+//       Scaffold(
+//         appBar: AppBar(
+//           title: Text(title),
+//           leading: IconButton(
+//             icon: const Icon(Icons.arrow_back),
+//             onPressed: () => Get.back(),
+//           ),
+//         ),
+//         body: Column(
+//           children: [
+//             Padding(
+//               padding: const EdgeInsets.all(12),
+//               child: TextField(
+//                 controller: searchCtrl,
+//                 decoration: const InputDecoration(
+//                   hintText: 'Search...',
+//                   prefixIcon: Icon(Icons.search),
+//                   border: OutlineInputBorder(),
+//                 ),
+//                 onChanged: (v) {
+//                   filteredList.value = items
+//                       .where((e) => e.toLowerCase().contains(v.toLowerCase()))
+//                       .toList();
+//                 },
+//               ),
+//             ),
+//             Expanded(
+//               child: Obx(() {
+//                 List<String> sortedList = List.from(filteredList);
+
+//                 /// 🔥 Move Selected Item To Top
+//                 if (selectedValue.value.isNotEmpty &&
+//                     sortedList.contains(selectedValue.value)) {
+//                   sortedList.remove(selectedValue.value);
+//                   sortedList.insert(0, selectedValue.value);
+//                 }
+
+//                 return ListView.builder(
+//                   itemCount: sortedList.length,
+//                   itemBuilder: (_, index) {
+//                     final item = sortedList[index];
+//                     final isSelected = item == selectedValue.value;
+
+//                     return ListTile(
+//                       tileColor: isSelected
+//                           ? Colors.red.withOpacity(0.08)
+//                           : null,
+//                       title: Row(
+//                         children: [
+//                           Text(
+//                             item,
+//                             style: TextStyle(
+//                               color: isSelected ? Colors.red : Colors.black,
+//                               fontWeight: isSelected
+//                                   ? FontWeight.bold
+//                                   : FontWeight.normal,
+//                             ),
+//                           ),
+//                           const Spacer(),
+//                           if (isSelected)
+//                             const Icon(
+//                               Icons.check_circle,
+//                               color: Colors.red,
+//                               size: 20,
+//                             ),
+//                         ],
+//                       ),
+//                       onTap: () {
+//                         selectedValue.value = item;
+//                         onSelect(item);
+//                         Get.back();
+//                       },
+//                     );
+//                   },
+//                 );
+//               }),
+//             ),
+
+//             /*  Expanded(
+//               child: Obx(
+//                 () => ListView.builder(
+//                   itemCount: filteredList.length,
+//                   itemBuilder: (_, index) {
+//                     final item = filteredList[index];
+//                     final isSelected = item == selectedValue.value;
+//                     return ListTile(
+//                       title: Row(
+//                         children: [
+//                           Text(
+//                             item,
+//                             style: TextStyle(
+//                               color: isSelected ? Colors.red : Colors.black,
+//                             ),
+//                           ),
+//                           const Spacer(),
+//                           if (isSelected)
+//                             const Icon(
+//                               Icons.check,
+//                               color: Colors.red,
+//                               size: 20,
+//                             ),
+//                         ],
+//                       ),
+//                       onTap: () {
+//                         selectedValue.value = item;
+//                         onSelect(item);
+//                         Get.back();
+//                       },
+//                     );
+//                   },
+//                 ),
+//               ),
+//             ),*/
+//             Padding(
+//               padding: const EdgeInsets.all(12),
+//               child: SizedBox(
+//                 width: double.infinity,
+//                 child: OutlinedButton(
+//                   style: ButtonStyle(
+//                     side: WidgetStateProperty.all(
+//                       const BorderSide(
+//                         color: Colors.red, // Border color
+//                         width: 2, // Border width
+//                       ),
+//                     ),
+
+//                     shape: WidgetStateProperty.all(
+//                       RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(8), // Border radius
+//                       ),
+//                     ),
+//                   ),
+
+//                   onPressed: () => Get.back(),
+//                   child: const Text(
+//                     'Cancel',
+//                     style: TextStyle(color: Colors.red),
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//       barrierDismissible: false,
+//     );
+//   }
+// }
 
 ////=====================================
 class AxleTyreLayout extends StatelessWidget {

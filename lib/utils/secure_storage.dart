@@ -52,8 +52,24 @@ class SecureStorage {
     await _storage.write(key: 'username', value: username);
   }
 
+  static Future<void> saveUserProfileName(String username) async {
+    await _storage.write(key: 'userprofilename', value: username);
+  }
+
+  static Future<String?> getUserProfileName() async {
+    return await _storage.read(key: 'userprofilename');
+  }
+
   static Future<String?> getUserName() async {
     return await _storage.read(key: 'username');
+  }
+
+  static Future<void> saveUserProfileRole(String userRole) async {
+    return await _storage.write(key: 'userprofilerole', value: userRole);
+  }
+
+  static Future<String?> getUserProfileRole() async {
+    return await _storage.read(key: 'userprofilerole');
   }
 
   static Future<void> clearUserName() async {

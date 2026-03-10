@@ -672,17 +672,27 @@ class CreateTyreController extends GetxController {
 
       AppLoader.hide();
 
+      Get.snackbar(
+        "Success",
+        "Tire cloned successfully.\nTire with serial no: ${tireSerialNo.text} created successfully.",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+        duration: const Duration(seconds: 3),
+      );
       // RESET ONLY NECESSARY FIELDS
       tireSerialNo.clear();
       brandNo.clear();
 
       currentStep.value = 0;
 
-      Get.snackbar(
-        "Success",
-        "Tyre saved. Ready to clone.",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      // Get.snackbar(
+      //   "Success",
+      //   "Tyre saved. Ready to clone.",
+      //   snackPosition: SnackPosition.BOTTOM,
+      // );
     } catch (e) {
       AppLoader.hide();
       Get.snackbar("Error", e.toString(), snackPosition: SnackPosition.BOTTOM);

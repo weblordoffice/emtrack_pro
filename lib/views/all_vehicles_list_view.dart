@@ -5,6 +5,7 @@ import 'package:emtrack/views/create_vehicle_view.dart';
 import 'package:emtrack/views/Edit_vehicle.dart';
 import 'package:emtrack/views/vehicle_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class AllVehicleListView extends StatelessWidget {
@@ -102,7 +103,7 @@ class AllVehicleListView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${vehicle.vehicleNumber ?? ''}',
+                        '#${vehicle.vehicleNumber ?? ''}',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.red,
@@ -154,7 +155,11 @@ class AllVehicleListView extends StatelessWidget {
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       print("Image Load Error => $error");
-                      return const Icon(Icons.directions_car, size: 40);
+                      return SvgPicture.asset(
+                        'assets/svgImage/IMG_Default.svg',
+                        height: 40,
+                      );
+                      //const Icon(Icons.directions_car, size: 40);
                     },
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
