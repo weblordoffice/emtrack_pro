@@ -220,8 +220,27 @@ class AllTyresView extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _createTireFAB(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Material(
+        color: Colors.transparent,
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: () => Get.toNamed(AppPages.CREATE_TYRE),
+          borderRadius: BorderRadius.circular(24),
+          splashColor: Colors.transparent,
+
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: SvgPicture.asset(
+              'assets/svgImage/NewTire.svg',
+              height: 56,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
+
+      //_createTireFAB(),
     );
   }
 

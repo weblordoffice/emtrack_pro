@@ -69,8 +69,39 @@ class AllVehicleListView extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _createVehicleFAB(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: Material(
+        color: Colors.transparent,
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: () => Get.to(() => CreateVehicleView()),
+          borderRadius: BorderRadius.circular(24),
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: SvgPicture.asset(
+              'assets/svgImage/CreateVehicle.svg',
+              height: 56,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
+
+      // _createVehicleFAB(),
+    );
+  }
+
+  // 🚘 VEHICLE CARD (always show a default vehicle icon)
+  Widget _buildVehicleImage() {
+    // assetNumber is not a URL; it’s just an identifier.
+    // Use the bundled PNG so we don’t run into Svg parsing/asset lookup issues.
+    return Image.asset(
+      'assets/images/IMG_Default.png',
+      height: 60,
+      width: 60,
+      fit: BoxFit.contain,
     );
   }
 
@@ -152,13 +183,10 @@ class AllVehicleListView extends StatelessWidget {
                   Image.network(
                     Uri.encodeFull(vehicle.assetNumber ?? ""),
                     height: 40,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.fill,
                     errorBuilder: (context, error, stackTrace) {
                       print("Image Load Error => $error");
-                      return SvgPicture.asset(
-                        'assets/svgImage/IMG_Default.svg',
-                        height: 40,
-                      );
+                      return _buildVehicleImage();
                       //const Icon(Icons.directions_car, size: 40);
                     },
                     loadingBuilder: (context, child, loadingProgress) {
