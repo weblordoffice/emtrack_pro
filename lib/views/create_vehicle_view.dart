@@ -450,8 +450,13 @@ class CreateVehicleView extends StatelessWidget {
                       : null,
                   errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
-                keyboardType: TextInputType.number,
 
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
+                ],
                 onChanged: (v) {
                   vc.removalTread.value = v;
                   vc.clearRemovalTreadError();

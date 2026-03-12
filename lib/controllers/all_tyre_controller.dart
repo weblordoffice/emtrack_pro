@@ -46,6 +46,7 @@ class AllTyreController extends GetxController
     tabController = TabController(length: tabs.length, vsync: this);
 
     /// 🚀 FIRST LOAD
+
     fetchData(tabs[0]);
 
     /// 🔁 Tab change

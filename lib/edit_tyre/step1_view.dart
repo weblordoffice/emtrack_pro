@@ -28,139 +28,141 @@ class Step1View extends StatelessWidget {
   final FocusNode _focusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 15),
-        const Text(
-          "Identification Details",
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 15),
+          const Text(
+            "Identification Details",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        SizedBox(height: 10),
-        Row(
-          children: [
-            Text("Tire Serial Number "),
-            Text("*", style: TextStyle(color: Colors.red)),
-          ],
-        ),
-        _tf(
-          label: "Enter Tire Serial Number",
-          controller: c.tireSerialNo,
-          //validator: (v) => validateField(v, numeric: true),
-        ),
-        Row(children: [Text("Enter Brand Number ")]),
-        _tf(
-          label: "Enter Brand No.",
-          controller: c.brandNo,
-          // validator: (v) => validateField(v),
-        ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Text("Tire Serial Number "),
+              Text("*", style: TextStyle(color: Colors.red)),
+            ],
+          ),
+          _tf(
+            label: "Enter Tire Serial Number",
+            controller: c.tireSerialNo,
+            //validator: (v) => validateField(v, numeric: true),
+          ),
+          Row(children: [Text("Enter Brand Number ")]),
+          _tf(
+            label: "Enter Brand No.",
+            controller: c.brandNo,
+            // validator: (v) => validateField(v),
+          ),
 
-        Row(
-          children: [
-            Text("Register Date "),
-            Text("*", style: TextStyle(color: Colors.red)),
-          ],
-        ),
-        _tf(
-          label: "Registered Date",
-          controller: c.registeredDate,
+          Row(
+            children: [
+              Text("Register Date "),
+              Text("*", style: TextStyle(color: Colors.red)),
+            ],
+          ),
+          _tf(
+            label: "Registered Date",
+            controller: c.registeredDate,
+            //validator: (v) => validateField(v),
+            onTap: () => pickDate(context),
+          ),
+
+          Row(children: [Text("Evaluation Number ")]),
+          _tf(
+            label: "Enter Evaluation Number",
+            controller: c.evaluationNo,
+            // validator: (v) => validateField(v),
+          ),
+          Row(children: [Text("Lot Number ")]),
+          _tf(
+            label: "Enter Lot Number",
+            controller: c.lotNo,
+            //validator: (v) => validateField(v),
+          ),
+          Row(children: [Text("Purchase Order Number")]),
+          _tf(
+            label: "Enter Purchase Order Number",
+            controller: c.poNo,
+            // validator: (v) => validateField(v),
+          ),
+          Row(
+            children: [
+              Text("Disposition "),
+              Text("*", style: TextStyle(color: Colors.red)),
+            ],
+          ),
+          _tf(
+            label: "Enter Disposition",
+            value: c.dispositionText.value,
+            enabled: false,
+            //validator: (v) => validateField(v),
+          ),
+          Row(
+            children: const [
+              Text("Status ", style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          /*  _dropdownTFStatus(
+            label: "Status",
+            items: c.statusList.toList(), // list of names
+            ids: c.statusIdList.toList(), // list of IDs
+            controller: c.tireStatusId, // optional, TextEditingController
+          ),*/
+          _dropdownTFStatus(
+            label: "Tire Status",
+            controller: c.tireStatusId, // TextEditingController for UI
+            items: c.statusList, // Display names
+            ids: c.statusIdList.toList(), // Corresponding IDs
+          ),
+
+          Row(children: [Text("Tracking Method ")]),
+          _dropdownTF(
+            label: "Tracking Method",
+            value: c.trackingMethodText.value,
+            items: ["Hours", "Distance", "Both"],
+          ),
+          Row(
+            children: [
+              Text("Current Hours "),
+              Text("*", style: TextStyle(color: Colors.red)),
+            ],
+          ),
+          _tf(
+            label: "Enter Current Hours",
+            controller: c.currentHours,
+            keyboard: TextInputType.number,
+            focusNode: _focusNode,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d{0,1}')),
+            ],
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Enter Valid Details";
+              }
+
+              if (!RegExp(r'^-?\d+(\.\d{1,2})?$').hasMatch(value)) {
+                return "Enter valid number";
+              }
+
+              return null;
+            },
+            showClear: true,
+          ),
+
           //validator: (v) => validateField(v),
-          onTap: () => pickDate(context),
-        ),
+          const SizedBox(height: 24),
 
-        Row(children: [Text("Evaluation Number ")]),
-        _tf(
-          label: "Enter Evaluation Number",
-          controller: c.evaluationNo,
-          // validator: (v) => validateField(v),
-        ),
-        Row(children: [Text("Lot Number ")]),
-        _tf(
-          label: "Enter Lot Number",
-          controller: c.lotNo,
-          //validator: (v) => validateField(v),
-        ),
-        Row(children: [Text("Purchase Order Number")]),
-        _tf(
-          label: "Enter Purchase Order Number",
-          controller: c.poNo,
-          // validator: (v) => validateField(v),
-        ),
-        Row(
-          children: [
-            Text("Disposition "),
-            Text("*", style: TextStyle(color: Colors.red)),
-          ],
-        ),
-        _tf(
-          label: "Enter Disposition",
-          value: c.dispositionText.value,
-          enabled: false,
-          //validator: (v) => validateField(v),
-        ),
-        Row(
-          children: const [
-            Text("Status ", style: TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ),
-        /*  _dropdownTFStatus(
-          label: "Status",
-          items: c.statusList.toList(), // list of names
-          ids: c.statusIdList.toList(), // list of IDs
-          controller: c.tireStatusId, // optional, TextEditingController
-        ),*/
-        _dropdownTFStatus(
-          label: "Tire Status",
-          controller: c.tireStatusId, // TextEditingController for UI
-          items: c.statusList, // Display names
-          ids: c.statusIdList.toList(), // Corresponding IDs
-        ),
-
-        // Row(children: [Text("Tracking Method ")]),
-        // _dropdownTF(
-        //   label: "Tracking Method",
-        //   value: c.trackingMethodText.value,
-        //   items: ["Hours", "Distance", "Both"],
-        // ),
-        Row(
-          children: [
-            Text("Current Hours "),
-            Text("*", style: TextStyle(color: Colors.red)),
-          ],
-        ),
-        _tf(
-          label: "Enter Current Hours",
-          controller: c.currentHours,
-          keyboard: TextInputType.number,
-          focusNode: _focusNode,
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d{0,1}')),
-          ],
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return "Enter Valid Details";
-            }
-
-            if (!RegExp(r'^-?\d+(\.\d{1,2})?$').hasMatch(value)) {
-              return "Enter valid number";
-            }
-
-            return null;
-          },
-          showClear: true,
-        ),
-
-        //validator: (v) => validateField(v),
-        const SizedBox(height: 24),
-
-        _primaryBtn("Next", () => c.nextStep()),
-        const SizedBox(height: 12),
-        _outlineBtn("Cancel", c.cancelDialog),
-      ],
+          _primaryBtn("Next", () => c.nextStep()),
+          const SizedBox(height: 12),
+          _outlineBtn("Cancel", c.cancelDialog),
+        ],
+      ),
     );
   }
 
@@ -381,6 +383,174 @@ class Step1View extends StatelessWidget {
     );
   }
 
+  Widget _dropdownTF({
+    required String label,
+    TextEditingController? controller,
+    dynamic value,
+    required List<String> items,
+  }) {
+    final TextEditingController effectiveController =
+        controller ?? TextEditingController(text: value?.toString() ?? "");
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: GestureDetector(
+        onTap: () async {
+          final selected = await _showTrackingSelectionDialog(
+            selectedValue: c.selectedTrackingMethod,
+            label: label,
+            items: items,
+          );
+          if (selected != null) {
+            effectiveController.text = selected;
+            c.selectedTrackingMethod.value = selected.toString();
+          }
+        },
+        child: AbsorbPointer(
+          child: TextFormField(
+            controller: effectiveController,
+            readOnly: true,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              hintText: label,
+              suffixIcon: const Icon(Icons.arrow_drop_down, color: Colors.red),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<String?> _showTrackingSelectionDialog({
+    required String label,
+    required List<String> items,
+    required RxString selectedValue, // use RxString for reactive selection
+    Color selectedColor = Colors.red, // existing design color
+  }) async {
+    // Local tempSelected to show check immediately in dialog
+    String tempSelected = selectedValue.value;
+
+    return await Get.dialog<String>(
+      StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ), // design same
+            title: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            contentPadding: EdgeInsets.zero,
+            content: SizedBox(
+              width: double.maxFinite,
+              height: 260,
+              child: Column(
+                children: [
+                  const Divider(height: 1),
+
+                  /// LIST
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final e = items[index];
+                        final isSelected = e == tempSelected;
+
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              tempSelected =
+                                  e; // selected item show immediately
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    e,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: isSelected
+                                          ? selectedColor
+                                          : Colors.black,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                                if (isSelected)
+                                  Icon(
+                                    Icons.check,
+                                    color: selectedColor,
+                                    size: 20,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  const Divider(height: 1),
+
+                  /// ACTION BUTTONS
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => Get.back(),
+                          child: Container(
+                            padding: const EdgeInsets.all(14),
+                            alignment: Alignment.center,
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(color: Colors.red, fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(width: 0.5, height: 48, color: Colors.grey),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            selectedValue.value =
+                                tempSelected; // persist selection in controller
+                            Get.back(result: tempSelected); // return value
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(14),
+                            alignment: Alignment.center,
+                            child: const Text(
+                              'OK',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   // Widget _dropdownTF({
   //   required String label,
   //   TextEditingController? controller,
@@ -418,6 +588,7 @@ class Step1View extends StatelessWidget {
   //     ),
   //   );
   // }
+
   /*
   Widget _dropdownTFStatus({
     required String label,

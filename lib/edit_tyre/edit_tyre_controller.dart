@@ -14,13 +14,14 @@ class EditTyreController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final MasterDataService _masterService = MasterDataService();
   //========selected value=========//
-  var selectedstatus = 0.obs; // selected ID
+
   var tireStatusName = "".obs; // selected name
 
-  RxString selectedTrackingMethod = "".obs;
+  RxString selectedTrackingMethod = "Hours".obs;
   // STEP 1
-  final statusList = <String>[].obs;
-  final statusIdList = <int>[].obs;
+  RxList<String> statusList = <String>[].obs;
+  RxList<int> statusIdList = <int>[].obs;
+  RxInt selectedstatus = 0.obs;
   // UI
   String? registeredDateApi; // Backend
 
@@ -49,6 +50,15 @@ class EditTyreController extends GetxController {
   // STEP 4
   final fillTypeList = <String>[].obs;
   final fillTypeIdList = <int>[].obs;
+
+  void setStatusList(List<String> list, List<int> idList) {
+    statusList.assignAll(list);
+    statusIdList.assignAll(idList);
+
+    if (statusList.isNotEmpty) {
+      selectedstatus.value = statusIdList.last;
+    }
+  }
 
   void nextStep() {
     // 🔴 VALIDATION BEFORE NEXT STEP
@@ -347,10 +357,24 @@ class EditTyreController extends GetxController {
 
       /// 🔹 STATUS (name+id same length to avoid RangeError)
       final statusRaw = (data['tireStatus'] as List);
-      statusList.assignAll(statusRaw.map((e) => e['statusName'].toString()));
-      statusIdList.assignAll(
-        statusRaw.map((e) => (e['statusId'] as num).toInt()),
-      );
+      // statusList.assignAll(statusRaw.map((e) => e['statusName'].toString()));
+      // statusIdList.assignAll(
+      //   statusRaw.map((e) => (e['statusId'] as num).toInt()),
+      // );
+      // setStatusList(statusList);
+
+      statusList.clear();
+      statusIdList.clear();
+
+      List<String> names = [];
+      List<int> ids = [];
+
+      for (var e in statusRaw) {
+        names.add(e['statusName']?.toString() ?? '');
+        ids.add(int.tryParse(e['statusId'].toString()) ?? 0);
+      }
+
+      setStatusList(names, ids);
 
       /// 🔹 MANUFACTURER (name+id same length to avoid RangeError in setDropdownById)
       final manufRaw = (data['tireManufacturers'] as List);

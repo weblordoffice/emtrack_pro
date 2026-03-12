@@ -8,10 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../models/tyre_model.dart';
+import '../services/tyre_service.dart';
+
 class InstallTyreController extends GetxController {
   final RxBool isSubmitting = false.obs;
 
   final service = InstallTyreService();
+  final tyreService = TyreService();
   final picker = ImagePicker();
   final MasterDataService _masterService = MasterDataService();
   Rx<InstallTireModel> model = InstallTireModel().obs;
@@ -31,6 +35,8 @@ class InstallTyreController extends GetxController {
   final RxInt installedDispositionId = 0.obs;
   final RxString vehicleNumber = "".obs;
 
+  RxList<TyreModel> tyreList = <TyreModel>[].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -45,7 +51,7 @@ class InstallTyreController extends GetxController {
     final String lastInspection = args["lastInspection"] ?? "";
     final double avgTread = args["avgTread"] ?? 0.0;
 
-    /// 🔥 MODEL PREFILL
+    // /// 🔥 MODEL PREFILL
     model.update((m) {
       m!.vehicleId = vehicleId;
       m.wheelPosition = wheelPosition;
@@ -58,6 +64,7 @@ class InstallTyreController extends GetxController {
     print("MODEL wheelPosition => ${model.value.wheelPosition}");
 
     loadMasterData();
+    loadTyres(tireId);
   }
 
   // 🔹 Counters
@@ -87,8 +94,8 @@ class InstallTyreController extends GetxController {
   });
   // 🧮 Average Calculation
   void _calcAverage(InstallTireModel m) {
-    final outside = m.outsideTread ?? 0;
-    final inside = m.insideTread ?? 0;
+    final outside = tyreList.first.outsideTread ?? 0;
+    final inside = tyreList.first.insideTread ?? 0;
 
     final avg = (outside + inside) / 2;
 
@@ -166,6 +173,27 @@ class InstallTyreController extends GetxController {
     }
   }
 
+  Future<void> loadTyres(int tireId) async {
+    try {
+      final tyres = await tyreService.getTyresById(tireId);
+
+      print("SERVICE RESULT => $tyres");
+      print("SERVICE LENGTH => ${tyres.length}");
+
+      tyreList.clear();
+      tyreList.addAll(tyres);
+
+      print("TYRE LIST LENGTH => ${tyreList.length}");
+
+      if (tyreList.isNotEmpty) {
+        print("OUTSIDE => ${tyreList.first.outsideTread}");
+        print("INSIDE => ${tyreList.first.insideTread}");
+      }
+    } catch (e) {
+      print("Error loading tyres: $e");
+    }
+  }
+
   // ✅ Submit
   Future<void> submit() async {
     // 🔒 Prevent double click
@@ -209,9 +237,9 @@ class InstallTyreController extends GetxController {
         return;
       }
 
-      final outsideTread = m.outsideTread ?? 0.0;
-      final insideTread = m.insideTread ?? 0.0;
-      final currentPressure = m.currentPressure ?? 28.0;
+      final outsideTread = tyreList.first.outsideTread ?? 0.0;
+      final insideTread = tyreList.first.insideTread ?? 0.0;
+      final currentPressure = tyreList.first.currentPressure ?? 28.0;
 
       /* Map<String, dynamic> payload = {
         "action": "Install",
@@ -257,18 +285,18 @@ class InstallTyreController extends GetxController {
         "parentAccountId": parentAccountId,
         "vehicleId": m.vehicleId,
         // "inspectionId": 0,
-        "tireId": m.tireId,
+        "tireId": tyreList.first.tireId,
         // "tireId": 537217,
         // "currentHours": m.currentHours ?? 1050.0,
         //"currentMiles": m.currentMiles ?? 0.0,
         //  "imagesLocation": m.imagesLocation ?? "",
-        "tireSerialNo": m.tireSerialNo ?? "",
+        "tireSerialNo": tyreList.first.tireSerialNo ?? "",
         //  "brandNumber": m.brandNumber ?? "BR-001",
-        "originalTread": m.originalTread ?? 140.0,
+        "originalTread": tyreList.first.originalTread ?? 140.0,
         //  "removeAt": m.removeAt ?? 30.0,
-        "outsideTread": outsideTread,
+        "outsideTread": tyreList.first.outsideTread,
         // "middleTread": m.middleTread ?? 0.0,
-        "insideTread": insideTread,
+        "insideTread": tyreList.first.insideTread,
         "currentTreadDepth": ((outsideTread + insideTread) / 2),
         "currentPressure": currentPressure,
         //  "pressureUnitId": 1,

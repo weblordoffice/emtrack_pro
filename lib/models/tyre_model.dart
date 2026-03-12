@@ -71,8 +71,8 @@ class TyreModel {
   final String? compoundCode;
 
   // 🔹 Inspection fields
-  final int? outsideTread;
-  final int? insideTread;
+  final double? outsideTread;
+  final double? insideTread;
   final String? comments;
   final int? casingConditionId;
   final int? wearConditionId;
@@ -208,8 +208,8 @@ class TyreModel {
       typeOfTire: _toInt(json['typeOfTire']),
 
       // 🔹 Inspection fields
-      outsideTread: _toInt(json['outsideTread']),
-      insideTread: _toInt(json['insideTread']),
+      outsideTread: _toDouble(json['outsideTread']),
+      insideTread: _toDouble(json['insideTread']),
       comments: json['comments']?.toString(),
       casingConditionId: _toInt(json['casingConditionId']),
       wearConditionId: _toInt(json['wearConditionId']),
@@ -217,6 +217,21 @@ class TyreModel {
   }
 }
 
-int? _toInt(dynamic v) => v == null ? null : int.tryParse(v.toString());
-double? _toDouble(dynamic v) =>
-    v == null ? null : double.tryParse(v.toString());
+// int? _toInt(dynamic v) => v == null ? null : int.tryParse(v.toString());
+// double? _toDouble(dynamic v) =>
+//     v == null ? null : double.tryParse(v.toString());
+
+
+int? _toInt(dynamic v) {
+  if (v == null) return null;
+  if (v is int) return v;
+  if (v is double) return v.toInt();
+  return int.tryParse(v.toString());
+}
+
+double? _toDouble(dynamic v) {
+  if (v == null) return null;
+  if (v is double) return v;
+  if (v is int) return v.toDouble();
+  return double.tryParse(v.toString());
+}

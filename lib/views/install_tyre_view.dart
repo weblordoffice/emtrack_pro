@@ -7,6 +7,7 @@ class InstallTyreView extends StatelessWidget {
   InstallTyreView({super.key});
 
   final controller = Get.find<InstallTyreController>();
+
   final selectedCtrl = Get.put(SelectedAccountController());
   @override
   Widget build(BuildContext context) {
@@ -26,6 +27,10 @@ class InstallTyreView extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Obx(() {
             final m = controller.model.value;
+            final tyreData = controller.tyreList.isNotEmpty
+                ? controller.tyreList.first
+                : null;
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -64,7 +69,7 @@ class InstallTyreView extends StatelessWidget {
                         style: TextStyle(fontSize: 12),
                       ),
                       Text(
-                        "${m.tireSerialNo}",
+                        "${tyreData?.tireSerialNo}",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Divider(),
@@ -88,7 +93,7 @@ class InstallTyreView extends StatelessWidget {
                 // 🔹 Outside Tread Depth
                 _counter32(
                   title: "Outside Tread Depth",
-                  value: "${m.outsideTread} /32nds",
+                  value: "${tyreData?.outsideTread ?? 0} /32nds",
                   onMinus: controller.decOutside,
                   onPlus: controller.incOutside,
                 ),
@@ -98,7 +103,7 @@ class InstallTyreView extends StatelessWidget {
                 // 🔹 Inside Tread Depth
                 _counter32(
                   title: "Inside Tread Depth",
-                  value: "${m.insideTread} /32nds",
+                  value: "${tyreData?.insideTread ?? 0} /32nds",
                   onMinus: controller.decInside,
                   onPlus: controller.incInside,
                 ),
@@ -176,7 +181,7 @@ class InstallTyreView extends StatelessWidget {
 
                 _textBox(
                   "Comments",
-                  "test31",
+                  m.comments,
                   onChanged: (v) =>
                       controller.model.update((m) => m!.comments = v),
                 ),

@@ -22,6 +22,15 @@ class TyreResponseModel {
   });
 
   factory TyreResponseModel.fromJson(Map<String, dynamic> json) {
+    final modelData = json['model'];
+
+    List<TyreModel> tyres = [];
+
+    if (modelData is List) {
+      tyres = modelData.map((e) => TyreModel.fromJson(e)).toList();
+    } else if (modelData is Map<String, dynamic>) {
+      tyres = [TyreModel.fromJson(modelData)];
+    }
     return TyreResponseModel(
       message: json['message'],
       didError: json['didError'] ?? false,
@@ -30,9 +39,7 @@ class TyreResponseModel {
       pageSize: json['pageSize'] ?? 0,
       pageNumber: json['pageNumber'] ?? 0,
       currentTimeStamp: json['currentTimeStamp'] ?? 0,
-      model: (json['model'] as List? ?? [])
-          .map((e) => TyreModel.fromJson(e))
-          .toList(),
+      model: tyres,
     );
   }
 }
