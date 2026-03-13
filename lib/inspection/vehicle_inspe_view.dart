@@ -390,6 +390,7 @@ class VehicleInspeView extends StatelessWidget {
                     title: "Cancel Request",
                     message:
                         "Are you sure you want to cancel? we wiil loose unsave data.",
+
                     onOk: () {
                       Get.back(closeOverlays: true);
                       Future.delayed(const Duration(milliseconds: 200), () {
@@ -520,7 +521,7 @@ class VehicleInspeView extends StatelessWidget {
               Get.back();
             },
             child: const Text(
-              "Cancel",
+              "No",
               style: TextStyle(color: CupertinoColors.systemRed),
             ),
           ),
@@ -530,7 +531,7 @@ class VehicleInspeView extends StatelessWidget {
               onOk();
             },
             child: const Text(
-              "OK",
+              "Yes",
               style: TextStyle(color: CupertinoColors.systemRed),
             ),
           ),

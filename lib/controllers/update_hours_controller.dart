@@ -17,6 +17,8 @@ class UpdateHoursController extends GetxController {
   var vehicleId = 0.obs;
   var loading = false.obs;
 
+  RxnString updateHoursError = RxnString();
+
   final updateHoursService = UpdateHoursService();
 
   // Text controllers
@@ -135,6 +137,22 @@ class UpdateHoursController extends GetxController {
     } finally {
       loading.value = false;
     }
+  }
+
+  String? validateHours() {
+    double lastHours = lastRecordedHours.value;
+
+    double enteredHours = double.tryParse(updateHoursController.text) ?? 0;
+
+    if (updateHoursController.text.isEmpty) {
+      return "Please enter hours";
+    }
+
+    if (enteredHours <= lastHours) {
+      return "Please enter value greater than last recorded hours";
+    }
+
+    return null; // ✅ means valid
   }
 
   String formatDate(String? apiDate) {

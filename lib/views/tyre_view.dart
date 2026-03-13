@@ -71,7 +71,7 @@ class TyreView extends StatelessWidget {
               const Text("Vehicle Id:"),
               const SizedBox(height: 4),
               Text(
-                tyre.tireId.toString(),
+                tyre.vehicleNumber.toString(),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
@@ -153,7 +153,7 @@ class TyreView extends StatelessWidget {
         _row("Evaluation Number", tyre.evaluationNo.toString()),
         _row("Purchase Order Number", tyre.purchaseCost.toString()),
         _row("Lot Number", tyre.lotNo.toString()),
-        _row("Disposition", tyre.dispositionId.toString()),
+        _row("Disposition", controller.getDispositionName(tyre.dispositionId)),
         _row("Status", controller.getTireStatusName(tyre.tireStatusId)),
         _row("Tracking Method", controller.getTrackingMethod(tyre.mileageType)),
       ],

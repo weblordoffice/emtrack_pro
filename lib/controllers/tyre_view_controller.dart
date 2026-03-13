@@ -190,6 +190,21 @@ class TyreViewController extends GetxController
     return match.first.statusName.toString();
   }
 
+    String getDispositionName(int? id) {
+    if (masterData.value == null || id == null) return "";
+
+    final list = masterData.value!.tireDispositions;
+
+    final match = list.where((e) => e.dispositionId == id);
+
+    if (match.isEmpty) {
+      print("❌ TireFillType not found for id: $id");
+      return "";
+    }
+
+    return match.first.dispositionName.toString();
+  }
+
   String getTrackingMethod(String? mileageType) {
     switch (mileageType) {
       case "1":

@@ -73,14 +73,19 @@ class _Step2ViewState extends State<Step2View> {
           },
         ),
 
-        Row(children: [Text("Star Rating")]),
-        // _dropdownTF(
-        //   hintText: "Star Rating",
-        //   controller: c.starRatingId,
-        //   onTap: () => _starDialog(context),
-        //   validator: _required,
-        // ),
-        starRatingField(context),
+        Obx(() {
+          if (c.selectedSizeId.value == 0) {
+            return SizedBox(); // hidden
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(children: [Text("Star Rating")]),
+              starRatingField(context),
+            ],
+          );
+        }),
 
         Row(
           children: [

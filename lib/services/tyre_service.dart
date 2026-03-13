@@ -80,6 +80,7 @@ class TyreService {
       rethrow; // Propagate exception to caller
     }
   }
+
 Future<List<TyreModel>> getTyresById(int tireId) async {
   try {
     print("🔥 TyreService.getTyreById called with ID: $tireId");
@@ -109,4 +110,6 @@ Future<List<TyreModel>> getTyresById(int tireId) async {
     rethrow;
   }
 }
+
+
 }

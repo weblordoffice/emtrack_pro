@@ -1,5 +1,7 @@
 import 'package:emtrack/controllers/install_tyre_controller.dart';
 import 'package:emtrack/controllers/selected_account_controller.dart';
+import 'package:emtrack/routes/app_pages.dart';
+import 'package:emtrack/utils/app_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -230,7 +232,20 @@ class InstallTyreView extends StatelessWidget {
                       const SizedBox(height: 10),
                       TextButton(
                         onPressed: () {
-                          Get.back(); // cancel action
+                          AppDialog.showConfirmDialog(
+                            title: "Cancel Request",
+
+                            message:
+                                "Are you sure you want to cancel? You will\n lose unsaved data.",
+                            okText: "Yes",
+                            onOk: () {
+                              Get.back(closeOverlays: true);
+
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                Get.offAllNamed(AppPages.HOME);
+                              });
+                            },
+                          );
                         },
                         child: const Text(
                           "Cancel",

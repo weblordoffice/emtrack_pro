@@ -1,6 +1,7 @@
 import 'package:emtrack/color/app_color.dart';
 import 'package:emtrack/controllers/selected_account_controller.dart';
 import 'package:emtrack/controllers/update_hours_controller.dart';
+import 'package:emtrack/utils/app_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -60,6 +61,7 @@ class UpdateHoursView extends StatelessWidget {
                 child: AbsorbPointer(
                   child: TextField(
                     controller: updatectrl.surveyDateController,
+
                     decoration: InputDecoration(
                       hintText: "Select Date",
                       suffixIcon: const Icon(
@@ -86,17 +88,26 @@ class UpdateHoursView extends StatelessWidget {
               const SizedBox(height: 20),
               _requiredLabel("Update hours"),
               const SizedBox(height: 10),
-              TextField(
-                controller: updatectrl1.updateHoursController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  hintText: "Enter Hours",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: Colors.grey.shade50,
-                      width: 1,
+              Obx(
+                () => TextField(
+                  controller: updatectrl1.updateHoursController,
+                  keyboardType: TextInputType.number,
+                  onChanged: (v) {
+                    (v) {
+                      updatectrl.updateHoursError.value = updatectrl
+                          .validateHours();
+                    };
+                  },
+                  decoration: InputDecoration(
+                    hintText: "Enter Hours",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade50,
+                        width: 1,
+                      ),
                     ),
+                    errorText: updatectrl.updateHoursError.value,
                   ),
                 ),
               ),
@@ -113,8 +124,24 @@ class UpdateHoursView extends StatelessWidget {
                     onTap: updatectrl.loading.value
                         ? null
                         : () {
-                            _showConfirmDialog(context);
-                            //    updatectrl.submitUpdateHours();
+                            final err = updatectrl.validateHours();
+                            updatectrl.updateHoursError.value = err;
+
+                            if (err != null) return;
+                            FocusManager.instance.primaryFocus?.unfocus();
+
+                            AppDialog.showConfirmDialog(
+                              title: 'Change Tire Details',
+                              message:
+                                  'These changes will impact tire hours. \n Do you wish to proceed?',
+                              okText: 'Proceed',
+                              cancelText: 'Cancel',
+
+                              onOk: () {
+                                updatectrl.submitUpdateHours();
+                              },
+                            );
+                            //  _showConfirmDialog(context);
                           },
                     child: Center(
                       child: updatectrl.loading.value
@@ -211,6 +238,26 @@ class UpdateHoursView extends StatelessWidget {
       ],
     ),
   );
+
+  //   bool validateHours() {
+  //   double lastHours = updatectrl.lastRecordedHours.value;
+
+  //   double enteredHours =
+  //       double.tryParse(updatectrl1.updateHoursController.text) ?? 0;
+
+  //   if (enteredHours <= lastHours) {
+  //     Get.snackbar(
+  //       "Validation",
+  //       "Please enter a value greater than last recorded hours",
+  //       backgroundColor: Colors.red,
+  //       colorText: Colors.white,
+  //       snackPosition: SnackPosition.TOP,
+  //     );
+  //     return false;
+  //   }
+
+  //   return true;
+  // }
 
   Widget _disabledField([String? value]) => Container(
     height: 48,

@@ -7,12 +7,17 @@ import 'package:emtrack/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../routes/app_pages.dart';
+import '../utils/app_dialog.dart';
+
 class CreateTyreController extends GetxController {
   // ================= STEPPER =================
   final RxInt currentStep = 0.obs;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final MasterDataService _masterService = MasterDataService();
   //===========
+
+  final ScrollController pageScrollController = ScrollController();
   // ===== Manufacturer Mapping =====
   final Map<String, int> manufacturerMap = {};
 
@@ -425,17 +430,28 @@ class CreateTyreController extends GetxController {
   }
 
   void cancelDialog() {
-    Get.defaultDialog(
-      title: "Cancel Request",
-      middleText: "Are you sure you want to cancel?",
-      textCancel: "No",
-      textConfirm: "Yes",
-      onConfirm: () {
+    AppDialog.showConfirmDialog(
+      title: 'Cancel Request',
+      message:
+          'Are you sure you want to cancel? You will \n lose unsaved data.',
+      onOk: () {
         Get.back();
-        Get.back();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Get.offAllNamed(AppPages.HOME);
+        });
       },
-      onCancel: () {},
     );
+    // Get.defaultDialog(
+    //   title: "Cancel Request",
+    //   middleText: "Are you sure you want to cancel?",
+    //   textCancel: "No",
+    //   textConfirm: "Yes",
+    //   onConfirm: () {
+    //     Get.back();
+    //     Get.back();
+    //   },
+    //   onCancel: () {},
+    // );
   }
 
   Future<void> loadMasterData() async {
@@ -688,6 +704,13 @@ class CreateTyreController extends GetxController {
 
       currentStep.value = 0;
 
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        pageScrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOut,
+        );
+      });
       // Get.snackbar(
       //   "Success",
       //   "Tyre saved. Ready to clone.",

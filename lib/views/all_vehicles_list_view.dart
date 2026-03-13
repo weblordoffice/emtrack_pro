@@ -69,7 +69,7 @@ class AllVehicleListView extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Material(
         color: Colors.transparent,
         type: MaterialType.transparency,
@@ -82,7 +82,7 @@ class AllVehicleListView extends StatelessWidget {
             padding: const EdgeInsets.all(5),
             child: SvgPicture.asset(
               'assets/svgImage/CreateVehicle.svg',
-              height: 56,
+              height: 46,
               fit: BoxFit.contain,
             ),
           ),
@@ -99,8 +99,8 @@ class AllVehicleListView extends StatelessWidget {
     // Use the bundled PNG so we don’t run into Svg parsing/asset lookup issues.
     return Image.asset(
       'assets/images/IMG_Default.png',
-      height: 60,
-      width: 60,
+      height: 70,
+      width: 70,
       fit: BoxFit.contain,
     );
   }
@@ -169,7 +169,8 @@ class AllVehicleListView extends StatelessWidget {
                         children: [
                           Text("Axel: "),
                           Text(
-                            " ${vehicle.axleConfig ?? 0}",
+                            formatAxleConfig(vehicle.axleConfig),
+                            //" ${vehicle.axleConfig ?? 0}",
                             style: TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.bold,
@@ -217,6 +218,16 @@ class AllVehicleListView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String formatAxleConfig(String value) {
+    // remove bracket part
+    String result = value.replaceAll(RegExp(r'\s*\(.*?\)'), '');
+
+    // make Axles -> Axle
+    result = result.replaceAll('Axles', 'Axle');
+
+    return result.trim();
   }
 
   Widget _createVehicleFAB() {

@@ -233,7 +233,7 @@ class AllTyresView extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: SvgPicture.asset(
               'assets/svgImage/NewTire.svg',
-              height: 56,
+              height: 46,
               fit: BoxFit.contain,
             ),
           ),

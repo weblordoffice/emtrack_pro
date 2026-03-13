@@ -32,6 +32,7 @@ class CreateTyreScreen extends StatelessWidget {
             key: c.formKey,
             child: Obx(
               () => SingleChildScrollView(
+                controller: c.pageScrollController,
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

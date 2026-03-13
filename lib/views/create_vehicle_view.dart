@@ -2,6 +2,8 @@ import 'package:emtrack/color/app_color.dart';
 import 'package:emtrack/controllers/all_vehicles_controller.dart';
 import 'package:emtrack/controllers/create_vehicle_controller.dart';
 import 'package:emtrack/controllers/selected_account_controller.dart';
+import 'package:emtrack/routes/app_pages.dart';
+import 'package:emtrack/utils/app_dialog.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -662,7 +664,22 @@ class CreateVehicleView extends StatelessWidget {
 
             Center(
               child: TextButton(
-                onPressed: () => Get.back(),
+                onPressed: () {
+                  AppDialog.showConfirmDialog(
+                    title: "Cancel Request",
+
+                    message:
+                        "Are you sure you want to cancel? You will\n lose unsaved data.",
+                    okText: "Yes",
+                    onOk: () {
+                      Get.back(closeOverlays: true);
+
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Get.offAllNamed(AppPages.HOME);
+                      });
+                    },
+                  );
+                },
                 child: Text(
                   'Cancel',
                   style: TextStyle(color: AppColors.buttonDanger),

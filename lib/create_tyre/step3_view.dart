@@ -13,8 +13,8 @@ class Step3View extends StatefulWidget {
 class _Step3ViewState extends State<Step3View> {
   final CreateTyreController c = Get.find<CreateTyreController>();
 
-  double outsidePercent = 0;
-  double insidePercent = 0;
+  double? outsidePercen;
+  double? insidePercent;
 
   bool outsideWarn = false;
   bool insideWarn = false;
@@ -43,15 +43,15 @@ class _Step3ViewState extends State<Step3View> {
 
     setState(() {
       if (outside != null) {
-        outsidePercent = (1 - (outside - removeAt) / denominator) * 100;
-        outsidePercent = outsidePercent.roundToDouble();
-        outsideWarn = outsidePercent > 100 || outsidePercent < 0;
+        outsidePercen = (1 - (outside - removeAt) / denominator) * 100;
+        outsidePercen = outsidePercen!.roundToDouble();
+        outsideWarn = outsidePercen! > 100 || outsidePercen! < 0;
       }
 
       if (inside != null) {
         insidePercent = (1 - (inside - removeAt) / denominator) * 100;
-        insidePercent = insidePercent.roundToDouble();
-        insideWarn = insidePercent > 100 || insidePercent < 0;
+        insidePercent = insidePercent!.roundToDouble();
+        insideWarn = insidePercent! > 100 || insidePercent! < 0;
       }
     });
   }
@@ -93,18 +93,24 @@ class _Step3ViewState extends State<Step3View> {
         _tf(
           label: "Remove At",
           controller: c.removeAt,
-
           validator: _required,
           focusNode: _focusNode,
           clearIcon: true,
-          // onChanged: (_) {
-          //   setState(() {});
-          //   _calculate();
-          // },
+          onChanged: (_) {
+            setState(() {});
+            _calculate();
+          },
         ),
 
         const Row(children: [Text("Purchase Tread")]),
-        _tf(label: "Enter Purchase Tread", controller: c.purchasedTread),
+        _tf(
+          label: "Enter Purchase Tread",
+          controller: c.purchasedTread,
+          onChanged: (_) {
+            setState(() {});
+            _calculate();
+          },
+        ),
 
         Row(
           children: const [
@@ -114,8 +120,9 @@ class _Step3ViewState extends State<Step3View> {
         ),
         _suffixTextTF(
           controller: c.outsideTread,
-          percent: outsidePercent,
+          percent: outsidePercen ?? 0,
           warn: outsideWarn,
+          errorText: _required(c.outsideTread.text),
           onChanged: (_) => _calculate(),
           validator: _required,
         ),
@@ -128,8 +135,9 @@ class _Step3ViewState extends State<Step3View> {
         ),
         _suffixTextTF(
           controller: c.insideTread,
-          percent: insidePercent,
+          percent: insidePercent ?? 0,
           warn: insideWarn,
+          errorText: _required(c.outsideTread.text),
           onChanged: (_) => _calculate(),
           validator: _required,
         ),
@@ -196,6 +204,7 @@ class _Step3ViewState extends State<Step3View> {
     required TextEditingController controller,
     required double percent,
     required bool warn,
+    String? errorText,
     String? Function(String?)? validator,
     void Function(String)? onChanged,
   }) {
@@ -207,7 +216,7 @@ class _Step3ViewState extends State<Step3View> {
           TextFormField(
             controller: controller,
             keyboardType: TextInputType.number,
-            validator: validator,
+            validator: null,
             onChanged: onChanged,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             decoration: InputDecoration(
@@ -220,8 +229,9 @@ class _Step3ViewState extends State<Step3View> {
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: warn ? Colors.red : Colors.grey),
               ),
-              suffixText: controller.text.isEmpty
-                  ? "100% worn"
+              suffixText:
+                  (controller.text.isEmpty || percent == null || percent == 0)
+                  ? null
                   : "${percent.toInt()}% worn",
               suffixStyle: const TextStyle(
                 color: Colors.black, // ALWAYS BLACK
@@ -231,7 +241,7 @@ class _Step3ViewState extends State<Step3View> {
           ),
 
           // 🔴 WARNING MESSAGE
-          if (warn && controller.text.isNotEmpty)
+          if (warn)
             Padding(
               padding: const EdgeInsets.only(top: 6),
               child: Text(
@@ -241,6 +251,16 @@ class _Step3ViewState extends State<Step3View> {
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
+              ),
+            ),
+
+          /// ⚠️ VALIDATION BELOW WARNING
+          if (errorText != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                errorText,
+                style: const TextStyle(color: Colors.red, fontSize: 12),
               ),
             ),
         ],
