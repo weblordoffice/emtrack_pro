@@ -198,7 +198,7 @@ class AllTyreController extends GetxController
               title: const Center(child: Text('Clone')),
               onTap: () {
                 Get.back();
-                Get.toNamed(AppPages.CREATE_TYRE);
+                Get.toNamed(AppPages.CREATE_TYRE, arguments: tyre.tireId);
               },
             ),
           ],

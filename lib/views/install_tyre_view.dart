@@ -95,7 +95,7 @@ class InstallTyreView extends StatelessWidget {
                 // 🔹 Outside Tread Depth
                 _counter32(
                   title: "Outside Tread Depth",
-                  value: "${tyreData?.outsideTread ?? 0} /32nds",
+                  value: "${m.outsideTread} /32nds",
                   onMinus: controller.decOutside,
                   onPlus: controller.incOutside,
                 ),
@@ -105,7 +105,7 @@ class InstallTyreView extends StatelessWidget {
                 // 🔹 Inside Tread Depth
                 _counter32(
                   title: "Inside Tread Depth",
-                  value: "${tyreData?.insideTread ?? 0} /32nds",
+                  value: "${m.insideTread} /32nds",
                   onMinus: controller.decInside,
                   onPlus: controller.incInside,
                 ),
@@ -168,7 +168,11 @@ class InstallTyreView extends StatelessWidget {
                 //_dropdown("Casing Condition", m.casingConditionId.toString()),
                 const SizedBox(height: 12),
 
-                _textBox("List Of Previous Comments", "test21", enabled: false),
+                _textBox(
+                  "List Of Previous Comments",
+                  "List Of Previous Comments",
+                  enabled: false,
+                ),
 
                 const SizedBox(height: 12),
 

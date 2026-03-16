@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final viewTyreResponse = viewTyreResponseFromJson(jsonString);
+
 import 'dart:convert';
 
 ViewTyreResponse viewTyreResponseFromJson(String str) =>
@@ -11,14 +15,14 @@ class ViewTyreResponse {
   bool didError;
   dynamic errorMessage;
   int httpStatusCode;
-  Model model;
+  ViewModel viewModel;
 
   ViewTyreResponse({
     required this.message,
     required this.didError,
     required this.errorMessage,
     required this.httpStatusCode,
-    required this.model,
+    required this.viewModel,
   });
 
   factory ViewTyreResponse.fromJson(Map<String, dynamic> json) =>
@@ -27,7 +31,7 @@ class ViewTyreResponse {
         didError: json["didError"],
         errorMessage: json["errorMessage"],
         httpStatusCode: json["httpStatusCode"],
-        model: Model.fromJson(json["model"]),
+        viewModel: ViewModel.fromJson(json["model"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -35,192 +39,216 @@ class ViewTyreResponse {
     "didError": didError,
     "errorMessage": errorMessage,
     "httpStatusCode": httpStatusCode,
-    "model": model.toJson(),
+    "model": viewModel.toJson(),
   };
 }
 
-class Model {
-  int tireId;
-  String tireSerialNo;
-  int vehicleId;
-  int locationId;
-  int parentAccountId;
-  String brandNo;
-  DateTime registeredDate;
-  String mileageType;
-  int currentMiles;
-  int currentHours;
-  int dispositionId;
-  int tireStatusId;
-  String wheelPosition;
-  bool isMountToRim;
+class ViewModel {
+  int? tireId;
+  String? tireSerialNo;
+  int? vehicleId;
+  int? locationId;
+  int? parentAccountId;
+  String? brandNo;
+  DateTime? registeredDate;
+  String? mileageType;
+
+  double? currentMiles;
+  double? currentHours;
+
+  int? dispositionId;
+  int? tireStatusId;
+  String? wheelPosition;
+  bool? isMountToRim;
+
   dynamic mountedRimId;
-  String mountedRimSerialNo;
-  int originalTread;
-  int purchasedTread;
-  int removeAt;
-  int outsideTread;
-  int middleTread;
-  int insideTread;
-  int averageTreadDepth;
-  int recommendedPressure;
-  int currentTreadDepth;
-  int currentPressure;
-  int percentageWorn;
-  int manufacturerId;
-  int sizeId;
-  int starRatingId;
-  int plyId;
-  int typeId;
-  int indCodeId;
-  int compoundId;
-  int loadRatingId;
-  int speedRatingId;
-  int purchaseCost;
-  int casingValue;
-  int fillTypeId;
-  int fillCost;
-  int repairCost;
-  int retreadCost;
-  int repairCount;
-  int retreadCount;
-  int costAdjustment;
-  int warrantyAdjustment;
-  int soldAmount;
-  int netCost;
-  TireGraphData tireGraphData;
-  String vehicleNumber;
+  String? mountedRimSerialNo;
+
+  double? originalTread;
+  double? purchasedTread;
+  double? removeAt;
+  double? outsideTread;
+  double? middleTread;
+  double? insideTread;
+  double? averageTreadDepth;
+  double? recommendedPressure;
+  double? currentTreadDepth;
+  double? currentPressure;
+  double? percentageWorn;
+
+  int? manufacturerId;
+  int? sizeId;
+  int? starRatingId;
+  int? plyId;
+  int? typeId;
+  int? indCodeId;
+  int? compoundId;
+  int? loadRatingId;
+  int? speedRatingId;
+
+  double? purchaseCost;
+  double? casingValue;
+  int? fillTypeId;
+  double? fillCost;
+  double? repairCost;
+  double? retreadCost;
+
+  int? repairCount;
+  int? retreadCount;
+
+  double? costAdjustment;
+  double? warrantyAdjustment;
+  double? soldAmount;
+  double? netCost;
+
+  String? vehicleNumber;
   dynamic tireHistory;
-  List<TireHistory1> tireHistory1;
-  String createdBy;
-  bool isEditable;
-  String evaluationNo;
-  String lotNo;
-  String poNo;
-  String imagesLocation;
 
-  Model({
-    required this.tireId,
-    required this.tireSerialNo,
-    required this.vehicleId,
-    required this.locationId,
-    required this.parentAccountId,
-    required this.brandNo,
-    required this.registeredDate,
-    required this.mileageType,
-    required this.currentMiles,
-    required this.currentHours,
-    required this.dispositionId,
-    required this.tireStatusId,
-    required this.wheelPosition,
-    required this.isMountToRim,
-    required this.mountedRimId,
-    required this.mountedRimSerialNo,
-    required this.originalTread,
-    required this.purchasedTread,
-    required this.removeAt,
-    required this.outsideTread,
-    required this.middleTread,
-    required this.insideTread,
-    required this.averageTreadDepth,
-    required this.recommendedPressure,
-    required this.currentTreadDepth,
-    required this.currentPressure,
-    required this.percentageWorn,
-    required this.manufacturerId,
-    required this.sizeId,
-    required this.starRatingId,
-    required this.plyId,
-    required this.typeId,
-    required this.indCodeId,
-    required this.compoundId,
-    required this.loadRatingId,
-    required this.speedRatingId,
-    required this.purchaseCost,
-    required this.casingValue,
-    required this.fillTypeId,
-    required this.fillCost,
-    required this.repairCost,
-    required this.retreadCost,
-    required this.repairCount,
-    required this.retreadCount,
-    required this.costAdjustment,
-    required this.warrantyAdjustment,
-    required this.soldAmount,
-    required this.netCost,
-    required this.tireGraphData,
-    required this.vehicleNumber,
-    required this.tireHistory,
-    required this.tireHistory1,
-    required this.createdBy,
-    required this.isEditable,
-    required this.evaluationNo,
-    required this.lotNo,
-    required this.poNo,
-    required this.imagesLocation,
+  String? createdBy;
+  bool? isEditable;
+
+  String? evaluationNo;
+  String? lotNo;
+  String? poNo;
+  String? imagesLocation;
+
+  ViewModel({
+    this.tireId,
+    this.tireSerialNo,
+    this.vehicleId,
+    this.locationId,
+    this.parentAccountId,
+    this.brandNo,
+    this.registeredDate,
+    this.mileageType,
+    this.currentMiles,
+    this.currentHours,
+    this.dispositionId,
+    this.tireStatusId,
+    this.wheelPosition,
+    this.isMountToRim,
+    this.mountedRimId,
+    this.mountedRimSerialNo,
+    this.originalTread,
+    this.purchasedTread,
+    this.removeAt,
+    this.outsideTread,
+    this.middleTread,
+    this.insideTread,
+    this.averageTreadDepth,
+    this.recommendedPressure,
+    this.currentTreadDepth,
+    this.currentPressure,
+    this.percentageWorn,
+    this.manufacturerId,
+    this.sizeId,
+    this.starRatingId,
+    this.plyId,
+    this.typeId,
+    this.indCodeId,
+    this.compoundId,
+    this.loadRatingId,
+    this.speedRatingId,
+    this.purchaseCost,
+    this.casingValue,
+    this.fillTypeId,
+    this.fillCost,
+    this.repairCost,
+    this.retreadCost,
+    this.repairCount,
+    this.retreadCount,
+    this.costAdjustment,
+    this.warrantyAdjustment,
+    this.soldAmount,
+    this.netCost,
+
+    this.vehicleNumber,
+    this.tireHistory,
+
+    this.createdBy,
+    this.isEditable,
+    this.evaluationNo,
+    this.lotNo,
+    this.poNo,
+    this.imagesLocation,
   });
+  factory ViewModel.fromJson(Map<String, dynamic> json) => ViewModel(
+    tireId: toInt(json["tireId"]),
+    tireSerialNo: toStr(json["tireSerialNo"]),
 
-  factory Model.fromJson(Map<String, dynamic> json) => Model(
-    tireId: json["tireId"],
-    tireSerialNo: json["tireSerialNo"],
-    vehicleId: json["vehicleId"],
-    locationId: json["locationId"],
-    parentAccountId: json["parentAccountId"],
-    brandNo: json["brandNo"],
-    registeredDate: DateTime.parse(json["registeredDate"]),
-    mileageType: json["mileageType"],
-    currentMiles: json["currentMiles"],
-    currentHours: json["currentHours"],
-    dispositionId: json["dispositionId"],
-    tireStatusId: json["tireStatusId"],
-    wheelPosition: json["wheelPosition"],
+    vehicleId: toInt(json["vehicleId"]),
+    locationId: toInt(json["locationId"]),
+    parentAccountId: toInt(json["parentAccountId"]),
+
+    brandNo: toStr(json["brandNo"]),
+
+    registeredDate: json["registeredDate"] != null
+        ? DateTime.tryParse(json["registeredDate"].toString())
+        : null,
+
+    mileageType: toStr(json["mileageType"]),
+
+    currentMiles: toDouble(json["currentMiles"]),
+    currentHours: toDouble(json["currentHours"]),
+
+    dispositionId: toInt(json["dispositionId"]),
+    tireStatusId: toInt(json["tireStatusId"]),
+
+    wheelPosition: toStr(json["wheelPosition"]),
     isMountToRim: json["isMountToRim"],
-    mountedRimId: json["mountedRimId"],
-    mountedRimSerialNo: json["mountedRimSerialNo"],
-    originalTread: json["originalTread"],
-    purchasedTread: json["purchasedTread"],
-    removeAt: json["removeAt"],
-    outsideTread: json["outsideTread"],
-    middleTread: json["middleTread"],
-    insideTread: json["insideTread"],
-    averageTreadDepth: json["averageTreadDepth"],
-    recommendedPressure: json["recommendedPressure"],
-    currentTreadDepth: json["currentTreadDepth"],
-    currentPressure: json["currentPressure"],
-    percentageWorn: json["percentageWorn"],
-    manufacturerId: json["manufacturerId"],
-    sizeId: json["sizeId"],
-    starRatingId: json["starRatingId"],
-    plyId: json["plyId"],
-    typeId: json["typeId"],
-    indCodeId: json["indCodeId"],
-    compoundId: json["compoundId"],
-    loadRatingId: json["loadRatingId"],
-    speedRatingId: json["speedRatingId"],
-    purchaseCost: json["purchaseCost"],
-    casingValue: json["casingValue"],
-    fillTypeId: json["fillTypeId"],
-    fillCost: json["fillCost"],
-    repairCost: json["repairCost"],
-    retreadCost: json["retreadCost"],
-    repairCount: json["repairCount"],
-    retreadCount: json["retreadCount"],
-    costAdjustment: json["costAdjustment"],
-    warrantyAdjustment: json["warrantyAdjustment"],
-    soldAmount: json["soldAmount"],
-    netCost: json["netCost"],
-    tireGraphData: TireGraphData.fromJson(json["tireGraphData"]),
-    vehicleNumber: json["vehicleNumber"],
+
+    mountedRimId: toInt(json["mountedRimId"]),
+    mountedRimSerialNo: toStr(json["mountedRimSerialNo"]),
+
+    originalTread: toDouble(json["originalTread"]),
+    purchasedTread: toDouble(json["purchasedTread"]),
+    removeAt: toDouble(json["removeAt"]),
+
+    outsideTread: toDouble(json["outsideTread"]),
+    middleTread: toDouble(json["middleTread"]),
+    insideTread: toDouble(json["insideTread"]),
+    averageTreadDepth: toDouble(json["averageTreadDepth"]),
+
+    recommendedPressure: toDouble(json["recommendedPressure"]),
+    currentTreadDepth: toDouble(json["currentTreadDepth"]),
+    currentPressure: toDouble(json["currentPressure"]),
+    percentageWorn: toDouble(json["percentageWorn"]),
+
+    manufacturerId: toInt(json["manufacturerId"]),
+    sizeId: toInt(json["sizeId"]),
+    starRatingId: toInt(json["starRatingId"]),
+    plyId: toInt(json["plyId"]),
+    typeId: toInt(json["typeId"]),
+    indCodeId: toInt(json["indCodeId"]),
+    compoundId: toInt(json["compoundId"]),
+    loadRatingId: toInt(json["loadRatingId"]),
+    speedRatingId: toInt(json["speedRatingId"]),
+
+    purchaseCost: toDouble(json["purchaseCost"]),
+    casingValue: toDouble(json["casingValue"]),
+    fillTypeId: toInt(json["fillTypeId"]),
+    fillCost: toDouble(json["fillCost"]),
+    repairCost: toDouble(json["repairCost"]),
+    retreadCost: toDouble(json["retreadCost"]),
+
+    repairCount: toInt(json["repairCount"]),
+    retreadCount: toInt(json["retreadCount"]),
+
+    costAdjustment: toDouble(json["costAdjustment"]),
+    warrantyAdjustment: toDouble(json["warrantyAdjustment"]),
+    soldAmount: toDouble(json["soldAmount"]),
+    netCost: toDouble(json["netCost"]),
+
+    vehicleNumber: toStr(json["vehicleNumber"]),
+
     tireHistory: json["tireHistory"],
-    tireHistory1: List<TireHistory1>.from(
-      json["tireHistory1"].map((x) => TireHistory1.fromJson(x)),
-    ),
-    createdBy: json["createdBy"],
+
+    createdBy: toStr(json["createdBy"]),
     isEditable: json["isEditable"],
-    evaluationNo: json["evaluationNo"],
-    lotNo: json["lotNo"],
-    poNo: json["poNo"],
-    imagesLocation: json["imagesLocation"],
+
+    evaluationNo: toStr(json["evaluationNo"]),
+    lotNo: toStr(json["lotNo"]),
+    poNo: toStr(json["poNo"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -230,7 +258,7 @@ class Model {
     "locationId": locationId,
     "parentAccountId": parentAccountId,
     "brandNo": brandNo,
-    "registeredDate": registeredDate.toIso8601String(),
+    "registeredDate": registeredDate?.toIso8601String(),
     "mileageType": mileageType,
     "currentMiles": currentMiles,
     "currentHours": currentHours,
@@ -272,10 +300,10 @@ class Model {
     "warrantyAdjustment": warrantyAdjustment,
     "soldAmount": soldAmount,
     "netCost": netCost,
-    "tireGraphData": tireGraphData.toJson(),
+
     "vehicleNumber": vehicleNumber,
     "tireHistory": tireHistory,
-    "tireHistory1": List<dynamic>.from(tireHistory1.map((x) => x.toJson())),
+
     "createdBy": createdBy,
     "isEditable": isEditable,
     "evaluationNo": evaluationNo,
@@ -285,159 +313,21 @@ class Model {
   };
 }
 
-class TireGraphData {
-  List<CostPerHourListElement> treadDepthList;
-  List<CostPerHourListElement> pressureList;
-  List<CostPerHourListElement> costPerHourList;
-  List<CostPerHourListElement> hoursPerTreadDepthList;
-  List<CostPerHourListElement> milesPerTreadDepthList;
-
-  TireGraphData({
-    required this.treadDepthList,
-    required this.pressureList,
-    required this.costPerHourList,
-    required this.hoursPerTreadDepthList,
-    required this.milesPerTreadDepthList,
-  });
-
-  factory TireGraphData.fromJson(Map<String, dynamic> json) => TireGraphData(
-    treadDepthList: List<CostPerHourListElement>.from(
-      json["treadDepthList"].map((x) => CostPerHourListElement.fromJson(x)),
-    ),
-    pressureList: List<CostPerHourListElement>.from(
-      json["pressureList"].map((x) => CostPerHourListElement.fromJson(x)),
-    ),
-    costPerHourList: List<CostPerHourListElement>.from(
-      json["costPerHourList"].map((x) => CostPerHourListElement.fromJson(x)),
-    ),
-    hoursPerTreadDepthList: List<CostPerHourListElement>.from(
-      json["hoursPerTreadDepthList"].map(
-        (x) => CostPerHourListElement.fromJson(x),
-      ),
-    ),
-    milesPerTreadDepthList: List<CostPerHourListElement>.from(
-      json["milesPerTreadDepthList"].map(
-        (x) => CostPerHourListElement.fromJson(x),
-      ),
-    ),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "treadDepthList": List<dynamic>.from(treadDepthList.map((x) => x.toJson())),
-    "pressureList": List<dynamic>.from(pressureList.map((x) => x.toJson())),
-    "costPerHourList": List<dynamic>.from(
-      costPerHourList.map((x) => x.toJson()),
-    ),
-    "hoursPerTreadDepthList": List<dynamic>.from(
-      hoursPerTreadDepthList.map((x) => x.toJson()),
-    ),
-    "milesPerTreadDepthList": List<dynamic>.from(
-      milesPerTreadDepthList.map((x) => x.toJson()),
-    ),
-  };
+int? toInt(dynamic v) {
+  if (v == null) return null;
+  if (v is int) return v;
+  if (v is double) return v.toInt();
+  return int.tryParse(v.toString());
 }
 
-class CostPerHourListElement {
-  double tireMetric;
-  DateTime timeSpan;
-  String? info;
-
-  CostPerHourListElement({
-    required this.tireMetric,
-    required this.timeSpan,
-    required this.info,
-  });
-
-  factory CostPerHourListElement.fromJson(Map<String, dynamic> json) =>
-      CostPerHourListElement(
-        tireMetric: json["tireMetric"]?.toDouble(),
-        timeSpan: DateTime.parse(json["timeSpan"]),
-        info: json["info"],
-      );
-
-  Map<String, dynamic> toJson() => {
-    "tireMetric": tireMetric,
-    "timeSpan": timeSpan.toIso8601String(),
-    "info": info,
-  };
+double? toDouble(dynamic v) {
+  if (v == null) return null;
+  if (v is double) return v;
+  if (v is int) return v.toDouble();
+  return double.tryParse(v.toString());
 }
 
-class TireHistory1 {
-  int eventId;
-  String eventName;
-  DateTime eventDate;
-  String disposition;
-  int treadDepth;
-  int pressure;
-  int hours;
-  int km;
-  int cost;
-  String vehicleNumber;
-  String wheelPosition;
-  dynamic comments;
-  String user;
-  int tireId;
-  DateTime createdDate;
-  DateTime updatedDate;
-  String pressureType;
-
-  TireHistory1({
-    required this.eventId,
-    required this.eventName,
-    required this.eventDate,
-    required this.disposition,
-    required this.treadDepth,
-    required this.pressure,
-    required this.hours,
-    required this.km,
-    required this.cost,
-    required this.vehicleNumber,
-    required this.wheelPosition,
-    required this.comments,
-    required this.user,
-    required this.tireId,
-    required this.createdDate,
-    required this.updatedDate,
-    required this.pressureType,
-  });
-
-  factory TireHistory1.fromJson(Map<String, dynamic> json) => TireHistory1(
-    eventId: json["eventId"],
-    eventName: json["eventName"],
-    eventDate: DateTime.parse(json["eventDate"]),
-    disposition: json["disposition"],
-    treadDepth: json["treadDepth"],
-    pressure: json["pressure"],
-    hours: json["hours"],
-    km: json["km"],
-    cost: json["cost"],
-    vehicleNumber: json["vehicleNumber"],
-    wheelPosition: json["wheelPosition"],
-    comments: json["comments"],
-    user: json["user"],
-    tireId: json["tireId"],
-    createdDate: DateTime.parse(json["createdDate"]),
-    updatedDate: DateTime.parse(json["updatedDate"]),
-    pressureType: json["pressureType"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "eventId": eventId,
-    "eventName": eventName,
-    "eventDate": eventDate.toIso8601String(),
-    "disposition": disposition,
-    "treadDepth": treadDepth,
-    "pressure": pressure,
-    "hours": hours,
-    "km": km,
-    "cost": cost,
-    "vehicleNumber": vehicleNumber,
-    "wheelPosition": wheelPosition,
-    "comments": comments,
-    "user": user,
-    "tireId": tireId,
-    "createdDate": createdDate.toIso8601String(),
-    "updatedDate": updatedDate.toIso8601String(),
-    "pressureType": pressureType,
-  };
+String? toStr(dynamic v) {
+  if (v == null) return null;
+  return v.toString();
 }

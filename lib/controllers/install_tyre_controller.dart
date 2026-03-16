@@ -13,6 +13,7 @@ import '../services/tyre_service.dart';
 
 class InstallTyreController extends GetxController {
   final RxBool isSubmitting = false.obs;
+  final RxBool isInitialLoading = false.obs;
 
   final service = InstallTyreService();
   final tyreService = TyreService();
@@ -36,6 +37,7 @@ class InstallTyreController extends GetxController {
   final RxString vehicleNumber = "".obs;
 
   RxList<TyreModel> tyreList = <TyreModel>[].obs;
+  RxDouble avgTread = 0.0.obs;
 
   @override
   void onInit() {
@@ -49,7 +51,7 @@ class InstallTyreController extends GetxController {
     final int tireId = args["tireId"] ?? 0;
     final String serialNo = args["serialNo"] ?? "";
     final String lastInspection = args["lastInspection"] ?? "";
-    final double avgTread = args["avgTread"] ?? 0.0;
+    //    final double avgTread = args["avgTread"] ?? 0.0;
 
     // /// 🔥 MODEL PREFILL
     model.update((m) {
@@ -57,7 +59,7 @@ class InstallTyreController extends GetxController {
       m.wheelPosition = wheelPosition;
       m.tireId = tireId;
       m.tireSerialNo = serialNo;
-      m.currentTreadDepth = avgTread;
+      m.currentTreadDepth = avgTread.value;
     });
     print("MODEL tireId => ${model.value.tireId}");
     print("INIT wheelPosition => $wheelPosition");
@@ -94,8 +96,8 @@ class InstallTyreController extends GetxController {
   });
   // 🧮 Average Calculation
   void _calcAverage(InstallTireModel m) {
-    final outside = tyreList.first.outsideTread ?? 0;
-    final inside = tyreList.first.insideTread ?? 0;
+    final outside = m.outsideTread;
+    final inside = m.insideTread;
 
     final avg = (outside + inside) / 2;
 
@@ -174,6 +176,7 @@ class InstallTyreController extends GetxController {
   }
 
   Future<void> loadTyres(int tireId) async {
+    isInitialLoading.value = true;
     try {
       final tyres = await tyreService.getTyresById(tireId);
 
@@ -186,11 +189,27 @@ class InstallTyreController extends GetxController {
       print("TYRE LIST LENGTH => ${tyreList.length}");
 
       if (tyreList.isNotEmpty) {
-        print("OUTSIDE => ${tyreList.first.outsideTread}");
-        print("INSIDE => ${tyreList.first.insideTread}");
+        final outside = tyreList.first.outsideTread ?? 0;
+        final inside = tyreList.first.insideTread ?? 0;
+
+        double avg;
+
+        if (outside != 0 && inside != 0) {
+          avg = (outside + inside) / 2;
+        } else {
+          avg = outside != 0 ? outside : inside;
+        }
+
+        avgTread.value = double.parse(avg.toStringAsFixed(2));
+
+        model.value.currentTreadDepth = avgTread.value;
+        model.value.outsideTread = outside;
+        model.value.insideTread = inside;
       }
     } catch (e) {
       print("Error loading tyres: $e");
+    } finally {
+      isInitialLoading.value = false;
     }
   }
 

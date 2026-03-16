@@ -1,13 +1,14 @@
 import 'package:emtrack/create_tyre/app_loader.dart';
 import 'package:emtrack/create_tyre/create_tyre_model.dart';
 import 'package:emtrack/create_tyre/create_tyre_service.dart';
+import 'package:emtrack/models/view_tyre_response.dart' as viewtyre;
 import 'package:emtrack/services/master_data_service.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:emtrack/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../routes/app_pages.dart';
+import '../services/tyre_service.dart';
 import '../utils/app_dialog.dart';
 
 class CreateTyreController extends GetxController {
@@ -42,6 +43,7 @@ class CreateTyreController extends GetxController {
   final RxInt selectedSpeedRatingId = 0.obs;
   //final RxInt selectedFillTypeId = 0.obs;
   int? selectedFillTypeId;
+  final tireStatusId = TextEditingController();
 
   //==============
 
@@ -63,6 +65,7 @@ class CreateTyreController extends GetxController {
   final speedRatingList = <String>[].obs;
 
   List allTireSizes = [];
+  final isPageLoading = true.obs;
 
   // STEP 4
   final fillTypeList = <String>[].obs;
@@ -132,6 +135,7 @@ class CreateTyreController extends GetxController {
   final costAdjustment = TextEditingController(text: "0");
   final soldAmount = TextEditingController(text: "0");
   final netCost = TextEditingController(text: "0");
+  int? tireId;
 
   // ⭐ STAR ENABLE FLAG
   final RxBool isStarEnabled = false.obs;
@@ -145,37 +149,61 @@ class CreateTyreController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadMasterData();
-
-    manufacturerId.addListener(checkStarEnable);
-    sizeId.addListener(checkStarEnable);
-    final now = DateTime.now();
-
-    // 👁 UI (dd-MM-yyyy)
-    registeredDate.text =
-        "${now.day.toString().padLeft(2, '0')}/"
-        "${now.month.toString().padLeft(2, '0')}/"
-        "${now.year}";
-
-    // 🔥 Backend (ISO 8601)
-    registeredDateApi = now.toUtc().toIso8601String();
-
-    // default backend values
-    model.dispositionId = 8;
-    dispositionText.value = "Inventory";
-
-    model.tireStatusId = 7;
-
-    model.trackingMethod = "Hours"; // Updated for model
-    trackingMethodText.value = "Hours";
-
-    model.mountStatus = "Not Mounted";
-    model.isMountToRim = false;
-
-    model.numberOfRetreads = 0;
-    numberOfRetreadsVal.value = 0;
+    _initScreen();
   }
+Future<void> _initScreen() async {
+  try {
+    isPageLoading.value = true;
 
+    /// 🔥 Load Masters First
+    await loadMasterData();
+
+    final arg = Get.arguments;
+
+    /// ⭐ CLONE FLOW
+    if (arg is int && arg > 0) {
+      tireId = arg;
+      await loadTyreForClone(tireId!);
+    }
+
+    /// ⭐ DEFAULT CREATE VALUES (works for both)
+    _setDefaultValues();
+
+  } catch (e) {
+    print("❌ Init Screen Error $e");
+  } finally {
+    isPageLoading.value = false;
+  }
+}
+
+void _setDefaultValues() {
+
+  manufacturerId.addListener(checkStarEnable);
+  sizeId.addListener(checkStarEnable);
+
+  final now = DateTime.now();
+
+  registeredDate.text =
+      "${now.day.toString().padLeft(2, '0')}/"
+      "${now.month.toString().padLeft(2, '0')}/"
+      "${now.year}";
+
+  registeredDateApi = now.toUtc().toIso8601String();
+
+  model.dispositionId = 8;
+  dispositionText.value = "Inventory";
+
+  model.tireStatusId = 7;
+
+  model.trackingMethod = "Hours";
+  trackingMethodText.value = "Hours";
+
+  model.mountStatus = "Not Mounted";
+  model.isMountToRim = false;
+
+  model.numberOfRetreads = 0;
+  numberOfRetreadsVal.value = 0;
+}
   // ================= NET COST =================
   void calculateNetCost() {
     double a = double.tryParse(purchaseCost.text) ?? 0;
@@ -279,7 +307,7 @@ class CreateTyreController extends GetxController {
   //   // ================= PARENT & LOCATION =================
   //   final parentId = SecureStorage.getParentAccountId();
 
-  //   model.parentAccountId = int.tryParse(parentId.toString() ?? "");
+  //   model.parentAccountId = int.tryParse(parentId.toString() );
 
   //   final storedLocation = await SecureStorage.getLocationId();
 
@@ -316,7 +344,7 @@ class CreateTyreController extends GetxController {
     model.compoundId = selectedCompoundId.value;
     model.loadRatingId = selectedLoadRatingId.value;
     model.speedRatingId = selectedSpeedRatingId.value;
-    model.fillTypeId = selectedFillTypeId;
+    model.fillTypeId = int.parse(selectedFillTypeId.toString());
 
     // ================= STEP 3: Tread measurements =================
     model.originalTread = double.tryParse(originalTread.text) ?? 0;
@@ -379,7 +407,7 @@ class CreateTyreController extends GetxController {
 
     print("Stored LocationId => $storedLocation");
 
-    model.locationId = int.tryParse(storedLocation ?? "") ?? 0;
+    model.locationId = int.tryParse(storedLocation!) ?? 0;
   }
 
   // ================= SUBMIT =================
@@ -723,11 +751,11 @@ class CreateTyreController extends GetxController {
   }
 
   void bindModelToControllers(CreateTyreModel m) {
-    tireSerialNo.text = m.tireSerialNo ?? "";
-    brandNo.text = m.brandNo ?? "";
-    evaluationNo.text = m.evaluationNo ?? "";
-    lotNo.text = m.lotNo ?? "";
-    poNo.text = m.poNo ?? "";
+    tireSerialNo.text = m.tireSerialNo!;
+    brandNo.text = m.brandNo!;
+    evaluationNo.text = m.evaluationNo!;
+    lotNo.text = m.lotNo!;
+    poNo.text = m.poNo!;
     currentHours.text = (m.currentHours ?? 0).toString();
 
     manufacturerId.text = (m.manufacturerId ?? 0).toString();
@@ -757,5 +785,190 @@ class CreateTyreController extends GetxController {
     netCost.text = (m.netCost ?? 0).toString();
 
     update();
+  }
+
+  Future<void> loadTyreForClone(int tyreId) async {
+    try {
+      final tyre = await TyreService().cloneTyresById(tyreId);
+
+      _assignCloneData(tyre);
+    } catch (e) {
+      print("❌ Clone Load Error $e");
+    }
+  }
+
+  void _assignCloneData(viewtyre.ViewModel tyre) {
+    filterTireSizesByManufacturer(tyre.manufacturerId!);
+    getTireTypes(tyre.sizeId!);
+    // ✅ Save vehicleId & vehicleNumber from API so they are sent back on update
+    model.vehicleId = tyre.vehicleId;
+    model.vehicleNumber = tyre.vehicleNumber;
+
+    selectedManufacturerId.value = tyre.manufacturerId ?? 0;
+    selectedSizeId.value = tyre.sizeId ?? 0;
+    selectedTypeId.value = tyre.typeId ?? 0;
+    selectedCompoundId.value = tyre.compoundId ?? 0;
+    selectedStatusId.value = tyre.tireStatusId ?? 0;
+    //   selectedFillTypeId = tyre.fillTypeId as RxInt?;
+
+    // tireSerialNo.text = tyre.tireSerialNo ?? '';
+    brandNo.text = tyre.brandNo ?? '';
+    evaluationNo.text = tyre.evaluationNo ?? '';
+    lotNo.text = tyre.lotNo ?? '';
+    poNo.text = tyre.poNo ?? '';
+    currentHours.text = tyre.currentHours.toString();
+
+    // 🔹 DATE
+    final dt = DateTime.parse(tyre.registeredDate.toString());
+
+    registeredDate.text =
+        "${dt.day.toString().padLeft(2, '0')}-"
+        "${dt.month.toString().padLeft(2, '0')}-"
+        "${dt.year}";
+
+    registeredDateApi = dt.toUtc().toIso8601String();
+
+    /// ✅ Manufecterer ID
+    manufacturerId.text = tyre.manufacturerId.toString();
+    // MANUFACTURER
+    // 🔹 STATUS
+
+    setDropdownById(
+      id: tyre.tireStatusId,
+      idList: statusIdList,
+      nameList: statusList,
+      controller: tireStatusId,
+      selectedId: selectedStatusId,
+    );
+
+    setDropdownById(
+      id: tyre.manufacturerId,
+      idList: manufacturerIdList.toList(),
+      nameList: manufacturerList.toList(),
+      controller: manufacturerId,
+      selectedId: selectedManufacturerId,
+    );
+
+    //...........
+    sizeId.text = tyre.sizeId.toString();
+    setDropdownById(
+      id: tyre.sizeId,
+      idList: tireSizeIdList.toList(),
+      nameList: tireSizeList.toList(),
+      controller: sizeId,
+      selectedId: selectedSizeId,
+    );
+    starRatingId.text = tyre.starRatingId.toString();
+    starRating.value = tyre.starRatingId ?? 0;
+    model.typeId = int.tryParse(typeId.text) ?? 0;
+
+    indCodeId.text = tyre.indCodeId.toString();
+    setDropdownById(
+      id: tyre.indCodeId,
+      idList: indCodeIdList.toList(),
+      nameList: indCodeList.toList(),
+      controller: indCodeId,
+      selectedId: selectedIndCodeId,
+    );
+    compoundId.text = tyre.compoundId.toString();
+    setDropdownById(
+      id: tyre.compoundId,
+      idList: compoundIdList.toList(),
+      nameList: compoundList.toList(),
+      controller: compoundId,
+      selectedId: selectedCompoundId,
+    );
+    loadRatingId.text = tyre.loadRatingId.toString();
+    setDropdownById(
+      id: tyre.loadRatingId,
+      idList: loadRatingIdList.toList(),
+      nameList: loadRatingList.toList(),
+      controller: loadRatingId,
+      selectedId: selectedLoadRatingId,
+    );
+    // speedrating
+    setDropdownById(
+      id: tyre.speedRatingId,
+      idList: speedRatingIdList.toList(),
+      nameList: speedRatingList.toList(),
+      controller: speedRatingId,
+      selectedId: selectedSpeedRatingId,
+    );
+    // ✅ TYPE ID
+    setDropdownById(
+      id: tyre.typeId,
+      idList: typeIdList.toList(),
+      nameList: typeList.toList(),
+      controller: typeId,
+      selectedId: selectedTypeId,
+    );
+
+    // 🔹 STEP 3
+    originalTread.text = tyre.originalTread.toString();
+    purchasedTread.text = tyre.purchasedTread.toString();
+    removeAt.text = tyre.removeAt.toString();
+    outsideTread.text = tyre.outsideTread.toString();
+    insideTread.text = tyre.insideTread.toString();
+
+    // 🔹 STEP 4
+    purchaseCost.text = tyre.purchaseCost.toString();
+    casingValue.text = tyre.casingValue.toString();
+    // fillTypeId.text = tyre.fillTypeId.toString();
+    setDropdownById(
+      id: tyre.fillTypeId,
+      idList: fillTypeIdList.toList(),
+      nameList: fillTypeList.toList(),
+      controller: fillTypeId,
+      selectedId: (selectedFillTypeId ?? 0).obs,
+    );
+    fillCost.text = tyre.fillCost.toString();
+    repairCost.text = tyre.repairCost.toString();
+    retreadCost.text = tyre.retreadCost.toString();
+    warrantyAdjustment.text = tyre.warrantyAdjustment.toString();
+    costAdjustment.text = tyre.costAdjustment.toString();
+    soldAmount.text = tyre.soldAmount.toString();
+    netCost.text = tyre.netCost.toString();
+
+    update(); // if GetBuilder
+  }
+
+  void setDropdownById({
+    required int? id,
+    required List<int> idList,
+    required List<String> nameList,
+    required TextEditingController controller,
+    RxInt? selectedId,
+  }) {
+    if (id == null || id == 0) {
+      controller.clear();
+      if (selectedId != null) {
+        selectedId.value = 0;
+      }
+      return;
+    }
+
+    final index = idList.indexOf(id);
+
+    if (index == -1) {
+      controller.clear();
+      print("⚠️ setDropdownById: ID $id not found in idList");
+      return;
+    }
+
+    // 🔒 Bounds check: avoid RangeError when idList and nameList length differ
+    if (index >= nameList.length) {
+      controller.clear();
+      if (selectedId != null) selectedId.value = 0;
+      print(
+        "⚠️ setDropdownById: index $index out of range for nameList (length ${nameList.length}). idList.length=${idList.length}, id=$id",
+      );
+      return;
+    }
+
+    controller.text = nameList[index];
+
+    if (selectedId != null) {
+      selectedId.value = idList[index];
+    }
   }
 }

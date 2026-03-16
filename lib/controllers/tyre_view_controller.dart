@@ -1,12 +1,4 @@
 import 'package:emtrack/models/masterDataMobileModel/master_model.dart';
-import 'package:emtrack/models/masterDataMobileModel/tire_manufacturer_model.dart';
-import 'package:emtrack/models/masterDataMobileModel/tire_size_model.dart';
-import 'package:emtrack/models/masterDataMobileModel/star_rating_model.dart';
-import 'package:emtrack/models/masterDataMobileModel/tire_type_model.dart';
-import 'package:emtrack/models/masterDataMobileModel/tire_ind_code_model.dart';
-import 'package:emtrack/models/masterDataMobileModel/tire_compound_model.dart';
-import 'package:emtrack/models/masterDataMobileModel/tire_load_rating_model.dart';
-import 'package:emtrack/models/masterDataMobileModel/tire_fill_type_model.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -190,7 +182,7 @@ class TyreViewController extends GetxController
     return match.first.statusName.toString();
   }
 
-    String getDispositionName(int? id) {
+  String getDispositionName(int? id) {
     if (masterData.value == null || id == null) return "";
 
     final list = masterData.value!.tireDispositions;

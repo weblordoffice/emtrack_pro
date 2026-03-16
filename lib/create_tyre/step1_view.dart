@@ -29,112 +29,126 @@ class Step1View extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Obx(() {
+      return Stack(
         children: [
-          const SizedBox(height: 15),
-          const Text(
-            "Identification Details",
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 15),
+              const Text(
+                "Identification Details",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  Text("Tire Serial Number "),
+                  Text("*", style: TextStyle(color: Colors.red)),
+                ],
+              ),
+              _tf(
+                label: "Enter Tire Serial Number",
+                controller: c.tireSerialNo,
+                validator: (v) => _required(v),
+              ),
+              Row(children: [Text("Enter Brand Number ")]),
+              _tf(label: "Enter Brand No.", controller: c.brandNo),
+
+              Row(
+                children: [
+                  Text("Register Date "),
+                  Text("*", style: TextStyle(color: Colors.red)),
+                ],
+              ),
+              _tf(
+                label: "Registered Date",
+                controller: c.registeredDate,
+
+                onTap: () => pickDate(context),
+              ),
+
+              Row(children: [Text("Evaluation Number ")]),
+              _tf(label: "Enter Evaluation Number", controller: c.evaluationNo),
+              Row(children: [Text("Lot Number ")]),
+              _tf(label: "Enter Lot Number", controller: c.lotNo),
+              Row(children: [Text("Purchase Order Number")]),
+              _tf(label: "Enter Purchase Order Number", controller: c.poNo),
+              Row(
+                children: [
+                  Text("Disposition "),
+                  Text("*", style: TextStyle(color: Colors.red)),
+                ],
+              ),
+              _tf(
+                label: "Enter Disposition",
+                value: c.dispositionText.value,
+                enabled: false,
+              ),
+              Row(children: [Text("Status ")]),
+              _dropdownTFStatus(
+                label: "Status",
+                value: c.selectedstatus.value,
+                items: c.statusList,
+              ),
+              Row(children: [Text("Tracking Method ")]),
+              _dropdownTF(
+                label: "Tracking Method",
+                value: c.trackingMethodText.value,
+                items: ["Hours", "Distance", "Both"],
+              ),
+              Row(
+                children: [
+                  Text("Current Hours "),
+                  Text("*", style: TextStyle(color: Colors.red)),
+                ],
+              ),
+              _tf(
+                label: "Enter Current Hours",
+                controller: c.currentHours,
+                focusNode: _focusNode,
+                keyboard: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^-?\d*\.?\d{0,1}'),
+                  ),
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Enter Valid Details";
+                  }
+
+                  if (!RegExp(r'^-?\d+(\.\d{1,2})?$').hasMatch(value)) {
+                    return "Enter valid number";
+                  }
+
+                  return null;
+                },
+                showClear: true,
+              ),
+
+              const SizedBox(height: 24),
+
+              _primaryBtn("Next", () => c.nextStep()),
+              const SizedBox(height: 12),
+              _outlineBtn("Cancel", c.cancelDialog),
+            ],
+          ),
+
+          if (c.isPageLoading.value)
+            Positioned.fill(
+              child: Container(
+                alignment: Alignment.center,
+                child: const CircularProgressIndicator(),
+              ),
             ),
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Text("Tire Serial Number "),
-              Text("*", style: TextStyle(color: Colors.red)),
-            ],
-          ),
-          _tf(
-            label: "Enter Tire Serial Number",
-            controller: c.tireSerialNo,
-            validator: (v) => _required(v),
-          ),
-          Row(children: [Text("Enter Brand Number ")]),
-          _tf(label: "Enter Brand No.", controller: c.brandNo),
-
-          Row(
-            children: [
-              Text("Register Date "),
-              Text("*", style: TextStyle(color: Colors.red)),
-            ],
-          ),
-          _tf(
-            label: "Registered Date",
-            controller: c.registeredDate,
-
-            onTap: () => pickDate(context),
-          ),
-
-          Row(children: [Text("Evaluation Number ")]),
-          _tf(label: "Enter Evaluation Number", controller: c.evaluationNo),
-          Row(children: [Text("Lot Number ")]),
-          _tf(label: "Enter Lot Number", controller: c.lotNo),
-          Row(children: [Text("Purchase Order Number")]),
-          _tf(label: "Enter Purchase Order Number", controller: c.poNo),
-          Row(
-            children: [
-              Text("Disposition "),
-              Text("*", style: TextStyle(color: Colors.red)),
-            ],
-          ),
-          _tf(
-            label: "Enter Disposition",
-            value: c.dispositionText.value,
-            enabled: false,
-          ),
-          Row(children: [Text("Status ")]),
-          _dropdownTFStatus(
-            label: "Status",
-            value: c.selectedstatus.value,
-            items: c.statusList,
-          ),
-          Row(children: [Text("Tracking Method ")]),
-          _dropdownTF(
-            label: "Tracking Method",
-            value: c.trackingMethodText.value,
-            items: ["Hours", "Distance", "Both"],
-          ),
-          Row(
-            children: [
-              Text("Current Hours "),
-              Text("*", style: TextStyle(color: Colors.red)),
-            ],
-          ),
-          _tf(
-            label: "Enter Current Hours",
-            controller: c.currentHours,
-            focusNode: _focusNode,
-            keyboard: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d{0,1}')),
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return "Enter Valid Details";
-              }
-
-              if (!RegExp(r'^-?\d+(\.\d{1,2})?$').hasMatch(value)) {
-                return "Enter valid number";
-              }
-
-              return null;
-            },
-            showClear: true,
-          ),
-
-          const SizedBox(height: 24),
-
-          _primaryBtn("Next", () => c.nextStep()),
-          const SizedBox(height: 12),
-          _outlineBtn("Cancel", c.cancelDialog),
         ],
-      ),
-    );
+      );
+    });
   }
 
   // ================= COMMON WIDGETS =================

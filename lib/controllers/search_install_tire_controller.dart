@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/tyre_model.dart';
 import '../services/tyre_service.dart';
-import '../inspection/edit_vehicle_inspection_view.dart';
+
 import '../views/tyre_view.dart';
 
 class SearchInstallTireController extends GetxController {

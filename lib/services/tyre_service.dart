@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:emtrack/models/tyre_model.dart';
 import 'package:emtrack/models/tyre_responsive_model.dart';
+import 'package:emtrack/models/view_tyre_response.dart';
 import 'package:emtrack/services/api_constants.dart';
 import 'package:emtrack/services/api_service.dart';
 import 'package:emtrack/services/global_logout_handler.dart';
@@ -81,35 +82,55 @@ class TyreService {
     }
   }
 
-Future<List<TyreModel>> getTyresById(int tireId) async {
-  try {
-    print("🔥 TyreService.getTyreById called with ID: $tireId");
+  Future<List<TyreModel>> getTyresById(int tireId) async {
+    try {
+      print("🔥 TyreService.getTyreById called with ID: $tireId");
 
-    final response = await ApiService.getApi(
-      endpoint: '${ApiConstants.getTyreById}$tireId',
-    );
+      final response = await ApiService.getApi(
+        endpoint: '${ApiConstants.getTyreById}$tireId',
+      );
 
-    if (response == null) {
-      throw Exception("Empty API response");
+      if (response == null) {
+        throw Exception("Empty API response");
+      }
+
+      final tyreResponse = TyreResponseModel.fromJson(response);
+
+      if (tyreResponse.didError) {
+        print("❌ API Error: ${tyreResponse.errorMessage}");
+        throw Exception(tyreResponse.errorMessage ?? "API returned an error");
+      }
+
+      print("✅ Tyres fetched successfully: ${tyreResponse.model.length}");
+
+      return tyreResponse.model;
+    } catch (e, stacktrace) {
+      print("🔥 Exception in TyreService.getTyreById:");
+      print(e);
+      print(stacktrace);
+      rethrow;
     }
-
-    final tyreResponse = TyreResponseModel.fromJson(response);
-
-    if (tyreResponse.didError) {
-      print("❌ API Error: ${tyreResponse.errorMessage}");
-      throw Exception(tyreResponse.errorMessage ?? "API returned an error");
-    }
-
-    print("✅ Tyres fetched successfully: ${tyreResponse.model.length}");
-
-    return tyreResponse.model;
-  } catch (e, stacktrace) {
-    print("🔥 Exception in TyreService.getTyreById:");
-    print(e);
-    print(stacktrace);
-    rethrow;
   }
-}
 
+  Future<ViewModel> cloneTyresById(int tireId) async {
+    try {
+      final response = await ApiService.getApi(
+        endpoint: '${ApiConstants.getTyreById}$tireId',
+      );
 
+      if (response == null) {
+        throw Exception("Empty API response");
+      }
+
+      final tyreResponse = ViewTyreResponse.fromJson(response);
+
+      if (tyreResponse.didError) {
+        throw Exception(tyreResponse.errorMessage);
+      }
+
+      return tyreResponse.viewModel; // ⭐ SINGLE OBJECT
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -96,10 +96,10 @@ class _Step3ViewState extends State<Step3View> {
           validator: _required,
           focusNode: _focusNode,
           clearIcon: true,
-          onChanged: (_) {
-            setState(() {});
-            _calculate();
-          },
+          // onChanged: (_) {
+          //   setState(() {});
+          //   _calculate();
+          // },
         ),
 
         const Row(children: [Text("Purchase Tread")]),
