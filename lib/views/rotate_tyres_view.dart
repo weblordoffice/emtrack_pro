@@ -2,6 +2,10 @@ import 'package:emtrack/color/app_color.dart';
 import 'package:emtrack/widgets/vehicle_daigram_Rotate_tyres.dart';
 import 'package:flutter/material.dart';
 
+import '../create_tyre/tyre_rotation_controller.dart';
+import '../models/tyre_data.dart';
+import '../models/tyre_drag_data.dart';
+
 class RotateTyresView extends StatefulWidget {
   const RotateTyresView({super.key});
 
@@ -42,29 +46,8 @@ class _RotateTyresViewState extends State<RotateTyresView> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   VehicleDiagramRotateTyres(),
-
-                  Container(
-                    padding: EdgeInsets.only(
-                      top: 32,
-                      bottom: 32,
-                      left: 16,
-                      right: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.black, width: 1),
-                    ),
-                    child: Column(
-                      children: [
-                        Text("Rotate"),
-                        Text(
-                          "Tire",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text("Rotate"),
-                      ],
-                    ),
-                  ),
+                  const SizedBox(width: 20),
+                  _centerBuffer(),
                 ],
               ),
               SizedBox(height: 20),
@@ -130,6 +113,131 @@ class _RotateTyresViewState extends State<RotateTyresView> {
         color: color,
         child: Text(text),
       ),
+    );
+  }
+
+  Widget _centerBuffer() {
+    final controller = TyreRotationController.instance;
+
+    return DragTarget<TyreDragData>(
+      onWillAccept: (data) => controller.bufferTyre == null,
+
+      onAccept: (data) {
+        setState(() {
+          /// Move tyre from slot → buffer
+          controller.moveToBuffer(data.slotIndex);
+        });
+      },
+
+      builder: (context, candidateData, rejectedData) {
+        final tyre = controller.bufferTyre;
+
+        return Container(
+          width: 90,
+          height: 230,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(20),
+            color: tyre != null ? Colors.white : Colors.transparent,
+          ),
+          child: tyre != null
+              ? Draggable<TyreDragData>(
+                  data: TyreDragData(
+                    diagramIndex: -1, // ⭐ means coming from buffer
+                    slotIndex: -1,
+                  ),
+                  feedback: Material(
+                    color: Colors.transparent,
+                    child: _bufferTyreUI(tyre, dragging: true),
+                  ),
+                  child: _bufferTyreUI(tyre),
+                )
+              : Text.rich(
+                  TextSpan(
+                    text: "Rotate \n",
+                    style: const TextStyle(fontSize: 14, color: Colors.black),
+                    children: const [
+                      TextSpan(
+                        text: "Tire\n",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(text: "Position"),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+        );
+      },
+    );
+  }
+
+  Widget _bufferTyreUI(TyreData d, {bool dragging = false}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.blue),
+          ),
+          child: Text(
+            d.serial,
+            style: const TextStyle(color: Colors.blue, fontSize: 12),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: 95,
+          height: 150,
+          decoration: BoxDecoration(
+            color: dragging ? Colors.blue : Colors.black,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: d.borderColor, width: 4),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: d.percentColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    d.percent,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text('P   ${d.p}', style: const TextStyle(color: Colors.white)),
+                Text(
+                  'To  ${d.to}',
+                  style: const TextStyle(color: Colors.white),
+                ),
+                Text(
+                  'Ti  ${d.ti}',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          d.miles,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 12),
+        ),
+      ],
     );
   }
 }

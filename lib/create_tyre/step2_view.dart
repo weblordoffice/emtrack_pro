@@ -170,6 +170,7 @@ class _Step2ViewState extends State<Step2View> {
         controller: controller,
         readOnly: true,
         validator: validator,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           hintText: hintText,

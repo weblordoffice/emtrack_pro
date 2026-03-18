@@ -123,7 +123,7 @@ class TyreView extends StatelessWidget {
     );
   }
 
-  Widget _row(String title, String value) {
+  Widget _row(String title, String value, {String? subvalue}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Column(
@@ -131,12 +131,25 @@ class TyreView extends StatelessWidget {
         children: [
           Text(title),
           const SizedBox(height: 3),
-          Text(
-            value,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              overflow: TextOverflow.ellipsis,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                value,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (subvalue != null)
+                Text(
+                  "$subvalue % Worn",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
           ),
         ],
       ),
@@ -185,14 +198,35 @@ class TyreView extends StatelessWidget {
   }
 
   Widget _treadDepthTab(TyreViewModel tyre) {
+    int usd1 =
+        ((1 -
+                    (tyre.outsideTread! - tyre.removeAt!) /
+                        (tyre.originalTread! - tyre.removeAt!)) *
+                100)
+            .round();
+
+    int usd2 =
+        ((1 -
+                    (tyre.insideTread! - tyre.removeAt!) /
+                        (tyre.originalTread! - tyre.removeAt!)) *
+                100)
+            .round();
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         _row("Original Tread", tyre.originalTread.toString()),
         _row("Remove At", tyre.removeAt.toString()),
         _row("Purchase Tread", tyre.purchasedTread.toString()),
-        _row("Outside(a)", tyre.outsideTread.toString()),
-        _row("Inside(c)", tyre.insideTread.toString()),
+        _row(
+          "Outside(a)",
+          tyre.outsideTread.toString(),
+          subvalue: usd1.toString(),
+        ),
+        _row(
+          "Inside(c)",
+          tyre.insideTread.toString(),
+          subvalue: usd2.toString(),
+        ),
       ],
     );
   }

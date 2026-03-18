@@ -39,9 +39,16 @@ class InstallTyreController extends GetxController {
   RxList<TyreModel> tyreList = <TyreModel>[].obs;
   RxDouble avgTread = 0.0.obs;
 
+  final commentsController = TextEditingController();
+  final previousCommentController = TextEditingController(
+    text: "List Of Previous Comments",
+  );
+
   @override
   void onInit() {
     super.onInit();
+
+    commentsController.text = model.value.comments ?? "";
 
     final args = Get.arguments ?? {};
     print("install tire $args");

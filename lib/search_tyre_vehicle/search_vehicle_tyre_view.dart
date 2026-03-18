@@ -77,8 +77,17 @@ class SearchVehicleTyreView extends StatelessWidget {
                                       arguments: e.vehicleId,
                                     ),
                                     title: e.vehicleId.toString(),
-                                    onRemove: () =>
-                                        controller.removeRecentVehicle(e),
+                                    onRemove: () async {
+                                      final confirm = await confirmRemoveDialog(
+                                        context,
+                                        message:
+                                            "Are you sure you want to remove this tyre Inspection?",
+                                      );
+
+                                      if (confirm == true) {
+                                        controller.removeRecentVehicle(e);
+                                      }
+                                    },
                                   ),
                                 )
                                 .toList(),
@@ -173,8 +182,45 @@ class SearchVehicleTyreView extends StatelessWidget {
                         itemBuilder: (_, i) {
                           final item = c.visibleList[i];
                           final title = c.selectedTab.value == 0
-                              ? (item as VehicleItem).vehicleId.toString()
-                              : (item as TireItem).tireId.toString();
+                              ? (item as VehicleItem).vehicleNumber.toString()
+                              : (item as TireItem).tireSerialNo.toString();
+
+                          /// ⭐ LAST ITEM → SHOW ACTION UI
+                          if (i == c.visibleList.length - 1) {
+                            return Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    c.selectedTab.value == 0
+                                        ? "Couldn't find your Vehicles?"
+                                        : "Couldn't find your Tires?",
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 10),
+
+                                  _actionButton(
+                                    text: c.selectedTab.value == 0
+                                        ? 'Create New Vehicle'
+                                        : 'Create New Tire',
+                                    onTap: () {
+                                      if (c.selectedTab.value == 0) {
+                                        Get.to(() => CreateVehicleView());
+                                      } else {
+                                        Get.to(() => CreateTyreScreen());
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
                           return Container(
                             margin: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
@@ -190,49 +236,49 @@ class SearchVehicleTyreView extends StatelessWidget {
                       ),
               ),
 
-              /// ACTION BUTTON
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (c.selectedTab.value == 0) ...[
-                      const Text(
-                        "Couldn't find your Vehicles?",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      _actionButton(
-                        text: 'Create New Vehicle',
-                        onTap: () {
-                          Get.to(() => CreateVehicleView());
-                          debugPrint('Vehicle Create');
-                        },
-                      ),
-                    ],
-                    if (c.selectedTab.value == 1) ...[
-                      const Text(
-                        "Couldn't find your Tires?",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      _actionButton(
-                        text: 'Create New Tire',
-                        onTap: () {
-                          Get.to(() => CreateTyreScreen());
-                          debugPrint('Tire Create');
-                        },
-                      ),
-                    ],
-                  ],
-                ),
-              ),
+              // /// ACTION BUTTON
+              // Padding(
+              //   padding: const EdgeInsets.all(12),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       if (c.selectedTab.value == 0) ...[
+              //         const Text(
+              //           "Couldn't find your Vehicles?",
+              //           style: TextStyle(
+              //             fontSize: 20,
+              //             fontWeight: FontWeight.w500,
+              //           ),
+              //         ),
+              //         const SizedBox(height: 10),
+              //         _actionButton(
+              //           text: 'Create New Vehicle',
+              //           onTap: () {
+              //             Get.to(() => CreateVehicleView());
+              //             debugPrint('Vehicle Create');
+              //           },
+              //         ),
+              //       ],
+              //       if (c.selectedTab.value == 1) ...[
+              //         const Text(
+              //           "Couldn't find your Tires?",
+              //           style: TextStyle(
+              //             fontSize: 20,
+              //             fontWeight: FontWeight.w500,
+              //           ),
+              //         ),
+              //         const SizedBox(height: 10),
+              //         _actionButton(
+              //           text: 'Create New Tire',
+              //           onTap: () {
+              //             Get.to(() => CreateTyreScreen());
+              //             debugPrint('Tire Create');
+              //           },
+              //         ),
+              //       ],
+              //     ],
+              //   ),
+              // ),
             ],
           );
         }),
@@ -331,6 +377,70 @@ class SearchVehicleTyreView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<bool?> confirmRemoveDialog(
+    BuildContext context, {
+    String title = "Confirm remove",
+    String message = "Are you sure you want to remove this item?",
+  }) {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                Text(message, style: const TextStyle(fontSize: 14)),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text(
+                        "YES",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 8),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text(
+                        "NO",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

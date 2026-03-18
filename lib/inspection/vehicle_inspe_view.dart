@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../views/rotate_tyres_view.dart';
+
 class VehicleInspeView extends StatelessWidget {
   const VehicleInspeView({super.key});
   @override
@@ -287,6 +289,35 @@ class VehicleInspeView extends StatelessWidget {
                     'Tread Depth: (To) Outside (Ti) Inside (Tm) Middle\nPressure (P) Tyre Pressure',
                     textAlign: TextAlign.center,
                   ),
+
+                  SizedBox(height: 11),
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                            color: Colors.red, // 👉 outline color
+                            width: 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        onPressed: () {
+                          Get.to(() => RotateTyresView());
+                        },
+                        icon: const Icon(Icons.sync, color: Colors.red),
+                        label: const Text(
+                          'Rotate Tyres',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 11),
                 ],
               ),
             ),
@@ -304,22 +335,24 @@ class VehicleInspeView extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: c.uploadedImages.isEmpty
-                          ? const Text(
-                              'Upload Images',
-                              style: TextStyle(fontSize: 16),
-                            )
-                          : SizedBox(
-                              height: 80,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: c.uploadedImages.length,
-                                itemBuilder: (_, i) => Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: Image.file(c.uploadedImages[i]),
-                                ),
-                              ),
-                            ),
+                      child:
+                          // c.uploadedImages.isEmpty
+                          //     ?
+                          const Text(
+                            'Upload Images',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                      // : SizedBox(
+                      //     height: 80,
+                      //     child: ListView.builder(
+                      //       scrollDirection: Axis.horizontal,
+                      //       itemCount: c.uploadedImages.length,
+                      //       itemBuilder: (_, i) => Padding(
+                      //         padding: const EdgeInsets.only(right: 8.0),
+                      //         child: Image.file(c.uploadedImages[i]),
+                      //       ),
+                      //     ),
+                      //   ),
                     ),
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
@@ -347,6 +380,68 @@ class VehicleInspeView extends StatelessWidget {
             ),
 
             const SizedBox(height: 20),
+            const Text('Upload Images', style: TextStyle(fontSize: 16)),
+
+            const SizedBox(height: 20),
+
+            Obx(
+              () => Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 250,
+                      width: 700,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: c.uploadedImages.length,
+                        itemBuilder: (_, i) => Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child:
+                              //Image.file(c.uploadedImages[i]),
+                              Stack(
+                                children: [
+                                  /// IMAGE CARD
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(
+                                      c.uploadedImages[i],
+                                      width: 200,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+
+                                  /// DELETE ICON
+                                  Positioned(
+                                    top: 5,
+                                    right: 5,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        c.uploadedImages.removeAt(i);
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.black54,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.delete,
+                                          size: 16,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
             /// SUBMIT
             Obx(

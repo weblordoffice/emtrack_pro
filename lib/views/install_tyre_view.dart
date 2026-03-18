@@ -170,7 +170,7 @@ class InstallTyreView extends StatelessWidget {
 
                 _textBox(
                   "List Of Previous Comments",
-                  "List Of Previous Comments",
+                  controller.previousCommentController,
                   enabled: false,
                 ),
 
@@ -187,7 +187,7 @@ class InstallTyreView extends StatelessWidget {
 
                 _textBox(
                   "Comments",
-                  m.comments,
+                  controller.commentsController,
                   onChanged: (v) =>
                       controller.model.update((m) => m!.comments = v),
                 ),
@@ -548,7 +548,7 @@ class InstallTyreView extends StatelessWidget {
 
   Widget _textBox(
     String label,
-    String value, {
+    TextEditingController controller, {
     bool enabled = true,
     Function(String)? onChanged,
   }) {
@@ -559,7 +559,7 @@ class InstallTyreView extends StatelessWidget {
         const SizedBox(height: 6),
         TextField(
           enabled: enabled,
-          controller: TextEditingController(text: value),
+          controller: controller,
           maxLines: 3,
           onChanged: onChanged,
           decoration: const InputDecoration(border: OutlineInputBorder()),
@@ -568,3 +568,26 @@ class InstallTyreView extends StatelessWidget {
     );
   }
 }
+
+//   Widget _textBox(
+//     String label,
+//     String value, {
+//     bool enabled = true,
+//     Function(String)? onChanged,
+//   }) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(label),
+//         const SizedBox(height: 6),
+//         TextField(
+//           enabled: enabled,
+//           controller: TextEditingController(text: value),
+//           maxLines: 3,
+//           onChanged: onChanged,
+//           decoration: const InputDecoration(border: OutlineInputBorder()),
+//         ),
+//       ],
+//     );
+//   }
+// }

@@ -2,6 +2,7 @@ import 'package:emtrack/controllers/all_vehicles_controller.dart';
 import 'package:emtrack/controllers/home_controller.dart';
 import 'package:emtrack/controllers/selected_account_controller.dart';
 import 'package:emtrack/controllers/all_tyre_controller.dart';
+import 'package:emtrack/routes/app_pages.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:get/get.dart';
 import '../models/change_account_model.dart';
@@ -142,8 +143,11 @@ class ChangeAccountController extends GetxController {
     homeCtrl.loadVehicleCountByAccount();
 
     /// REFRESH OTHER SCREENS
-    Get.back();
+    Get.offNamed(AppPages.HOME);
 
+    if (Get.isRegistered<HomeController>()) {
+      await Get.find<HomeController>().refreshHome();
+    }
     if (Get.isRegistered<AllVehicleController>()) {
       await Get.find<AllVehicleController>().loadVehicles();
     }

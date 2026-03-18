@@ -196,6 +196,17 @@ class Step4View extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      Padding(
+                        padding: EdgeInsetsGeometry.only(right: 25, left: 10),
+                        child: Text(
+                          "INR",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+
                       ValueListenableBuilder<TextEditingValue>(
                         valueListenable: controller,
                         builder: (context, value, _) {
@@ -212,17 +223,6 @@ class Step4View extends StatelessWidget {
                             },
                           );
                         },
-                      ),
-
-                      Padding(
-                        padding: EdgeInsetsGeometry.only(right: 25, left: 10),
-                        child: Text(
-                          "INR",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
                       ),
                     ],
                   ),

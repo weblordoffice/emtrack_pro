@@ -26,6 +26,7 @@ class _Step3ViewState extends State<Step3View> {
     if (c.removeAt.text.isEmpty) {
       c.removeAt.text = "0"; // default value
     }
+    _calculate();
   }
 
   // ================= CALCULATION =================
@@ -46,12 +47,20 @@ class _Step3ViewState extends State<Step3View> {
         outsidePercen = (1 - (outside - removeAt) / denominator) * 100;
         outsidePercen = outsidePercen!.roundToDouble();
         outsideWarn = outsidePercen! > 100 || outsidePercen! < 0;
+        outsideWarn = true;
+      } else {
+        outsidePercen = 0; // ⭐ RESET
+        outsideWarn = false; // ⭐ RESET
       }
 
       if (inside != null) {
         insidePercent = (1 - (inside - removeAt) / denominator) * 100;
         insidePercent = insidePercent!.roundToDouble();
         insideWarn = insidePercent! > 100 || insidePercent! < 0;
+        insideWarn = true;
+      } else {
+        insidePercent = 0; // ⭐ RESET
+        insideWarn = false; // ⭐ RESET
       }
     });
   }
@@ -121,9 +130,13 @@ class _Step3ViewState extends State<Step3View> {
         _suffixTextTF(
           controller: c.outsideTread,
           percent: outsidePercen ?? 0,
+
           warn: outsideWarn,
           errorText: _required(c.outsideTread.text),
-          onChanged: (_) => _calculate(),
+          onChanged: (_) {
+            setState(() {});
+            _calculate();
+          },
           validator: _required,
         ),
 
@@ -138,7 +151,10 @@ class _Step3ViewState extends State<Step3View> {
           percent: insidePercent ?? 0,
           warn: insideWarn,
           errorText: _required(c.outsideTread.text),
-          onChanged: (_) => _calculate(),
+          onChanged: (_) {
+            setState(() {});
+            _calculate();
+          },
           validator: _required,
         ),
 
@@ -216,7 +232,7 @@ class _Step3ViewState extends State<Step3View> {
           TextFormField(
             controller: controller,
             keyboardType: TextInputType.number,
-            validator: null,
+            validator: validator,
             onChanged: onChanged,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             decoration: InputDecoration(
@@ -229,10 +245,9 @@ class _Step3ViewState extends State<Step3View> {
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: warn ? Colors.red : Colors.grey),
               ),
-              suffixText:
-                  (controller.text.isEmpty || percent == null || percent == 0)
+              suffixText: (warn && controller.text.trim().isNotEmpty)
                   ? null
-                  : "${percent.toInt()}% worn",
+                  : "${percent.toStringAsFixed(0)}% worn",
               suffixStyle: const TextStyle(
                 color: Colors.black, // ALWAYS BLACK
                 fontWeight: FontWeight.bold,
@@ -240,12 +255,14 @@ class _Step3ViewState extends State<Step3View> {
             ),
           ),
 
-          // 🔴 WARNING MESSAGE
-          if (warn)
+          /// 🔴 WARNING MESSAGE
+          if (warn || controller.text.trim().isEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 6),
               child: Text(
-                "${percent.toInt()}% worn - Warning, you are decreasing tread on a tire past it's set pull point.",
+                controller.text.trim().isEmpty
+                    ? "This field is required"
+                    : "${percent.toInt()}% worn - Warning, you are decreasing tread on a tire past it's set pull point.",
                 style: const TextStyle(
                   color: Colors.red,
                   fontSize: 12,
@@ -254,8 +271,8 @@ class _Step3ViewState extends State<Step3View> {
               ),
             ),
 
-          /// ⚠️ VALIDATION BELOW WARNING
-          if (errorText != null)
+          /// ⚠️ VALIDATION BELOW WARNING (OPTIONAL SECOND ERROR)
+          if (errorText != null && controller.text.trim().isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Text(

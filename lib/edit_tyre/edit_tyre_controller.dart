@@ -1,11 +1,14 @@
 import 'package:emtrack/create_tyre/app_loader.dart';
 import 'package:emtrack/edit_tyre/edit_tyre_model.dart';
 import 'package:emtrack/edit_tyre/edit_tyre_service.dart';
+import 'package:emtrack/routes/app_pages.dart';
 import 'package:emtrack/services/master_data_service.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:emtrack/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../utils/app_dialog.dart';
 
 class EditTyreController extends GetxController {
   // ================= STEPPER =================
@@ -332,23 +335,19 @@ class EditTyreController extends GetxController {
   }
 
   void cancelDialog() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.defaultDialog(
-        title: "Cancel Request",
-        middleText: "Are you sure you want to cancel?",
-        textCancel: "No",
-        textConfirm: "Yes",
-        onConfirm: () {
-          // Close dialog
-          Get.back();
-          Get.back();
-        },
-        onCancel: () {
-          Get.back();
-          Get.back(); // Nothing, just close dialog
-        },
-      );
-    });
+    AppDialog.showConfirmDialog(
+      title: "Cancel Request",
+
+      message: "Are you sure you want to cancel? You will\n lose unsaved data.",
+      okText: "Yes",
+      onOk: () {
+        Get.back(closeOverlays: true);
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Get.offAllNamed(AppPages.HOME);
+        });
+      },
+    );
   }
 
   Future<void> loadMasterData() async {

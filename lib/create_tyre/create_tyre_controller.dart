@@ -151,59 +151,59 @@ class CreateTyreController extends GetxController {
     super.onInit();
     _initScreen();
   }
-Future<void> _initScreen() async {
-  try {
-    isPageLoading.value = true;
 
-    /// 🔥 Load Masters First
-    await loadMasterData();
+  Future<void> _initScreen() async {
+    try {
+      isPageLoading.value = true;
 
-    final arg = Get.arguments;
+      /// 🔥 Load Masters First
+      await loadMasterData();
 
-    /// ⭐ CLONE FLOW
-    if (arg is int && arg > 0) {
-      tireId = arg;
-      await loadTyreForClone(tireId!);
+      final arg = Get.arguments;
+
+      /// ⭐ CLONE FLOW
+      if (arg is int && arg > 0) {
+        tireId = arg;
+        await loadTyreForClone(tireId!);
+      }
+
+      /// ⭐ DEFAULT CREATE VALUES (works for both)
+      _setDefaultValues();
+    } catch (e) {
+      print("❌ Init Screen Error $e");
+    } finally {
+      isPageLoading.value = false;
     }
-
-    /// ⭐ DEFAULT CREATE VALUES (works for both)
-    _setDefaultValues();
-
-  } catch (e) {
-    print("❌ Init Screen Error $e");
-  } finally {
-    isPageLoading.value = false;
   }
-}
 
-void _setDefaultValues() {
+  void _setDefaultValues() {
+    manufacturerId.addListener(checkStarEnable);
+    sizeId.addListener(checkStarEnable);
 
-  manufacturerId.addListener(checkStarEnable);
-  sizeId.addListener(checkStarEnable);
+    final now = DateTime.now();
 
-  final now = DateTime.now();
+    registeredDate.text =
+        "${now.day.toString().padLeft(2, '0')}/"
+        "${now.month.toString().padLeft(2, '0')}/"
+        "${now.year}";
 
-  registeredDate.text =
-      "${now.day.toString().padLeft(2, '0')}/"
-      "${now.month.toString().padLeft(2, '0')}/"
-      "${now.year}";
+    registeredDateApi = now.toUtc().toIso8601String();
 
-  registeredDateApi = now.toUtc().toIso8601String();
+    model.dispositionId = 8;
+    dispositionText.value = "Inventory";
 
-  model.dispositionId = 8;
-  dispositionText.value = "Inventory";
+    model.tireStatusId = 7;
 
-  model.tireStatusId = 7;
+    model.trackingMethod = "Hours";
+    trackingMethodText.value = "Hours";
 
-  model.trackingMethod = "Hours";
-  trackingMethodText.value = "Hours";
+    model.mountStatus = "Not Mounted";
+    model.isMountToRim = false;
 
-  model.mountStatus = "Not Mounted";
-  model.isMountToRim = false;
+    model.numberOfRetreads = 0;
+    numberOfRetreadsVal.value = 0;
+  }
 
-  model.numberOfRetreads = 0;
-  numberOfRetreadsVal.value = 0;
-}
   // ================= NET COST =================
   void calculateNetCost() {
     double a = double.tryParse(purchaseCost.text) ?? 0;
@@ -344,7 +344,7 @@ void _setDefaultValues() {
     model.compoundId = selectedCompoundId.value;
     model.loadRatingId = selectedLoadRatingId.value;
     model.speedRatingId = selectedSpeedRatingId.value;
-    model.fillTypeId = int.parse(selectedFillTypeId.toString());
+    model.fillTypeId = int.tryParse(selectedFillTypeId.toString()) ?? 0;
 
     // ================= STEP 3: Tread measurements =================
     model.originalTread = double.tryParse(originalTread.text) ?? 0;

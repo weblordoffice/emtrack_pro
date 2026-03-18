@@ -106,7 +106,9 @@ class AllTyresView extends StatelessWidget {
                           ),
                           child: ListTile(
                             title: Text(
-                              tyre.tireSerialNo ?? "-",
+                              (tyre.brandNo != null)
+                                  ? "${tyre.tireSerialNo ?? '-'} / ${tyre.brandNo}"
+                                  : (tyre.tireSerialNo ?? '-'),
                               style: const TextStyle(
                                 color: AppColors.buttonDanger,
                                 fontWeight: FontWeight.bold,

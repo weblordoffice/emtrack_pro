@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 
-class VehicleDiagramRotateTyres extends StatelessWidget {
+import '../create_tyre/tyre_rotation_controller.dart';
+import '../models/tyre_drag_data.dart';
+
+class VehicleDiagramRotateTyres extends StatefulWidget {
   const VehicleDiagramRotateTyres({super.key});
+
+  @override
+  State<VehicleDiagramRotateTyres> createState() =>
+      _VehicleDiagramRotateTyresState();
+}
+
+/// ================= TYRE STATE =================
+
+class _VehicleDiagramRotateTyresState extends State<VehicleDiagramRotateTyres> {
+  /// ================= BUILD =================
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +26,6 @@ class VehicleDiagramRotateTyres extends StatelessWidget {
         /// L R
         const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
           children: [
             Text(
               'L',
@@ -34,79 +46,85 @@ class VehicleDiagramRotateTyres extends StatelessWidget {
             ),
           ],
         ),
+
         const SizedBox(height: 14),
 
         /// AXLE 1
-        _axle(
-          axleNo: '1',
-          left: _TyreData(
-            serial: 'F3R284522',
-            percent: '57%',
-            percentColor: const Color(0xFFB57B1C),
-            borderColor: const Color(0xFFB57B1C),
-            p: '0',
-            to: '33',
-            ti: '33',
-            miles: '0 Miles\n4592 hrs',
-          ),
-          right: _TyreData(
-            serial: 'XES7843AB',
-            percent: '19%',
-            percentColor: Colors.green,
-            borderColor: Colors.green,
-            p: '90',
-            to: '47',
-            ti: '47',
-            miles: '5 Miles\n1200 hrs',
-          ),
-        ),
+        _axle(axleNo: '1', leftIndex: 0, rightIndex: 1),
 
         const SizedBox(height: 26),
 
         /// AXLE 2
-        _axle(
-          axleNo: '2',
-          left: _TyreData(
-            serial: 'F3R382561',
-            percent: '61%',
-            percentColor: const Color(0xFFB57B1C),
-            borderColor: const Color(0xFFB57B1C),
-            p: '0',
-            to: '30',
-            ti: '30',
-            miles: '0 Miles\n4592 hrs',
-          ),
-          right: _TyreData(
-            serial: 'F3R383276',
-            percent: '51%',
-            percentColor: const Color(0xFFB57B1C),
-            borderColor: const Color(0xFFB57B1C),
-            p: '0',
-            to: '37',
-            ti: '37',
-            miles: '0 Miles\n4592 hrs',
-          ),
-        ),
+        _axle(axleNo: '2', leftIndex: 2, rightIndex: 3),
       ],
     );
   }
 
-  /* ================= AXLE ================= */
+  /// ================= AXLE =================
 
-  static Widget _axle({
+  Widget _axle({
     required String axleNo,
-    required _TyreData left,
-    required _TyreData right,
+    required int leftIndex,
+    required int rightIndex,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [_tyre(left), _axleCenter(axleNo), _tyre(right)],
+      children: [
+        _tyreSlot(leftIndex),
+        _axleCenter(axleNo),
+        _tyreSlot(rightIndex),
+      ],
     );
   }
 
-  /* ================= TYRE ================= */
+  Widget _tyreSlot(int index) {
+    final controller = TyreRotationController.instance;
+    final data = controller.tyres[index];
 
-  static Widget _tyre(_TyreData d) {
+    return DragTarget<TyreDragData>(
+      onWillAccept: (drag) => drag != null && drag.slotIndex != index,
+      onAccept: (drag) {
+        setState(() {
+          final controller = TyreRotationController.instance;
+
+          /// From buffer
+          if (drag.slotIndex == -1) {
+            controller.placeFromBuffer(index);
+            return;
+          }
+
+          /// Swap
+          if (controller.tyres[index] != null) {
+            controller.swapTyres(drag.slotIndex, index);
+          }
+          /// Move
+          else {
+            controller.moveTyre(drag.slotIndex, index);
+          }
+        });
+      },
+
+      builder: (context, candidateData, rejectedData) {
+        if (data == null) {
+          return _emptyTyre();
+        }
+
+        return Draggable<TyreDragData>(
+          data: TyreDragData(diagramIndex: 0, slotIndex: index),
+          feedback: Material(
+            color: Colors.transparent,
+            child: _tyreUI(data, dragging: true),
+          ),
+          childWhenDragging: _emptyTyre(),
+          child: _tyreUI(data),
+        );
+      },
+    );
+  }
+
+  /// ================= TYRE UI =================
+
+  Widget _tyreUI(d, {bool dragging = false}) {
     return Column(
       children: [
         _serial(d.serial),
@@ -115,7 +133,7 @@ class VehicleDiagramRotateTyres extends StatelessWidget {
           width: 95,
           height: 160,
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: dragging ? Colors.blue : Colors.black,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: d.borderColor, width: 4),
           ),
@@ -142,7 +160,21 @@ class VehicleDiagramRotateTyres extends StatelessWidget {
     );
   }
 
-  static Widget _serial(String text) {
+  Widget _emptyTyre() {
+    return Container(
+      width: 95,
+      height: 160,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.grey, width: 2),
+      ),
+      child: const Center(child: Icon(Icons.open_with, color: Colors.grey)),
+    );
+  }
+
+  /// ================= SMALL UI HELPERS =================
+
+  Widget _serial(String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
@@ -156,7 +188,7 @@ class VehicleDiagramRotateTyres extends StatelessWidget {
     );
   }
 
-  static Widget _percent(String text, Color color) {
+  Widget _percent(String text, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -173,7 +205,7 @@ class VehicleDiagramRotateTyres extends StatelessWidget {
     );
   }
 
-  static Widget _value(String l, String v) {
+  Widget _value(String l, String v) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Text(
@@ -183,9 +215,7 @@ class VehicleDiagramRotateTyres extends StatelessWidget {
     );
   }
 
-  /* ================= AXLE CENTER ================= */
-
-  static Widget _axleCenter(String no) {
+  Widget _axleCenter(String no) {
     return Column(
       children: [
         Container(width: 4, height: 60, color: Colors.grey.shade700),
@@ -206,34 +236,4 @@ class VehicleDiagramRotateTyres extends StatelessWidget {
   }
 }
 
-/* ================= HELPERS ================= */
-
-class _Dot extends StatelessWidget {
-  final Color color;
-  const _Dot(this.color);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 10,
-      height: 10,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-    );
-  }
-}
-
-class _TyreData {
-  final String serial, percent, p, to, ti, miles;
-  final Color borderColor, percentColor;
-
-  _TyreData({
-    required this.serial,
-    required this.percent,
-    required this.percentColor,
-    required this.borderColor,
-    required this.p,
-    required this.to,
-    required this.ti,
-    required this.miles,
-  });
-}
+/// ================= MODEL =================

@@ -47,11 +47,11 @@ class _HomeViewState extends State<HomeView> {
       // Dialog message
       final String message = isTyre
           ? (args["type"] == "update"
-                ? "Tire updated successfully 🎉"
-                : "New Tire submitted successfully 🎉")
+                ? "Tire updated successfully"
+                : "New Tire submitted successfully")
           : (args["type"] == "update"
-                ? "Vehicle updated successfully 🎉"
-                : "New Vehicle Created successfully. 🎉");
+                ? "Vehicle updated successfully"
+                : "New Vehicle Created successfully.");
 
       // Number text
       final String numberText = isTyre
