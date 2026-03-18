@@ -325,57 +325,55 @@ class VehicleInspeView extends StatelessWidget {
             const SizedBox(height: 20),
 
             /// UPLOAD IMAGES
-            Obx(
-              () => Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child:
-                          // c.uploadedImages.isEmpty
-                          //     ?
-                          const Text(
-                            'Upload Images',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                      // : SizedBox(
-                      //     height: 80,
-                      //     child: ListView.builder(
-                      //       scrollDirection: Axis.horizontal,
-                      //       itemCount: c.uploadedImages.length,
-                      //       itemBuilder: (_, i) => Padding(
-                      //         padding: const EdgeInsets.only(right: 8.0),
-                      //         child: Image.file(c.uploadedImages[i]),
-                      //       ),
-                      //     ),
-                      //   ),
-                    ),
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                          color: Colors.red, // 👉 outline color
-                          width: 1.5,
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade400),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child:
+                        // c.uploadedImages.isEmpty
+                        //     ?
+                        const Text(
+                          'Upload Images',
+                          style: TextStyle(fontSize: 16),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                    // : SizedBox(
+                    //     height: 80,
+                    //     child: ListView.builder(
+                    //       scrollDirection: Axis.horizontal,
+                    //       itemCount: c.uploadedImages.length,
+                    //       itemBuilder: (_, i) => Padding(
+                    //         padding: const EdgeInsets.only(right: 8.0),
+                    //         child: Image.file(c.uploadedImages[i]),
+                    //       ),
+                    //     ),
+                    //   ),
+                  ),
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(
+                        color: Colors.red, // 👉 outline color
+                        width: 1.5,
                       ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
 
-                      onPressed: () {
-                        openImagePicker(c);
-                      },
-                      icon: const Icon(Icons.camera_alt, color: Colors.red),
-                      label: const Text(
-                        'Upload',
-                        style: TextStyle(color: Colors.red),
-                      ),
+                    onPressed: () {
+                      openImagePicker(c);
+                    },
+                    icon: const Icon(Icons.camera_alt, color: Colors.red),
+                    label: const Text(
+                      'Upload',
+                      style: TextStyle(color: Colors.red),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
 
@@ -384,64 +382,59 @@ class VehicleInspeView extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            Obx(
-              () => Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 250,
-                      width: 700,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: c.uploadedImages.length,
-                        itemBuilder: (_, i) => Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child:
-                              //Image.file(c.uploadedImages[i]),
-                              Stack(
-                                children: [
-                                  /// IMAGE CARD
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.file(
-                                      c.uploadedImages[i],
-                                      width: 200,
-                                      height: 200,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+            Obx(() {
+              if (c.uploadedImages.isEmpty) {
+                return const SizedBox(); // 🔥 No height when no image
+              }
 
-                                  /// DELETE ICON
-                                  Positioned(
-                                    top: 5,
-                                    right: 5,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        c.uploadedImages.removeAt(i);
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(4),
-                                        decoration: const BoxDecoration(
-                                          color: Colors.black54,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.delete,
-                                          size: 16,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+              return SizedBox(
+                height: 220, // height only when images exist
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: c.uploadedImages.length,
+                  itemBuilder: (_, i) => Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Stack(
+                      children: [
+                        /// IMAGE CARD
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.file(
+                            c.uploadedImages[i],
+                            width: 200,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
+
+                        /// DELETE ICON
+                        Positioned(
+                          top: 5,
+                          right: 5,
+                          child: GestureDetector(
+                            onTap: () {
+                              c.uploadedImages.removeAt(i);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.black54,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.delete,
+                                size: 16,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            }),
 
             /// SUBMIT
             Obx(
