@@ -527,4 +527,10 @@ class UpdateVehicleController extends GetxController {
     vehicleIdCtrl.dispose();
     super.onClose();
   }
+
+  setremoveZero(dynamic value) {
+    double d = double.tryParse(value.toString()) ?? 0;
+
+    currentHoursCtrl.text = d % 1 == 0 ? d.toInt().toString() : d.toString();
+  }
 }

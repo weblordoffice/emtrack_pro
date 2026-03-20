@@ -215,7 +215,7 @@ class UpdateVehicleView extends StatelessWidget {
             label("Current Hours"),
             Obx(
               () => TextField(
-                controller: vc.currentHoursCtrl,
+                controller: vc.setremoveZero(vc.currentHours),
                 decoration: InputDecoration(
                   hintText: '0',
                   border: OutlineInputBorder(
@@ -427,7 +427,7 @@ class UpdateVehicleView extends StatelessWidget {
             label("Removal Tread"),
             Obx(
               () => TextField(
-                controller: vc.removalTreadCtrl,
+                controller: vc.setremoveZero(vc.removalTreadCtrl),
                 decoration: InputDecoration(
                   hintText: 'Removal Tread',
                   border: OutlineInputBorder(

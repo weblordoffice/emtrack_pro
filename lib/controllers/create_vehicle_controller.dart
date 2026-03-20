@@ -1,7 +1,6 @@
 import 'package:emtrack/routes/app_pages.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:emtrack/controllers/all_vehicles_controller.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/masterDataMobileModel/tire_size_model.dart';
@@ -147,14 +146,19 @@ class VehicleController extends GetxController {
 
     manufacturerId.value = m.manufacturerId;
 
+    /// DEPENDENT → TYPE
     typeList.value = types
         .where((t) => t.manufacturerId == manufacturerId.value)
         .map((e) => e.typeName)
         .toSet()
         .toList();
 
+    /// RESET DOWNSTREAM
     type.value = '';
     typeId.value = 0;
+
+    modelList.clear();
+    tyreSizeList.clear();
 
     if (typeList.isEmpty) _showDialog('Type');
   }
@@ -167,6 +171,19 @@ class VehicleController extends GetxController {
       (e) => e.typeName == value,
       orElse: () => types.first,
     );
+
+    /// DEPENDENT → MODEL
+    modelList.value = models
+        .where((m) => m.vehicleTypeId == typeId.value)
+        .map((e) => e.modelName)
+        .toSet()
+        .toList();
+
+    /// RESET DOWNSTREAM
+    model.value = '';
+    modelId.value = 0;
+
+    tyreSizeList.clear();
 
     typeId.value = t.typeId;
   }
