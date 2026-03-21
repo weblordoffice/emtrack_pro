@@ -1,6 +1,7 @@
 import 'package:emtrack/create_tyre/create_tyre_screen.dart';
 import 'package:emtrack/inspection/vehicle_inspe_model.dart';
 import 'package:emtrack/inspection/vehicle_inspe_view.dart';
+import 'package:emtrack/routes/app_pages.dart';
 
 import 'package:emtrack/search_tyre_vehicle/search_vehicle_tyre_controller.dart';
 import 'package:emtrack/search_tyre_vehicle/tire_item_model.dart';
@@ -26,7 +27,7 @@ class SearchVehicleTyreView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// MAIN SEARCH BAR
-            /// 
+            ///
             Padding(
               padding: const EdgeInsets.all(12),
               child: GestureDetector(
@@ -213,7 +214,7 @@ class SearchVehicleTyreView extends StatelessWidget {
                                       if (c.selectedTab.value == 0) {
                                         Get.to(() => CreateVehicleView());
                                       } else {
-                                        Get.to(() => CreateTyreScreen());
+                                        Get.toNamed(AppPages.CREATE_TYRE);
                                       }
                                     },
                                   ),

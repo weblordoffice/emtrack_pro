@@ -1,7 +1,5 @@
-import 'package:emtrack/models/user_models.dart';
 import 'package:emtrack/user_management/user_list_model.dart';
 import 'package:emtrack/user_management/user_management_list_service.dart';
-import 'package:emtrack/user_management/user_management_model.dart';
 import 'package:get/get.dart';
 
 class UserManagementListController extends GetxController {

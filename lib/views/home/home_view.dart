@@ -11,6 +11,7 @@ import 'package:emtrack/views/view_inspection_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/home_controller.dart';
+import '../../utils/app_snackbar.dart';
 import 'home_drawer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -67,16 +68,18 @@ class _HomeViewState extends State<HomeView> {
 
       print("DEBUG: vehicleId = $vehicleId"); // Debug print
 
-      Get.snackbar(
-        "Success",
-        "$message\n$numberText",
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-        margin: const EdgeInsets.all(10),
-        borderRadius: 8,
-        duration: const Duration(seconds: 3),
-      );
+      // Get.snackbar(
+      //   "Success",
+      //   "$message\n$numberText",
+      //   backgroundColor: Colors.green,
+      //   colorText: Colors.white,
+      //   snackPosition: SnackPosition.TOP,
+      //   margin: const EdgeInsets.all(10),
+      //   borderRadius: 8,
+      //   duration: const Duration(seconds: 3),
+      // );
+
+      AppSnackbar.success("$message\n$numberText");
 
       Future.delayed(const Duration(seconds: 3), () {
         if (!isTyre && vehicleId != null) {

@@ -19,6 +19,9 @@ class UserManagementController extends GetxController {
   final personalFormKey = GlobalKey<FormState>();
   final preferenceFormKey = GlobalKey<FormState>();
 
+  final firstNameFocus = FocusNode();
+  final middleNameFocus = FocusNode();
+
   /// 🔹 Text Controllers (DATA SAFE RAHEGA)
   final usernameC = TextEditingController();
   final passwordC = TextEditingController();
@@ -66,12 +69,16 @@ class UserManagementController extends GetxController {
 
   /// Navigation
   void next() {
-    if (currentStep.value == 0 && loginFormKey.currentState!.validate()) {
-      currentStep.value++;
-    } else if (currentStep.value == 1 &&
-        personalFormKey.currentState!.validate()) {
-      currentStep.value++;
-    }
+    Get.focusScope?.unfocus();
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (currentStep.value == 0 && loginFormKey.currentState!.validate()) {
+        currentStep.value++;
+      } else if (currentStep.value == 1 &&
+          personalFormKey.currentState!.validate()) {
+        currentStep.value++;
+      }
+    });
   }
 
   void previous() {

@@ -7,6 +7,7 @@ import 'package:emtrack/utils/app_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+
 class CreateVehicleView extends StatelessWidget {
   final vc = Get.put(VehicleController());
   final allVehicleController = Get.isRegistered<AllVehicleController>()

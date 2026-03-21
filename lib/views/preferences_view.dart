@@ -202,22 +202,49 @@ class PreferencesView extends GetView<PreferencesController> {
                     ), // ✅ border below title
                   ],
                 ),
-                content: Obx(
-                  () => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: items.map((e) {
-                      return ListTile(
-                        title: Text(e),
-                        trailing: tempValue.value == e
-                            ? const Icon(Icons.check, color: Colors.green)
-                            : null,
-                        onTap: () {
-                          tempValue.value = e;
-                        },
+
+                /// ⭐ FIXED HEIGHT + SCROLL
+                content: SizedBox(
+                  height: 250, // ⭐ you can adjust
+                  width: Get.width * .8,
+                  child: ListView.builder(
+                    itemCount: items.length,
+                    shrinkWrap: true,
+                    itemBuilder: (_, i) {
+                      final e = items[i];
+                      return Obx(
+                        () => ListTile(
+                          dense: true,
+                          title: Text(e),
+                          trailing: tempValue.value == e
+                              ? const Icon(Icons.check, color: Colors.green)
+                              : null,
+                          onTap: () {
+                            tempValue.value = e;
+                          },
+                        ),
                       );
-                    }).toList(),
+                    },
                   ),
                 ),
+
+                // content: Obx(
+                //   () => Column(
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: items.map((e) {
+                //       return ListTile(
+                //         minTileHeight: 25,
+                //         title: Text(e),
+                //         trailing: tempValue.value == e
+                //             ? const Icon(Icons.check, color: Colors.green)
+                //             : null,
+                //         onTap: () {
+                //           tempValue.value = e;
+                //         },
+                //       );
+                //     }).toList(),
+                //   ),
+                // ),
                 actionsPadding: EdgeInsets.zero,
                 actions: [
                   const Divider(
@@ -242,12 +269,7 @@ class PreferencesView extends GetView<PreferencesController> {
                           child: const Text('Cancel'),
                         ),
                       ),
-                      Container(
-                        width: 1,
-                        height: 48,
-                        color:
-                            Colors.grey, // vertical separator between buttons
-                      ),
+                      Container(width: 1, height: 48, color: Colors.grey),
                       Expanded(
                         child: TextButton(
                           onPressed: () {

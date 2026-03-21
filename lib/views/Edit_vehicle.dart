@@ -5,6 +5,9 @@ import 'package:emtrack/controllers/update_vehicle_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../routes/app_pages.dart';
+import '../utils/app_dialog.dart';
+
 class UpdateVehicleView extends StatelessWidget {
   final vc = Get.put(UpdateVehicleController());
   final allVehicleController = Get.isRegistered<AllVehicleController>();
@@ -511,10 +514,10 @@ class UpdateVehicleView extends StatelessWidget {
                           : Colors.grey,
                     ),
                   ),
-                  errorText: vc.commentsError.value.isNotEmpty
-                      ? vc.commentsError.value
-                      : null,
-                  errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
+                  //   errorText: vc.commentsError.value.isNotEmpty
+                  //       ? vc.commentsError.value
+                  //       : null,
+                  //   errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
                 maxLines: null,
                 onChanged: (v) {
@@ -696,7 +699,17 @@ class UpdateVehicleView extends StatelessWidget {
 
             Center(
               child: TextButton(
-                onPressed: () => Get.back(),
+                onPressed: () => AppDialog.showConfirmDialog(
+                  title: 'Cancel Request',
+                  message:
+                      'Are you sure you want to cancel? You will \n lose unsaved data.',
+                  onOk: () {
+                    Get.back();
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Get.offAllNamed(AppPages.HOME);
+                    });
+                  },
+                ),
                 child: Text(
                   'Cancel',
                   style: TextStyle(color: AppColors.buttonDanger),

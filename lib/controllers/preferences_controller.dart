@@ -17,14 +17,19 @@ class PreferencesController extends GetxController {
   final pressureUnits = ['PSI', 'KPA', 'Bar'];
   final languages = [
     'English (US/Canada)',
-    'English (UK/Australia)',
-    'Hindi',
     'Español',
+    'English(uk/Australia)',
     'Deutsche',
     'Italiano',
+    'français',
+    '中文',
+    'русский',
+    'português',
+    'polski',
+    'serbian',
   ];
   // 🔹 Selected values
-  RxString selectedLanguage = 'English (UK/Australia)'.obs;
+  RxString selectedLanguage = 'English (US/Canada)'.obs;
   RxString selectedMeasurement = 'Imperial'.obs;
   RxString selectedPressure = 'PSI'.obs;
   //=========

@@ -1,6 +1,7 @@
 import 'package:emtrack/models/user_models.dart';
 import 'package:emtrack/routes/app_pages.dart';
 import 'package:emtrack/user_management/user_management_list_controller.dart';
+import 'package:emtrack/utils/app_dialog.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -98,19 +99,29 @@ class UserManagementListView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    user.userRole.toString(),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
+                  // Text(
+                  //   user.userRole.toString(),
+                  //   style: const TextStyle(
+                  //     fontWeight: FontWeight.bold,
+                  //     fontSize: 16,
+                  //   ),
+                  // ),
                   if (user.firstName != null && user.firstName!.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
-                      child: Text("${user.firstName}   ${user.firstName}"),
+                      child: Text(
+                        "${user.firstName}   ${user.lastName}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
-                  if (user.phoneNumber!.isNotEmpty) Text(user.phoneNumber!),
+                  Text(
+                    user.userRole.toString(),
+                    style: const TextStyle(fontSize: 12),
+                  ),
+
                   const SizedBox(height: 6),
                   Text(
                     "phone: ${user.phoneNumber ?? 'N/A'}",
@@ -123,8 +134,13 @@ class UserManagementListView extends StatelessWidget {
             /// 🗑 DELETE
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () =>
-                  Get.find<UserManagementListController>().deleteUser(user),
+              onPressed: () => AppDialog.showConfirmDialog(
+                title: 'Delete User',
+                message: 'Are you sure you want to delete this user? ?',
+                onOk: () {
+                  Get.find<UserManagementListController>().deleteUser(user);
+                },
+              ),
             ),
           ],
         ),

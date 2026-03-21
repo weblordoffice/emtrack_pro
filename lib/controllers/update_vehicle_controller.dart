@@ -10,6 +10,7 @@ import '../models/masterDataMobileModel/vehicle_model_item_model.dart';
 import '../models/masterDataMobileModel/vehicle_type_model.dart';
 import '../models/vehicle_model.dart';
 import '../services/master_data_service.dart';
+import '../utils/app_snackbar.dart';
 
 class UpdateVehicleController extends GetxController {
   final UpdateVehicleService _vehicleService = UpdateVehicleService();
@@ -387,7 +388,11 @@ class UpdateVehicleController extends GetxController {
     }
 
     Get.offAll(() => HomeView());
-    Get.snackbar('Success', 'Vehicle Updated Successfully');
+    AppSnackbar.success(
+      'Vehicle Updated Successfully',
+      title: 'Vehicle Updated Successfully',
+    );
+    // Get.snackbar('Success', 'Vehicle Updated Successfully');
     resetForm();
   }
 
@@ -464,11 +469,11 @@ class UpdateVehicleController extends GetxController {
     }
 
     // Vehicle Comments
-    final cErr = required(comments.value);
-    if (cErr != null) {
-      commentsError.value = cErr;
-      isValid = false;
-    }
+    // final cErr = required(comments.value);
+    // if (cErr != null) {
+    //   commentsError.value = cErr;
+    //   isValid = false;
+    // }
 
     return isValid;
   }

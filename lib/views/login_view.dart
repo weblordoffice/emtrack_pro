@@ -205,7 +205,7 @@ class LoginView extends StatelessWidget {
               right: 0,
               child: Center(
                 child: Text(
-                  "@2025 The Goodyear Tire & Rubber Company",
+                  "@2025 The Yokohama Rubber Co.Ltd.",
                   style: TextStyle(color: AppColors.textGrey, fontSize: 12),
                 ),
               ),
