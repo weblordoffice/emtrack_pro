@@ -20,6 +20,8 @@ class HomeService {
 
       final uri = Uri.parse("${ApiConstants.baseUrl}/dashboard");
 
+      print("🔍 DASHBOARD API: $uri");
+
       final resp = await http.get(
         uri,
         headers: {
@@ -29,12 +31,13 @@ class HomeService {
         },
       );
 
-      print("DASHBOARD STATUS => ${resp.statusCode}");
-      print("DASHBOARD BODY => ${resp.body}");
+      print("🔍 DASHBOARD STATUS => ${resp.statusCode}");
+      print("🔍 DASHBOARD BODY => ${resp.body}");
 
       if (resp.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(resp.body);
         final payload = data['data'] ?? data;
+        print("🔍 DASHBOARD PAYLOAD => $payload");
         return HomeModel.fromJson(payload as Map<String, dynamic>);
       }
 
@@ -103,6 +106,9 @@ class HomeService {
         "${ApiConstants.baseUrl}/api/Tire/GetTiresByAccount/$parentAccountId",
       );
 
+      print("🔍 TYRE COUNT API: $uri");
+      print("🔍 PARENT ACCOUNT ID: $parentAccountId");
+
       final resp = await http.get(
         uri,
         headers: {"Content-Type": "application/json", "Cookie": cookie},
@@ -116,9 +122,12 @@ class HomeService {
       if (resp.statusCode == 200) {
         final json = jsonDecode(resp.body);
         final List list = json['model'] ?? [];
+        print("🔍 TYRE COUNT RESPONSE: ${list.length} tires");
+        print("🔍 TYRE RESPONSE BODY: ${resp.body}");
         return list.length; // ✅ TOTAL TYRES
       } else {
         print("Tyre API error ${resp.statusCode}");
+        print("Tyre API response: ${resp.body}");
         return 0;
       }
     } catch (e) {
@@ -142,15 +151,16 @@ class HomeService {
         "?timeStamp=$timeStamp", // ✅ query timestamp
       );
 
-      print("🌐 URL => $uri");
+      print("🔍 VEHICLE COUNT API: $uri");
+      print("🔍 PARENT ACCOUNT ID: $parentAccountId");
 
       final resp = await http.get(
         uri,
         headers: {"Accept": "application/json", "Cookie": cookie},
       );
 
-      print("📡 STATUS => ${resp.statusCode}");
-      print("📦 BODY => ${resp.body}");
+      print("📡 VEHICLE STATUS => ${resp.statusCode}");
+      print("📦 VEHICLE BODY => ${resp.body}");
 
       if (resp.statusCode == 200) {
         final json = jsonDecode(resp.body);
@@ -161,10 +171,12 @@ class HomeService {
         }
 
         final List list = json['model'] ?? [];
+        print("🔍 VEHICLE COUNT RESPONSE: ${list.length} vehicles");
         return list.length;
       }
 
       print("❌ Vehicle API error ${resp.statusCode}");
+      print("❌ Vehicle API response: ${resp.body}");
       return 0;
     } catch (e) {
       print("🔥 Vehicle API exception => $e");
@@ -173,24 +185,47 @@ class HomeService {
   }
 
   static Future<DashboardModel?> fetchReportDashboardHomeData() async {
+    print("🔍 HOME SERVICE: fetchReportDashboardHomeData started!");
     final parentAccountId = await SecureStorage.getParentAccountId();
     final getLocationId = await SecureStorage.getLocationId();
 
+    print("🔍 DASHBOARD REPORT API - Parent Account ID: $parentAccountId");
+    print("🔍 DASHBOARD REPORT API - Location ID: $getLocationId");
+
     try {
       final cookie = await SecureStorage.getCookie();
+      print("🔍 DASHBOARD REPORT API - Cookie: ${cookie?.substring(0, 20)}...");
 
       if (cookie == null || cookie.isEmpty) {
+        print("🔍 DASHBOARD REPORT API - No cookie found!");
         throw Exception("Session expired. Please login again.");
       }
 
+      print("🔍 DASHBOARD REPORT API - Making POST request...");
       final resp = await ApiService.postApi(
         endpoint: "/api/Report/GetReportDashboardData",
         body: {"accountIds": parentAccountId, "locationIds": getLocationId},
       );
 
+      print("🔍 DASHBOARD REPORT RESPONSE: $resp");
+
       if (resp['model'] != null) {
         final model = resp["model"];
-        return DashboardModel.fromJson(model);
+        print("🔍 DASHBOARD MODEL: $model");
+        print("🔍 DASHBOARD MODEL FIELDS:");
+        print("  - scrapTireCount: ${model['scrapTireCount']}");
+        print("  - tiresInServiceCount: ${model['tiresInServiceCount']}");
+        print("  - tiresInInventoryCount: ${model['tiresInInventoryCount']}");
+        print("  - vehicleCount: ${model['vehicleCount']}");
+        print("  - totalTiresCount: ${model['totalTiresCount']}");
+
+        final dashboardModel = DashboardModel.fromJson(model);
+        print(
+          "🔍 PARSED DASHBOARD - Total Tires: ${dashboardModel.totalTiresCount}, Vehicles: ${dashboardModel.vehicleCount}",
+        );
+        return dashboardModel;
+      } else {
+        print("🔍 DASHBOARD REPORT API - No model in response!");
       }
 
       if (resp.statusCode == 401 || resp.statusCode == 403) {
@@ -202,7 +237,7 @@ class HomeService {
 
       return null;
     } catch (e) {
-      print('HomeService.fetchHomeData error: $e');
+      print('HomeService.fetchReportDashboardHomeData error: $e');
       return null;
     }
   }

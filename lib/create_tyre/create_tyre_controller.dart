@@ -138,11 +138,10 @@ class CreateTyreController extends GetxController {
   int? tireId;
 
   // ⭐ STAR ENABLE FLAG
-  final RxBool isStarEnabled = false.obs;
+  final RxBool isStarEnabled = true.obs; // Always enabled
 
   void checkStarEnable() {
-    isStarEnabled.value =
-        manufacturerId.text.trim().isNotEmpty && sizeId.text.trim().isNotEmpty;
+    isStarEnabled.value = true; // Always enabled
     update();
   }
 
@@ -671,8 +670,13 @@ class CreateTyreController extends GetxController {
   }
 
   void setStarRating(int value) {
+    print("🔍 CREATE TYRE STAR RATING: Setting rating to $value");
     starRating.value = value;
     starRatingId.text = value.toString();
+    print("🔍 CREATE TYRE STAR RATING: starRating.value = ${starRating.value}");
+    print(
+      "🔍 CREATE TYRE STAR RATING: starRatingId.text = ${starRatingId.text}",
+    );
     update();
   }
 

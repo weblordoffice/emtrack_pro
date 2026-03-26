@@ -63,28 +63,51 @@ class EditTyreService {
     final cookie = await SecureStorage.getCookie();
 
     final url = "${ApiConstants.baseUrl}/api/Tire/GetById/$tireId";
-
     print("🟢 GET Tyre URL => $url"); // 🔹 Debug URL
-
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {"Accept": "application/json", "Cookie": cookie!},
-    );
-
-    print("🟡 RESPONSE STATUS => ${response.statusCode}"); // 🔹 HTTP status
-    print("🟡 RESPONSE BODY => ${response.body}"); // 🔹 Full response
-
-    final decoded = jsonDecode(response.body);
-    print("🔵 DECODED JSON => $decoded"); // 🔹 decoded map
-
-    final modelJson = decoded['model'];
-    print("🔵 MODEL JSON => $modelJson"); // 🔹 sirf model part
-
-    final tyreModel = EditTyreModel.fromJson(modelJson);
     print(
-      "🔵 TyreModel after fromJson => ${tyreModel.toJson()}",
-    ); // 🔹 final model check
+      "🔍 COOKIE CHECK: ${cookie?.substring(0, 20) ?? 'NULL'}...",
+    ); // Debug cookie
 
-    return tyreModel;
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {"Accept": "application/json", "Cookie": cookie!},
+      );
+
+      print("🟡 RESPONSE STATUS => ${response.statusCode}"); // 🔹 HTTP status
+      print("🟡 RESPONSE BODY => ${response.body}"); // 🔹 Full response
+
+      if (response.statusCode != 200) {
+        print("🔴 API ERROR: Status ${response.statusCode}");
+        print("🔴 ERROR BODY: ${response.body}");
+        throw Exception("API Error: ${response.statusCode}");
+      }
+
+      final decoded = jsonDecode(response.body);
+      print("🔵 DECODED JSON => $decoded"); // 🔹 decoded map
+
+      if (decoded['success'] != true) {
+        print("🔴 API SUCCESS FALSE: ${decoded['message'] ?? 'Unknown error'}");
+        throw Exception("API returned success: false");
+      }
+
+      final modelJson = decoded['model'];
+      if (modelJson == null) {
+        print("🔴 MODEL NULL: No model data in response");
+        throw Exception("Model data is null");
+      }
+
+      print("🔵 MODEL JSON => $modelJson"); // 🔹 sirf model part
+
+      final tyreModel = EditTyreModel.fromJson(modelJson);
+      print(
+        "🔵 TyreModel after fromJson => ${tyreModel.toJson()}",
+      ); // 🔹 final model check
+
+      return tyreModel;
+    } catch (e) {
+      print("🔴 CATCH ERROR in getTyreById: $e");
+      rethrow;
+    }
   }
 }

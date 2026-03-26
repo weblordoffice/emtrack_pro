@@ -216,7 +216,7 @@ class _HomeViewState extends State<HomeView> {
                           children: [
                             Obx(
                               () => Text(
-                                "${AppLocalizations.of(context)!.greeting}, ${ctrl.username.value}",
+                                "${AppLocalizations.of(context)!.greeting} ${ctrl.username.value},",
                                 style: TextStyle(
                                   color: AppColors.textWhite,
                                   fontSize: 18,
@@ -346,33 +346,40 @@ class _HomeViewState extends State<HomeView> {
                                               ),
 
                                               SizedBox(width: 10),
-                                              Column(
-                                                children: [
-                                                  Text(
-                                                    'Total Tires',
-                                                    style: TextStyle(
-                                                      color:
-                                                          AppColors.textWhite,
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Total Tires',
+                                                      style: TextStyle(
+                                                        color:
+                                                            AppColors.textWhite,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  SizedBox(height: 6),
-                                                  Text(
-                                                    ctrl
-                                                            .homeCount
-                                                            .value
-                                                            ?.totalTiresCount
-                                                            .toString() ??
-                                                        "0",
+                                                    SizedBox(height: 6),
+                                                    FittedBox(
+                                                      fit: BoxFit.scaleDown,
+                                                      child: Text(
+                                                        ctrl
+                                                                .homeCount
+                                                                .value
+                                                                ?.totalTiresCount
+                                                                .toString() ??
+                                                            "0",
 
-                                                    //    '${ctrl.tyreCount.value}',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 26,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                        //    '${ctrl.tyreCount.value}',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 26,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -437,33 +444,40 @@ class _HomeViewState extends State<HomeView> {
                                                     ),
                                               ),
                                               SizedBox(width: 8),
-                                              Column(
-                                                children: [
-                                                  Text(
-                                                    'Vehicles',
-                                                    style: TextStyle(
-                                                      color:
-                                                          AppColors.textWhite,
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Vehicles',
+                                                      style: TextStyle(
+                                                        color:
+                                                            AppColors.textWhite,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  SizedBox(height: 6),
-                                                  Text(
-                                                    ctrl
-                                                            .homeCount
-                                                            .value
-                                                            ?.vehicleCount
-                                                            .toString() ??
-                                                        "0",
-                                                    //   '${ctrl.vehicleCount.value}',
-                                                    style: TextStyle(
-                                                      color:
-                                                          AppColors.textWhite,
-                                                      fontSize: 26,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                    SizedBox(height: 6),
+                                                    FittedBox(
+                                                      fit: BoxFit.scaleDown,
+                                                      child: Text(
+                                                        ctrl
+                                                                .homeCount
+                                                                .value
+                                                                ?.vehicleCount
+                                                                .toString() ??
+                                                            "0",
+                                                        //   '${ctrl.vehicleCount.value}',
+                                                        style: TextStyle(
+                                                          color: AppColors
+                                                              .textWhite,
+                                                          fontSize: 26,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ],
                                           ),

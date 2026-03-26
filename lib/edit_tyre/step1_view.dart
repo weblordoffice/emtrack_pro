@@ -142,11 +142,16 @@ class Step1View extends StatelessWidget {
               FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d{0,1}')),
             ],
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return "Enter Valid Details";
               }
 
               if (!RegExp(r'^-?\d+(\.\d{1,2})?$').hasMatch(value)) {
+                return "Enter valid number";
+              }
+
+              // Allow "0" as valid value
+              if (double.tryParse(value) == null) {
                 return "Enter valid number";
               }
 

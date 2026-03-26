@@ -12,7 +12,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeTitle => 'Home';
 
   @override
-  String get greeting => 'Welcome!';
+  String get greeting => 'Welcome';
 
   @override
   String get settings => 'Settings';

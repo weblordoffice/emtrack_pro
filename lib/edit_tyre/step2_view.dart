@@ -519,31 +519,43 @@ class _Step2ViewState extends State<Step2View> {
 
         return InkWell(
           onTap: enabled ? () => _starDialog(context) : null,
-          child: InputDecorator(
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: enabled ? Colors.white : Colors.grey.shade50,
-              hintText: "Select",
-              suffixIcon: Icon(
-                Icons.arrow_drop_down,
-                color: enabled ? Colors.black : Colors.grey,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+          child: Container(
+            height: 40,
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300, width: 1),
+              borderRadius: BorderRadius.circular(4),
+              color: enabled ? Colors.white : Colors.grey.shade50,
             ),
-            child: starCount == 0
-                ? Text("Select", style: TextStyle(color: Colors.grey))
-                : Row(
+            child: Row(
+              children: [
+                if (starCount == 0)
+                  Text(
+                    "Select",
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                  )
+                else
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: List.generate(
-                      starCount,
-                      (_) => const Icon(
-                        Icons.star,
-                        color: Colors.orange,
-                        size: 14,
+                      5,
+                      (index) => Icon(
+                        index < starCount ? Icons.star : Icons.star_border,
+                        color: index < starCount
+                            ? Colors.amber
+                            : Colors.grey.shade400,
+                        size: 16,
                       ),
                     ),
                   ),
+                Spacer(),
+                Icon(
+                  Icons.keyboard_arrow_down,
+                  color: Colors.grey.shade600,
+                  size: 20,
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -595,25 +607,31 @@ class _Step2ViewState extends State<Step2View> {
                             ),
                             child: Row(
                               children: [
-                                /// ⭐ STARS
+                                /// STARS (Exactly 5 stars like image)
                                 Row(
                                   children: List.generate(
-                                    starValue,
-                                    (_) => Icon(
-                                      Icons.star,
-                                      color: isSelected
-                                          ? Colors.orange
-                                          : Colors.black,
-                                      size: 14,
+                                    5,
+                                    (index) => Icon(
+                                      index < starValue
+                                          ? Icons.star
+                                          : Icons.star_border,
+                                      color: index < starValue
+                                          ? Colors.amber
+                                          : Colors.grey.shade400,
+                                      size: 16,
                                     ),
                                   ),
                                 ),
 
-                                const Spacer(),
+                                const SizedBox(width: 12),
 
-                                /// ✅ CHECK (RED)
+                                /// CHECK
                                 if (isSelected)
-                                  const Icon(Icons.check, color: Colors.orange),
+                                  const Icon(
+                                    Icons.check,
+                                    color: Colors.amber,
+                                    size: 20,
+                                  ),
                               ],
                             ),
                           ),

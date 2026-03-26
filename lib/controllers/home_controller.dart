@@ -40,8 +40,9 @@ class HomeController extends GetxController {
     loadSelectedAccountData();
     fetchHome();
     fetchReportDashboardDataHome();
-    loadTyreCountByAccount();
-    loadVehicleCountByAccount();
+    // Remove separate API calls - use dashboard data only
+    // loadTyreCountByAccount();
+    // loadVehicleCountByAccount();
   }
 
   // ---------------- LOAD USERNAME ----------------
@@ -74,9 +75,13 @@ class HomeController extends GetxController {
 
   Future<void> fetchReportDashboardDataHome() async {
     isLoading.value = true;
+    print("🔍 HOME CONTROLLER: fetchReportDashboardDataHome called!");
     try {
       final response = await HomeService.fetchReportDashboardHomeData();
       homeCount.value = response;
+      print(
+        "🔍 HOME CONTROLLER: Dashboard data set - ${response?.totalTiresCount} tires, ${response?.vehicleCount} vehicles",
+      );
     } catch (e) {
       print("Home fetch error: $e");
     } finally {
@@ -88,6 +93,9 @@ class HomeController extends GetxController {
   Future<void> refreshHome() async {
     await fetchHome();
     await fetchReportDashboardDataHome();
+    // Remove separate API calls - use dashboard data only
+    // await loadTyreCountByAccount();
+    // await loadVehicleCountByAccount();
   }
 
   // ---------------- SYNC ----------------
@@ -144,11 +152,13 @@ class HomeController extends GetxController {
   Future<void> loadTyreCountByAccount() async {
     try {
       final parentAccountId = await SecureStorage.getParentAccountId();
+      print("🔍 HOME CONTROLLER - PARENT ACCOUNT ID: $parentAccountId");
       if (parentAccountId == null) return;
 
       tyreCount.value = await HomeService.fetchTyreCountByAccount(
         parentAccountId,
       );
+      print("🔍 HOME CONTROLLER - FINAL TYRE COUNT: ${tyreCount.value}");
     } catch (e) {
       print("Tyre count error $e");
     }
@@ -158,12 +168,15 @@ class HomeController extends GetxController {
   Future<void> loadVehicleCountByAccount() async {
     try {
       final parentAccountId = await SecureStorage.getParentAccountId();
+      print(
+        "🔍 HOME CONTROLLER - PARENT ACCOUNT ID (VEHICLE): $parentAccountId",
+      );
       if (parentAccountId == null) return;
 
       vehicleCount.value = await HomeService.fetchVehicleCountByAccount(
         parentAccountId,
       );
-      print("Total vehicle ${vehicleCount.value}");
+      print("🔍 HOME CONTROLLER - FINAL VEHICLE COUNT: ${vehicleCount.value}");
     } catch (e) {
       print("Vehicle count error $e");
     }

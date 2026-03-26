@@ -143,11 +143,10 @@ class EditTyreController extends GetxController {
   final RxInt selectedFillTypeId = 0.obs;
 
   // ⭐ STAR ENABLE FLAG
-  final RxBool isStarEnabled = false.obs;
+  final RxBool isStarEnabled = true.obs; // Always enabled
   // call this whenever manufacturer / size changes
   void checkStarEnable() {
-    isStarEnabled.value =
-        manufacturerId.text.trim().isNotEmpty && sizeId.text.trim().isNotEmpty;
+    isStarEnabled.value = true; // Always enabled
     update();
   }
 
@@ -386,10 +385,12 @@ class EditTyreController extends GetxController {
 
       /// 🔹 SIZE
       final sizeRaw = (data['tireSizes'] as List);
+      print("🔍 TIRE SIZE API RAW DATA: $sizeRaw");
       tireSizeList.assignAll(sizeRaw.map((e) => e['tireSizeName'].toString()));
       tireSizeIdList.assignAll(
         sizeRaw.map((e) => (e['tireSizeId'] as num).toInt()),
       );
+      print("🔍 TIRE SIZE LIST: ${tireSizeList.toList()}");
 
       /// 🔹 TYPE
       final typeRaw = (data['tireTypes'] as List);
@@ -436,8 +437,11 @@ class EditTyreController extends GetxController {
   }
 
   void setStarRating(int value) {
+    print("🔍 STAR RATING: Setting rating to $value");
     starRating.value = value; // data
     starRatingId.text = value.toString();
+    print("🔍 STAR RATING: starRating.value = ${starRating.value}");
+    print("🔍 STAR RATING: starRatingId.text = ${starRatingId.text}");
     update(); // 🔥 UI rebuild
   }
 
@@ -448,8 +452,14 @@ class EditTyreController extends GetxController {
       });
 
       final tyre = await EditTyreService.getTyreById(tireId!);
-      // 🔹 STEP 1
       print("✅ Tyre fetched successfully");
+      print("🔍 TYRE API RESPONSE:");
+      print("  - tyreId: ${tyre.tireId}");
+      print("  - manufacturerId: ${tyre.manufacturerId}");
+      print("  - sizeId: ${tyre.sizeId}");
+      print("  - starRatingId: ${tyre.starRatingId}");
+      print("  - typeId: ${tyre.typeId}");
+      print("  - compoundId: ${tyre.compoundId}");
 
       // ✅ Save vehicleId & vehicleNumber from API so they are sent back on update
       model.vehicleId = tyre.vehicleId;
@@ -512,8 +522,10 @@ class EditTyreController extends GetxController {
         controller: sizeId,
         selectedId: selectedSizeId,
       );
-      starRatingId.text = tyre.starRatingId.toString();
+      starRatingId.text = tyre.starRatingId?.toString() ?? "0";
       starRating.value = tyre.starRatingId ?? 0;
+      print("🔍 STAR RATING LOADED: starRatingId = ${starRatingId.text}");
+      print("🔍 STAR RATING LOADED: starRating.value = ${starRating.value}");
       // model.typeId = int.tryParse(typeId.text) ?? 0;
 
       // indCodeId.text = tyre.indCodeId.toString();

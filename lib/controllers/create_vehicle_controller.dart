@@ -93,7 +93,9 @@ class VehicleController extends GetxController {
 
   /* ---------------- LOAD DATA ---------------- */
   Future<void> loadMasterData() async {
+    print("🔍 CREATE VEHICLE: Loading master data...");
     final data = await _masterService.fetchMasterData();
+    print("🔍 CREATE VEHICLE: Master data received - ${data.keys}");
 
     /*manufacturers = (data['vehicleManufacturers'] as List)
         .map((e) => Manufacturer.fromJson(e))
@@ -116,14 +118,29 @@ class VehicleController extends GetxController {
         .map((e) => VehicleModelItem.fromJson(e))
         .toList();
 
-    /*tireSizes = (data['tireSizes'] as List)
-        .map((e) => TireSize.fromJson(e))
-        .toList();*/
+    print("🔍 CREATE VEHICLE: Raw tireSizes data: ${data['tireSizes']}");
 
-    tireSizes = (data['tireSizes'] as List)
-        .map((e) => TireSize.fromJson(e))
-        .where((t) => t.tireSizeName.trim().isNotEmpty)
-        .toList();
+    // 🔥 FIX: Check if tireSizes exists in API response
+    if (data['tireSizes'] != null) {
+      tireSizes = (data['tireSizes'] as List)
+          .map((e) {
+            print("🔍 CREATE VEHICLE: Processing tire size: $e");
+            return TireSize.fromJson(e);
+          })
+          .where((t) {
+            final isValid = t.tireSizeName.trim().isNotEmpty;
+            print(
+              "🔍 CREATE VEHICLE: Tire size '${t.tireSizeName}' is valid: $isValid",
+            );
+            return isValid;
+          })
+          .toList();
+    } else {
+      print("🔴 CREATE VEHICLE: tireSizes field not found in API response");
+      tireSizes = [];
+    }
+
+    print("🔍 CREATE VEHICLE: Final tireSizes count: ${tireSizes.length}");
 
     manufacturerList.value = manufacturers
         .map((e) => e.manufacturerName)
@@ -133,6 +150,15 @@ class VehicleController extends GetxController {
     modelList.value = models.map((e) => e.modelName).toSet().toList();
 
     tyreSizeList.value = tireSizes.map((e) => e.tireSizeName).toSet().toList();
+
+    // 🔥 FIX: Initialize typeList with all types initially
+    typeList.value = types.map((e) => e.typeName).toSet().toList();
+
+    print("🔍 CREATE VEHICLE: Data loaded successfully");
+    print("  - Manufacturers: ${manufacturerList.length}");
+    print("  - Types: ${typeList.length}");
+    print("  - Models: ${modelList.length}");
+    print("  - Tire Sizes: ${tyreSizeList.length}");
   }
 
   /* ---------------- MANUFACTURER (DEPENDENT) ---------------- */
@@ -172,6 +198,10 @@ class VehicleController extends GetxController {
       orElse: () => types.first,
     );
 
+    // 🔥 FIX: Set typeId FIRST, then filter models
+    typeId.value = t.typeId;
+    print("🔍 CREATE VEHICLE: Selected type '$value' with ID ${typeId.value}");
+
     /// DEPENDENT → MODEL
     modelList.value = models
         .where((m) => m.vehicleTypeId == typeId.value)
@@ -185,7 +215,9 @@ class VehicleController extends GetxController {
 
     tyreSizeList.clear();
 
-    typeId.value = t.typeId;
+    print(
+      "🔍 CREATE VEHICLE: Filtered models for type ${typeId.value}: ${modelList.length} models",
+    );
   }
 
   /* ---------------- MODEL (INDEPENDENT) ---------------- */
