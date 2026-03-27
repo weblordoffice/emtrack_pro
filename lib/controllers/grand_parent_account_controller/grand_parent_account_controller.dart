@@ -10,7 +10,7 @@ import 'package:emtrack/services/grand_parent_account_service/grand_parent_accou
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:get/get.dart';
 
-import '../../views/grand_parent_account_view/grandparent_account_list_view.dart';
+import '../../views/home/grand_parent_account_view/grandparent_account_list_view.dart';
 
 class GrandparentAccountController extends GetxController {
   final service = GrandparentAccountService();

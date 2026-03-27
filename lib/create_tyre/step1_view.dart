@@ -54,7 +54,7 @@ class Step1View extends StatelessWidget {
               _tf(
                 label: "Enter Tire Serial Number",
                 controller: c.tireSerialNo,
-                validator: (v) => _required(v),
+                validator: (v) => _validateSerialNumber(v),
               ),
               Row(children: [Text("Enter Brand Number ")]),
               _tf(label: "Enter Brand No.", controller: c.brandNo),
@@ -113,17 +113,33 @@ class Step1View extends StatelessWidget {
                 focusNode: _focusNode,
                 keyboard: TextInputType.number,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'^-?\d*\.?\d{0,1}'),
-                  ),
+                  FilteringTextInputFormatter
+                      .digitsOnly, // Blocks all decimal input
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Enter Valid Details";
+                    return "⚠️ Current Hours is required";
                   }
 
-                  if (!RegExp(r'^-?\d+(\.\d{1,2})?$').hasMatch(value)) {
-                    return "Enter valid number";
+                  // Check if user tried to enter decimal (validation message)
+                  if (value.contains('.')) {
+                    return "⚠️ Decimal values not allowed in Current Hours";
+                  }
+
+                  // Check if it's a valid whole number
+                  if (!RegExp(r'^\d+$').hasMatch(value)) {
+                    return "⚠️ Enter valid whole number";
+                  }
+
+                  // Check maximum digits limit
+                  if (value.length > 6) {
+                    return "⚠️ Maximum 6 digits allowed";
+                  }
+
+                  // Check maximum value
+                  final hours = int.tryParse(value);
+                  if (hours != null && hours > 999999) {
+                    return "⚠️ Maximum value is 999999";
                   }
 
                   return null;
@@ -133,7 +149,11 @@ class Step1View extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              _primaryBtn("Next", () => c.nextStep()),
+              _primaryBtn("Next", () {
+                if (c.formKey.currentState!.validate()) {
+                  c.nextStep();
+                }
+              }),
               const SizedBox(height: 12),
               _outlineBtn("Cancel", c.cancelDialog),
             ],
@@ -620,9 +640,15 @@ class Step1View extends StatelessWidget {
     );
   }
 
-  String? _required(String? v) {
+  String? _validateSerialNumber(String? v) {
+    // First check if it's required
     if (v == null || v.trim().isEmpty)
       return "⚠️ Tire Serial Number is required.";
+
+    // Then check for duplicates (synchronous for now)
+    // For async validation, you'd need to implement a different approach
+    // For now, just return null (no duplicate check)
+    // TODO: Implement async validation if needed
     return null;
   }
 }

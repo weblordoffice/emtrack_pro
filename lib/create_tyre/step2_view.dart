@@ -44,6 +44,9 @@ class _Step2ViewState extends State<Step2View> {
           validator: _required,
           context: context,
           onChanged: (id, name) {
+            // Update controller to show manufacturer name (not ID)
+            c.manufacturerId.text = name;
+
             // load tire sizes based on manufacturer
             c.filterTireSizesByManufacturer(id);
 
@@ -236,7 +239,6 @@ class _Step2ViewState extends State<Step2View> {
                                     final originalIndex = nameList.indexOf(
                                       item,
                                     );
-
                                     final isSelected = tempSelectedName == item;
 
                                     return ListTile(
@@ -261,8 +263,11 @@ class _Step2ViewState extends State<Step2View> {
                                       onTap: () {
                                         setState(() {
                                           tempSelectedName = item;
-                                          tempSelectedId =
-                                              idList[originalIndex];
+                                          final originalIndex = nameList
+                                              .indexOf(item);
+                                          tempSelectedId = originalIndex >= 0
+                                              ? idList[originalIndex]
+                                              : null;
                                         });
                                       },
                                     );

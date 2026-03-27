@@ -21,7 +21,7 @@ class CreateTyreScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          "Create New Tyre",
+          "Create New Tire",
           style: TextStyle(color: Colors.white),
         ),
       ),

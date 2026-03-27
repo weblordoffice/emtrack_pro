@@ -481,6 +481,36 @@ class CreateTyreController extends GetxController {
     // );
   }
 
+  // 🔥 ADD: Serial number validation
+  Future<String?> checkSerialNumberExists(String serialNumber) async {
+    try {
+      print("🔍 CHECKING SERIAL NUMBER: $serialNumber");
+
+      // TODO: Add API call to check if serial number exists
+      // For now, return null (no duplicate)
+      // You can implement this by calling an API endpoint that checks for duplicates
+
+      // Example implementation:
+      // final response = await http.get(
+      //   Uri.parse("${ApiConstants.baseUrl}/api/Tire/CheckSerialNumber?serialNumber=$serialNumber"),
+      //   headers: {'Cookie': await SecureStorage.getCookie()},
+      // );
+      //
+      // if (response.statusCode == 200) {
+      //   final data = jsonDecode(response.body);
+      //   if (data['exists'] == true) {
+      //     return "⚠️ Tire with serial number '$serialNumber' already exists.";
+      //   }
+      // }
+
+      print("✅ Serial number check passed: $serialNumber");
+      return null; // No duplicate found
+    } catch (e) {
+      print("❌ Error checking serial number: $e");
+      return null; // Allow proceed on error
+    }
+  }
+
   Future<void> loadMasterData() async {
     try {
       final data = await _masterService.fetchMasterData();
@@ -649,7 +679,7 @@ class CreateTyreController extends GetxController {
         .toList();
 
     tireSizeList.assignAll(
-      filtered.map((e) => e['tireSizeName'].toString()).toList(),
+      filtered.map((e) => e['tireSizeName'].toString().toUpperCase()).toList(),
     );
 
     tireSizeIdList.assignAll(

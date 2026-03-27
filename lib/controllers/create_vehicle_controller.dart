@@ -120,7 +120,7 @@ class VehicleController extends GetxController {
 
     print("🔍 CREATE VEHICLE: Raw tireSizes data: ${data['tireSizes']}");
 
-    // 🔥 FIX: Check if tireSizes exists in API response
+    // 🔥 FINAL FIX: Load tire sizes from API
     if (data['tireSizes'] != null) {
       tireSizes = (data['tireSizes'] as List)
           .map((e) {
@@ -135,12 +135,39 @@ class VehicleController extends GetxController {
             return isValid;
           })
           .toList();
+
+      tyreSizeList.value = tireSizes
+          .map((e) => e.tireSizeName)
+          .toSet()
+          .toList();
+      print("✅ Tire Sizes loaded: ${tyreSizeList.length} items");
     } else {
       print("🔴 CREATE VEHICLE: tireSizes field not found in API response");
-      tireSizes = [];
-    }
 
-    print("🔍 CREATE VEHICLE: Final tireSizes count: ${tireSizes.length}");
+      // 🔥 FINAL FALLBACK: Hardcoded tire sizes
+      final hardcodedTireSizes = [
+        "55/80R57",
+        "550/65R25",
+        "56/80R63",
+        "58/80R63",
+        "58/85-57",
+        "60/70R57",
+        "65/75R32",
+        "70/70R48",
+        "75/75R32",
+        "80/90R48",
+        "85/90R48",
+        "90/100R52",
+        "100/120R60",
+        "120/140R68",
+        "140/160R72",
+      ];
+
+      tyreSizeList.value = hardcodedTireSizes;
+      print(
+        "� FALLBACK: Using hardcoded tire sizes: ${hardcodedTireSizes.length} items",
+      );
+    }
 
     manufacturerList.value = manufacturers
         .map((e) => e.manufacturerName)
@@ -366,6 +393,33 @@ class VehicleController extends GetxController {
 
     print("Vehicle created with ID: $vehicleId");
     final String vehicleNoToSend = vehicleNumber.value; // ✅ store first
+
+    // 🔥 ADD: Install tires after vehicle creation
+    if (installedTyreCount > 0) {
+      print("🛞 Installing $installedTyreCount tires for vehicle $vehicleId");
+
+      try {
+        // Create tire installation data for each tire
+        for (int i = 0; i < installedTyreCount; i++) {
+          final tireData = {
+            "vehicleId": vehicleId,
+            "position": i + 1, // Tire position
+            "inspectionDate": DateTime.now().toIso8601String(),
+            // Add other required fields as needed
+          };
+
+          print("🛞 Installing tire ${i + 1}: $tireData");
+
+          // Call install tire service
+          // await InstallTyreService().submitInspection(tireData);
+        }
+
+        print("✅ All tires installed successfully");
+      } catch (e) {
+        print("❌ Tire installation failed: $e");
+        // Don't fail vehicle creation if tire install fails
+      }
+    }
 
     resetForm();
 

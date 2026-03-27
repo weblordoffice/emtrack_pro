@@ -132,7 +132,6 @@ class SearchInstallView extends StatelessWidget {
                           "tireId": tyre.tireId,
                           "serialNo": tyre.tireSerialNo,
 
-                    
                           // "avgTread": tyre.currentTreadDepth,
                         },
                       );
@@ -208,7 +207,7 @@ class SearchInstallView extends StatelessWidget {
             Get.to(() => CreateTyreScreen());
           },
           child: const Text(
-            'Create New Tyre',
+            'Create New Tire',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),

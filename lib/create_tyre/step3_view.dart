@@ -105,10 +105,10 @@ class _Step3ViewState extends State<Step3View> {
           validator: _required,
           focusNode: _focusNode,
           clearIcon: true,
-          // onChanged: (_) {
-          //   setState(() {});
-          //   _calculate();
-          // },
+          onChanged: (_) {
+            setState(() {});
+            _calculate();
+          },
         ),
 
         const Row(children: [Text("Purchase Tread")]),
@@ -150,7 +150,7 @@ class _Step3ViewState extends State<Step3View> {
           controller: c.insideTread,
           percent: insidePercent ?? 0,
           warn: insideWarn,
-          errorText: _required(c.outsideTread.text),
+          errorText: _required(c.insideTread.text),
           onChanged: (_) {
             setState(() {});
             _calculate();
@@ -200,7 +200,7 @@ class _Step3ViewState extends State<Step3View> {
             borderSide: BorderSide(color: Colors.grey, width: 2),
           ),
           hintText: label,
-          suffixIcon: clearIcon && controller.text.isNotEmpty
+          suffixIcon: clearIcon
               ? IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
