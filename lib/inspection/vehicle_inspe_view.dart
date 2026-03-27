@@ -199,10 +199,10 @@ class VehicleInspeView extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Obx(() => Text(
+            Text(
               "Vehicle No: ${c.vehicleNumberCtrl.text}",
-              style: TextStyle(color: Colors.black54, fontSize: 13),
-            )),
+              style: const TextStyle(color: Colors.black54, fontSize: 13),
+            ),
             /// LEGEND
             Row(
               children: const [
