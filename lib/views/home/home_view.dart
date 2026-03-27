@@ -511,7 +511,7 @@ class _HomeViewState extends State<HomeView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                // ✅ FIXED: vehicleCount dynamic (DashboardModel)
+                                //  FIXED: vehicleCount dynamic
                                 Container(
                                   decoration: BoxDecoration(
                                     border:
