@@ -24,60 +24,44 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  final bool _isUserOpeningDrawer = false;
-
   final HomeController ctrl = Get.put(HomeController());
-
   final auth = Get.put(AuthController());
 
+  @override
   @override
   void initState() {
     super.initState();
 
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
       final args = Get.arguments;
       print("DEBUG: Home Arguments: $args");
 
-      // Agar arguments nahi aaye ya showSuccess true nahi hai, return
       if (args == null || args["showSuccess"] != true) return;
 
-      // Module check: tyre ya vehicle
       final bool isTyre = args["module"] == "tyre";
 
-      // Dialog message
       final String message = isTyre
           ? (args["type"] == "update"
-                ? "Tire updated successfully"
-                : "New Tire submitted successfully")
+          ? "Tire updated successfully"
+          : "New Tire submitted successfully")
           : (args["type"] == "update"
-                ? "Vehicle updated successfully"
-                : "New Vehicle Created successfully.");
+          ? "Vehicle updated successfully"
+          : "New Vehicle Created successfully.");
 
-      // Number text
       final String numberText = isTyre
           ? "Tire Serial No: ${args["serialNo"] ?? '-'}"
           : "Vehicle with Id: Vehicle ${args["vehicleNo"] ?? '-'} Created Successfully.";
 
-      // Vehicle ID only for vehicle
       final int? vehicleId = isTyre
           ? null
           : (args["vehicleId"] is int
-                ? args["vehicleId"]
-                : int.tryParse(args["vehicleId"].toString()));
+          ? args["vehicleId"]
+          : int.tryParse(args["vehicleId"].toString()));
 
-      print("DEBUG: vehicleId = $vehicleId"); // Debug print
+      print("DEBUG: vehicleId = $vehicleId");
 
-      // Get.snackbar(
-      //   "Success",
-      //   "$message\n$numberText",
-      //   backgroundColor: Colors.green,
-      //   colorText: Colors.white,
-      //   snackPosition: SnackPosition.TOP,
-      //   margin: const EdgeInsets.all(10),
-      //   borderRadius: 8,
-      //   duration: const Duration(seconds: 3),
-      // );
+      await ctrl.fetchHome();
+      await ctrl.fetchReportDashboardDataHome();
 
       AppSnackbar.success("$message\n$numberText");
 
@@ -86,104 +70,27 @@ class _HomeViewState extends State<HomeView> {
           Get.offAll(() => VehicleInspeView(), arguments: vehicleId);
         }
       });
-
-      // Show dialog
-      // Get.dialog(
-      //   AlertDialog(
-      //     shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.circular(12),
-      //     ),
-      //     title: const Text(
-      //       "Success",
-      //       style: TextStyle(fontWeight: FontWeight.bold),
-      //     ),
-      //     content: Column(
-      //       mainAxisSize: MainAxisSize.min,
-      //       crossAxisAlignment: CrossAxisAlignment.start,
-      //       children: [
-      //         Text(message),
-      //         const SizedBox(height: 12),
-      //         Text(
-      //           numberText,
-      //           style: const TextStyle(
-      //             fontWeight: FontWeight.bold,
-      //             color: Colors.black,
-      //             fontSize: 16,
-      //           ),
-      //         ),
-      //         if (!isTyre && vehicleId != null) ...[
-      //           const SizedBox(height: 8),
-      //           /*  Text(
-      //             "Vehicle with ID: Vehicle $vehicleId Created Successfuly.",
-      //             style: const TextStyle(
-      //               fontWeight: FontWeight.bold,
-      //               color: Colors.blue,
-      //               fontSize: 16,
-      //             ),
-      //           ),*/
-      //           Text("Redirecting to Vehicle Inspection Now."),
-      //         ],
-      //       ],
-      //     ),
-      //     /* actions: [
-      //       /* TextButton(
-      //         onPressed: () {
-      //           if (isTyre) {
-      //             Get.back();
-      //           } else {
-      //             // ✅ Correctly pass vehicleId as a Map
-      //             Get.offAll(() => VehicleInspeView(), arguments: vehicleId);
-      //           }
-      //         },
-      //         child: const Text("OK"),
-      //       ),*/
-      //     ],*/
-      //   ),
-      //   barrierDismissible: false,
-      // );
-
-      // /// 🔥 AUTO REDIRECT AFTER 2 SECONDS
-      // Future.delayed(const Duration(seconds: 10), () {
-      //   Get.back(); // Close dialog
-
-      //   if (!isTyre && vehicleId != null) {
-      //     Get.offAll(
-      //       () => VehicleInspeView(),
-      //       arguments: vehicleId,
-      //       //  {
-      //       //   "vehicleId": vehicleId,
-      //       //   "inspectionId": args['vehicleNo'],
-      //       // },
-      //     );
-      //   }
     });
   }
-
   @override
   Widget build(BuildContext context) {
-    final h = MediaQuery.of(context).size.height;
     return Scaffold(
       key: _scaffoldKey,
-
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
         leading: Builder(
           builder: (context) => IconButton(
-            icon: Icon(Icons.menu, color: Colors.white),
-            onPressed: () {
-              Scaffold.of(
-                context,
-              ).openDrawer(); // open drawer only when user clicks
-            },
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Image.asset('assets/images/apk_logo.png', width: 80),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Image.asset('assets/images/logo.png', width: 120),
           ],
         ),
@@ -200,12 +107,12 @@ class _HomeViewState extends State<HomeView> {
               return RefreshIndicator(
                 onRefresh: ctrl.refreshHome,
                 child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   child: Column(
                     children: [
-                      // Welcome block + selected parent account
+                      // ─── Welcome Block ───
                       Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 18,
                         ),
@@ -214,61 +121,65 @@ class _HomeViewState extends State<HomeView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // ─── Welcome Block ───
                             Obx(
-                              () => Text(
-                                "${AppLocalizations.of(context)!.greeting} ${ctrl.username.value},",
-                                style: TextStyle(
+                                  () => Text(
+                                "${AppLocalizations.of(context)!.greeting}, ${ctrl.username.value},",
+                                style: const TextStyle(
                                   color: AppColors.textWhite,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
+                            ),                            const SizedBox(height: 8),
+                            const Text(
                               'Selected Parent Account & Location',
                               style: TextStyle(color: AppColors.textGrey),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.location_on,
                                       color: AppColors.textWhite,
                                     ),
                                     SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width *
-                                          0.5,
-                                      child: Text(
-                                        "${data?.parentAccount ?? ctrl.selectedParentAccountName.value}-${data?.location ?? ctrl.selectedLocationName.value}",
-                                        style: TextStyle(
-                                          color: AppColors.textWhite,
-                                          fontWeight: FontWeight.bold,
+                                      width: MediaQuery.of(context).size.width * 0.5,
+                                      child: Obx(
+                                            () => Text(
+                                          "${data?.parentAccount ?? ctrl.selectedParentAccountName.value}"
+                                              "-"
+                                              "${data?.location ?? ctrl.selectedLocationName.value}",
+                                          style: const TextStyle(
+                                            color: AppColors.textWhite,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
+
                                 InkWell(
                                   onTap: () async {
                                     final updated = await Get.to(
-                                      () => ChangeAccountView(),
+                                          () => ChangeAccountView(),
                                     );
                                     if (updated == true) {
-                                      ctrl.fetchHome(); // refresh home
+                                      await ctrl.fetchHome();
+                                      await ctrl.fetchReportDashboardDataHome();
                                     }
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.all(10),
+                                    padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       color: AppColors.primary,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: Text(
+                                    child: const Text(
                                       "Change",
                                       style: TextStyle(
                                         color: AppColors.textWhite,
@@ -279,15 +190,13 @@ class _HomeViewState extends State<HomeView> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
+
                             // Search box
                             GestureDetector(
-                              onTap: () {
-                                // open search page
-                                Get.to(() => SearchVehicleTyreView());
-                              },
+                              onTap: () => Get.to(() => SearchVehicleTyreView()),
                               child: Container(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   horizontal: 12,
                                   vertical: 14,
                                 ),
@@ -295,42 +204,36 @@ class _HomeViewState extends State<HomeView> {
                                   border: Border.all(color: Colors.white24),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: Row(
+                                child: const Row(
                                   children: [
                                     Icon(Icons.search, color: Colors.white54),
                                     SizedBox(width: 10),
                                     Text(
                                       'Search Vehicle / Tire for inspection',
-                                      style: TextStyle(
-                                        color: AppColors.textGrey,
-                                      ),
+                                      style: TextStyle(color: AppColors.textGrey),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                            SizedBox(height: 12),
-                            // cards row
+                            const SizedBox(height: 12),
+
+                            // ─── Total Tires + Vehicles Cards ───
                             Row(
                               children: [
                                 Expanded(
                                   child: InkWell(
-                                    onTap: () {
-                                      Get.toNamed(AppPages.ALL_TYRE_WIEW);
-                                    },
+                                    onTap: () => Get.toNamed(AppPages.ALL_TYRE_WIEW),
                                     child: Container(
-                                      margin: EdgeInsets.only(right: 8),
-                                      padding: EdgeInsets.all(12),
+                                      margin: const EdgeInsets.only(right: 8),
+                                      padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
                                         color: AppColors.primary,
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: Colors.white24,
-                                        ),
+                                        border: Border.all(color: Colors.white24),
                                       ),
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
@@ -338,57 +241,41 @@ class _HomeViewState extends State<HomeView> {
                                                 'assets/svgImage/total-tires-icon.svg',
                                                 width: 40,
                                                 height: 40,
-                                                colorFilter:
-                                                    const ColorFilter.mode(
-                                                      Colors.red,
-                                                      BlendMode.srcIn,
-                                                    ),
-                                              ),
-
-                                              SizedBox(width: 10),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      'Total Tires',
-                                                      style: TextStyle(
-                                                        color:
-                                                            AppColors.textWhite,
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 6),
-                                                    FittedBox(
-                                                      fit: BoxFit.scaleDown,
-                                                      child: Text(
-                                                        ctrl
-                                                                .homeCount
-                                                                .value
-                                                                ?.totalTiresCount
-                                                                .toString() ??
-                                                            "0",
-
-                                                        //    '${ctrl.tyreCount.value}',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 26,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                                colorFilter: const ColorFilter.mode(
+                                                  Colors.red,
+                                                  BlendMode.srcIn,
                                                 ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    'Total Tires',
+                                                    style: TextStyle(
+                                                      color: AppColors.textWhite,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 6),
+                                                  Obx(
+                                                        () => Text(
+                                                      (ctrl.tyreCount.value ?? 0).toString(),
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 26,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),                                                ],
                                               ),
                                             ],
                                           ),
-
-                                          Align(
+                                          const Align(
                                             alignment: Alignment.bottomRight,
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.end,
+                                              MainAxisAlignment.end,
                                               children: [
                                                 Text(
                                                   'View',
@@ -414,22 +301,17 @@ class _HomeViewState extends State<HomeView> {
                                 ),
                                 Expanded(
                                   child: InkWell(
-                                    onTap: () {
-                                      Get.to(() => AllVehicleListView());
-                                    },
+                                    onTap: () => Get.to(() => AllVehicleListView()),
                                     child: Container(
-                                      margin: EdgeInsets.only(left: 8),
-                                      padding: EdgeInsets.all(12),
+                                      margin: const EdgeInsets.only(left: 8),
+                                      padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
                                         color: AppColors.primary,
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: Colors.white24,
-                                        ),
+                                        border: Border.all(color: Colors.white24),
                                       ),
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
@@ -437,56 +319,42 @@ class _HomeViewState extends State<HomeView> {
                                                 'assets/svgImage/vehicle-icon.svg',
                                                 width: 40,
                                                 height: 40,
-                                                colorFilter:
-                                                    const ColorFilter.mode(
-                                                      Colors.red,
-                                                      BlendMode.srcIn,
-                                                    ),
-                                              ),
-                                              SizedBox(width: 8),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      'Vehicles',
-                                                      style: TextStyle(
-                                                        color:
-                                                            AppColors.textWhite,
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 6),
-                                                    FittedBox(
-                                                      fit: BoxFit.scaleDown,
-                                                      child: Text(
-                                                        ctrl
-                                                                .homeCount
-                                                                .value
-                                                                ?.vehicleCount
-                                                                .toString() ??
-                                                            "0",
-                                                        //   '${ctrl.vehicleCount.value}',
-                                                        style: TextStyle(
-                                                          color: AppColors
-                                                              .textWhite,
-                                                          fontSize: 26,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                                colorFilter: const ColorFilter.mode(
+                                                  Colors.red,
+                                                  BlendMode.srcIn,
                                                 ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    'Vehicles',
+                                                    style: TextStyle(
+                                                      color: AppColors.textWhite,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 6),
+                                                  Obx(
+                                                        () => Text(
+                                                          ctrl.vehicleCount.value.toString(),
+                                                      style: const TextStyle(
+                                                        color: AppColors.textWhite,
+                                                        fontSize: 26,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
-
-                                          Align(
+                                          const Align(
                                             alignment: Alignment.bottomRight,
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.end,
+                                              MainAxisAlignment.end,
                                               children: [
                                                 Text(
                                                   'View',
@@ -516,98 +384,105 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ),
 
-                      SizedBox(height: 14),
+                      const SizedBox(height: 14),
 
-                      // Last inspection + Sync button
+                      // ─── Last Inspection + Sync ───
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   'Last Inspection',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(height: 6),
+                                const SizedBox(height: 6),
                                 Text(
                                   data?.lastInspection ?? '--',
-                                  style: TextStyle(color: AppColors.textGrey),
+                                  style:
+                                  const TextStyle(color: AppColors.textGrey),
                                 ),
                               ],
                             ),
-                            ElevatedButton.icon(
-                              onPressed: ctrl.isLoading.value
-                                  ? null
-                                  : () => ctrl.syncInspections(),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                side: BorderSide(color: Colors.red),
-                                foregroundColor: Colors.red,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
+                            Obx(
+                                  () => ElevatedButton.icon(
+                                onPressed: ctrl.isLoading.value
+                                    ? null
+                                    : () => ctrl.syncInspections(),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  side: const BorderSide(color: Colors.red),
+                                  foregroundColor: Colors.red,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
                                 ),
-                              ),
-                              icon: Icon(Icons.sync, color: Colors.red),
-                              label: Text(
-                                'Sync',
-                                style: TextStyle(color: Colors.red),
+                                icon: const Icon(Icons.sync, color: Colors.red),
+                                label: const Text(
+                                  'Sync',
+                                  style: TextStyle(color: Colors.red),
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
 
-                      SizedBox(height: 18),
+                      const SizedBox(height: 18),
 
-                      // View Inspections boxes
+                      // ─── View Inspections ───
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'View Inspections',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                // Unsynced Card
                                 GestureDetector(
-                                  onTap: () {
-                                    Get.to(
-                                      () => const ViewInspectionPage(),
-                                      arguments: 0, // Unsynced
-                                    );
-                                  },
-                                  child: inspectionCard(
-                                    title: 'Unsynced Inspection',
-                                    count: '0',
+                                  onTap: () => Get.to(
+                                        () => const ViewInspectionPage(),
+                                    arguments: 0,
+                                  ),
+                                  child: Obx(
+                                        () => inspectionCard(
+                                      title: 'Unsynced Inspection',
+                                      count: ctrl.homeData.value
+                                          ?.unsyncedInspections
+                                          .toString() ??
+                                          '0',
+                                    ),
                                   ),
                                 ),
-                                SizedBox(width: 12),
-                                // Synced Card
+                                const SizedBox(width: 12),
                                 GestureDetector(
-                                  onTap: () {
-                                    Get.to(
-                                      () => const InspectionVehicleTyreView(),
-                                      arguments: 1, // Synced
-                                    );
-                                  },
-                                  child: inspectionCard(
-                                    title: 'Synced Inspection',
-                                    count: '0',
+                                  onTap: () => Get.to(
+                                        () => const InspectionVehicleTyreView(),
+                                    arguments: 1,
+                                  ),
+                                  child: Obx(
+                                        () => inspectionCard(
+                                      title: 'Synced Inspection',
+                                      count: ctrl.homeData.value
+                                          ?.syncedInspections
+                                          .toString() ??
+                                          '0',
+                                    ),
                                   ),
                                 ),
                               ],
@@ -615,90 +490,98 @@ class _HomeViewState extends State<HomeView> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
-                      // View Inspections boxes
+
+                      const SizedBox(height: 20),
+
+                      // ─── Vehicles/Tires Inspections ───
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Vehicles/Tires Inspections',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                // Synced Card
+                                //  FIXED: vehicleCount dynamic
                                 Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.red,
-                                      width: 1,
-                                    ),
+                                    border:
+                                    Border.all(color: Colors.red, width: 1),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Vehicle Inspection",
                                           style: TextStyle(fontSize: 18),
                                         ),
-                                        Text(
-                                          "32",
-                                          style: TextStyle(fontSize: 20),
+                                        Obx(
+                                              () => Text(
+                                            ctrl.homeCount.value?.vehicleCount
+                                                ?.toString() ??
+                                                "0",
+                                            style:
+                                            const TextStyle(fontSize: 20),
+                                          ),
                                         ),
                                         TextButton(
-                                          onPressed: () {
-                                            Get.to(
-                                              () => InspectionVehicleTyreView(),
-                                            );
-                                          },
-                                          child: Text(
+                                          onPressed: () => Get.to(
+                                                () => InspectionVehicleTyreView(),
+                                          ),
+                                          child: const Text(
                                             "view >",
-                                            style: TextStyle(color: Colors.red),
+                                            style:
+                                            TextStyle(color: Colors.red),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
                                 ),
+
+                                // ✅ FIXED: totalTiresCount dynamic
                                 Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.red,
-                                      width: 1,
-                                    ),
+                                    border:
+                                    Border.all(color: Colors.red, width: 1),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Tire Inspection",
                                           style: TextStyle(fontSize: 20),
                                         ),
-                                        Text(
-                                          "12",
-                                          style: TextStyle(fontSize: 20),
+                                        Obx(
+                                              () => Text(
+                                            ctrl.homeCount.value?.totalTiresCount
+                                                ?.toString() ??
+                                                "0",
+                                            style:
+                                            const TextStyle(fontSize: 20),
+                                          ),
                                         ),
                                         TextButton(
-                                          onPressed: () {
-                                            Get.to(
-                                              () => InspectionVehicleTyreView(),
-                                            );
-                                          },
-                                          child: Text(
+                                          onPressed: () => Get.to(
+                                                () => InspectionVehicleTyreView(),
+                                          ),
+                                          child: const Text(
                                             "view >",
-                                            style: TextStyle(color: Colors.red),
+                                            style:
+                                            TextStyle(color: Colors.red),
                                           ),
                                         ),
                                       ],
@@ -711,25 +594,22 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ),
 
-                      SizedBox(height: 120),
-                      // space for bottom button
+                      const SizedBox(height: 120),
                     ],
                   ),
                 ),
               );
             }),
           ),
-          // 🔹 LOADER OVERLAY (TOP)
-          Obx(() {
-            if (!ctrl.isLoading.value) {
-              return const SizedBox.shrink();
-            }
 
+          // Loader overlay
+          Obx(() {
+            if (!ctrl.isLoading.value) return const SizedBox.shrink();
             return Positioned.fill(
               child: IgnorePointer(
                 ignoring: true,
                 child: Container(
-                  color: Colors.white.withOpacity(0.6), // 👈 background dikhe
+                  color: Colors.white.withOpacity(0.6),
                   child: Center(
                     child: Image.asset(
                       'assets/images/emtrack_loader.gif',
@@ -744,25 +624,26 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
 
-      // Floating bottom "Start Inspection" + plus button
       bottomNavigationBar: InkWell(
-        onTap: () {
-          Get.to(() => SearchVehicleTyreView());
-        },
-        child: Container(
+        onTap: () async {
+          await Get.to(() => SearchVehicleTyreView());
+
+          ctrl.fetchHome();
+          ctrl.loadTyreCountByAccount();
+          ctrl.loadVehicleCountByAccount();
+        },        child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           color: Colors.white,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // START INSPECTION DESIGN (exact same)
               Container(
                 decoration: const BoxDecoration(
                   color: AppColors.primary,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(40),
                     bottomLeft: Radius.circular(40),
-                    topRight: Radius.circular(40), // nukila effect
+                    topRight: Radius.circular(40),
                     bottomRight: Radius.circular(0),
                   ),
                 ),
@@ -779,14 +660,9 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
-
               const SizedBox(width: 10),
-
-              // PLUS BUTTON (EXACT CIRCLE)
               FloatingActionButton(
-                onPressed: () {
-                  Get.to(() => SearchVehicleTyreView());
-                },
+                onPressed: () => Get.to(() => SearchVehicleTyreView()),
                 backgroundColor: AppColors.primary,
                 shape: const CircleBorder(),
                 child: const Icon(Icons.add, color: Colors.white),
@@ -807,7 +683,6 @@ class _HomeViewState extends State<HomeView> {
       ),
       child: Column(
         children: [
-          // LEFT CONTENT
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -815,7 +690,6 @@ class _HomeViewState extends State<HomeView> {
               Text(count, style: const TextStyle(fontSize: 18)),
             ],
           ),
-
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
