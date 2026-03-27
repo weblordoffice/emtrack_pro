@@ -5,7 +5,10 @@ import 'package:emtrack/controllers/selected_account_controller.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:emtrack/widgets/vehicle_daigram_Rotate_tyres.dart';
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:flutter/services.dart';
+=======
+>>>>>>> pratyush
 import 'package:get/get.dart';
 
 class CreateVehicleView extends StatelessWidget {
@@ -416,7 +419,11 @@ class CreateVehicleView extends StatelessWidget {
             /// REMOVAL TREAD
             label("Removal Tread"),
             Obx(
+<<<<<<< HEAD
                   () => TextField(
+=======
+              () => TextField(
+>>>>>>> pratyush
                 decoration: InputDecoration(
                   hintText: 'Removal Tread',
                   border: OutlineInputBorder(
@@ -431,6 +438,7 @@ class CreateVehicleView extends StatelessWidget {
                       : null,
                   errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
+<<<<<<< HEAD
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
@@ -478,6 +486,12 @@ class CreateVehicleView extends StatelessWidget {
                   } else {
                     vc.removalTreadError.value = ''; // pure integer — valid
                   }
+=======
+                keyboardType: TextInputType.number,
+                onChanged: (v) {
+                  vc.removalTread.value = v;
+                  vc.clearRemovalTreadError();
+>>>>>>> pratyush
                 },
               ),
             ),

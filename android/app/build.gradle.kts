@@ -8,7 +8,11 @@ plugins {
 android {
     namespace = "com.example.emtrack"
     compileSdk = flutter.compileSdkVersion
+<<<<<<< HEAD
     ndkVersion = flutter.ndkVersion
+=======
+    ndkVersion = "27.0.12077973"
+>>>>>>> pratyush
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

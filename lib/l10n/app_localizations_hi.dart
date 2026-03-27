@@ -12,7 +12,11 @@ class AppLocalizationsHi extends AppLocalizations {
   String get homeTitle => 'मुखपृष्ठ';
 
   @override
+<<<<<<< HEAD
   String get greeting => 'स्वागत है!';
+=======
+  String get greeting => 'स्वागत है';
+>>>>>>> pratyush
 
   @override
   String get settings => 'सेटिंग्स';

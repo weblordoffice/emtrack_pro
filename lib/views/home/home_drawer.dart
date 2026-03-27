@@ -5,8 +5,13 @@ import 'package:emtrack/user_management/user_management_list_view.dart';
 import 'package:emtrack/user_management/user_management_view.dart';
 import 'package:emtrack/views/change_account_view.dart';
 import 'package:emtrack/views/create_vehicle_view.dart';
+<<<<<<< HEAD
 import 'package:emtrack/views/grand_parent_account_view/grand_parent_account_view.dart';
 import 'package:emtrack/views/grand_parent_account_view/grandparent_account_list_view.dart';
+=======
+import '../home/grand_parent_account_view/grand_parent_account_view.dart';
+import '../home/grand_parent_account_view/grandparent_account_list_view.dart';
+>>>>>>> pratyush
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/home_controller.dart';

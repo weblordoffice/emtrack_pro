@@ -35,7 +35,44 @@ class MasterDataService {
         throw Exception(json['errorMessage'] ?? 'Unknown server error');
       }
 
+<<<<<<< HEAD
       return json['model'];
+=======
+      if (!json.containsKey('model')) {
+        print("🔴 MODEL MISSING: API response missing model data");
+        throw Exception('API response missing model data');
+      }
+
+      final model = json['model'];
+      print("📡 MODEL KEYS: ${model.keys.toList()}");
+      print("📡 MODEL TYPE: ${model.runtimeType}");
+
+      // Check specifically for tire sizes
+      if (model.containsKey('tireSizes')) {
+        print(
+          "✅ tireSizes FOUND: ${(model['tireSizes'] as List).length} items",
+        );
+      } else if (model.containsKey('tire_size')) {
+        print(
+          "✅ tire_size FOUND: ${(model['tire_size'] as List).length} items",
+        );
+      } else {
+        print("❌ tireSizes/tire_size NOT FOUND");
+        print("🔍 Available keys: ${model.keys.toList()}");
+
+        // Check for alternative tire size field names
+        model.keys.forEach((key) {
+          if (key.toLowerCase().contains('tire') ||
+              key.toLowerCase().contains('size')) {
+            print(
+              "🔍 ALTERNATIVE FOUND: $key -> ${(model[key] as List).length} items",
+            );
+          }
+        });
+      }
+
+      return model;
+>>>>>>> pratyush
     }
 
     if (response.statusCode == 401 || response.statusCode == 403) {

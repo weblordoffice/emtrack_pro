@@ -33,15 +33,22 @@ class UpdateHoursController extends GetxController {
   void onInit() {
     super.onInit();
 
+<<<<<<< HEAD
     vehicleModel = Get.arguments as VehicleInspectionModel?;
 
     // ✅ Current date in consistent dd/MM/yyyy format
     String currentDate = DateFormat("dd/MM/yyyy").format(DateTime.now());
 
+=======
+    // Get the vehicle model passed from previous page
+    vehicleModel = Get.arguments as VehicleInspectionModel?;
+    String currentDate = DateFormat("dd/MM/yyyy").format(DateTime.now());
+>>>>>>> pratyush
     if (vehicleModel != null) {
       vehicleId.value = vehicleModel!.vehicleId ?? 0;
       lastRecordedHours.value = vehicleModel!.lastRecordedHours ?? 0.0;
       lastRecordedMiles.value = vehicleModel!.lastRecordedMiles ?? 0.0;
+<<<<<<< HEAD
 
       // ✅ FIX: formatDate handles both ISO and pre-formatted strings
       lastRecordedDate.value = formatDate(vehicleModel!.lastRecordedDate);
@@ -51,19 +58,35 @@ class UpdateHoursController extends GetxController {
 
       updateHoursController.clear();
       surveyDateController.text = currentDate; // ✅ dd/MM/yyyy
+=======
+      lastRecordedDate.value = formatDate(vehicleModel!.lastRecordedDate);
+      surveyDate.value = vehicleModel!.lastRecordedDate ?? '';
+      vehicleNumber.value = vehicleModel!.vehicleNumber ?? '';
+
+      // Fill text controllers
+      //updateHoursController.text = lastRecordedHours.value.toString();
+      updateHoursController.clear();
+      surveyDateController.text = currentDate;
+>>>>>>> pratyush
       vehicleIdCtrl.text = vehicleId.value.toString();
 
       print("✅ Vehicle data loaded from argument:");
       print("VehicleId: ${vehicleId.value}");
+<<<<<<< HEAD
       print("Raw lastRecordedDate from API: ${vehicleModel!.lastRecordedDate}");
       print("Formatted lastRecordedDate: ${lastRecordedDate.value}");
       print("Hours: ${lastRecordedHours.value}");
+=======
+      print("Hours: ${lastRecordedHours.value}");
+      print("Date: ${lastRecordedDate.value}");
+>>>>>>> pratyush
     } else {
       print("❌ Vehicle model not passed in Get.arguments!");
     }
   }
 
   void pickSurveyDate(BuildContext context) async {
+<<<<<<< HEAD
     // ✅ Parse surveyDate back to DateTime for initialDate
     DateTime? initialDate;
     try {
@@ -84,6 +107,18 @@ class UpdateHoursController extends GetxController {
       final formatted = DateFormat("dd/MM/yyyy").format(picked);
       surveyDateController.text = formatted;
       surveyDate.value = formatted;
+=======
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.tryParse(surveyDate.value) ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      surveyDateController.text =
+          "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      surveyDate.value = surveyDateController.text;
+>>>>>>> pratyush
     }
   }
 
@@ -93,6 +128,10 @@ class UpdateHoursController extends GetxController {
     try {
       final updatedHours = double.tryParse(updateHoursController.text) ?? 0.0;
 
+<<<<<<< HEAD
+=======
+      /// 🔥 Get required IDs from secure storage
+>>>>>>> pratyush
       final locationIdStr = await SecureStorage.getLocationId();
       final parentAccountIdStr = await SecureStorage.getParentAccountId();
 
@@ -121,6 +160,7 @@ class UpdateHoursController extends GetxController {
       bool result = await updateHoursService.submitUpdate(model);
 
       if (result) {
+<<<<<<< HEAD
         Get.snackbar(
           "Success",
           "Hours updated successfully on Vehicle",
@@ -141,6 +181,28 @@ class UpdateHoursController extends GetxController {
         }
 
         Get.back(result: updatedHours); // ✅ Single back call
+=======
+        Get.back(result: updatedHours);
+        if (result) {
+          Get.snackbar(
+            "Success",
+            "Hours updated successfully\n Hours updated successfully on Vehicle",
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            margin: const EdgeInsets.all(10),
+            borderRadius: 8,
+            duration: const Duration(seconds: 3),
+          );
+          //   Get.snackbar("Success", "Hours updated successfully");
+
+          // 👇 Refresh previous screen
+          final vehicleController = Get.find<VehicleInspeController>();
+          await vehicleController.fetchInspectionData();
+
+          Get.back(); // go back
+        }
+>>>>>>> pratyush
       } else {
         Get.snackbar("Error", "Update Failed");
       }
@@ -153,6 +215,7 @@ class UpdateHoursController extends GetxController {
   }
 
   String? validateHours() {
+<<<<<<< HEAD
     if (updateHoursController.text.trim().isEmpty) {
       return "Please enter hours";
     }
@@ -203,3 +266,27 @@ class UpdateHoursController extends GetxController {
     super.onClose();
   }
 }
+=======
+    double lastHours = lastRecordedHours.value;
+
+    double enteredHours = double.tryParse(updateHoursController.text) ?? 0;
+
+    if (updateHoursController.text.isEmpty) {
+      return "Please enter hours";
+    }
+
+    if (enteredHours <= lastHours) {
+      return "Please enter value greater than last recorded hours";
+    }
+
+    return null; // ✅ means valid
+  }
+
+  String formatDate(String? apiDate) {
+    if (apiDate == null || apiDate.isEmpty) return "";
+
+    DateTime parsedDate = DateTime.parse(apiDate);
+    return DateFormat("dd/MM/yyyy").format(parsedDate);
+  }
+}
+>>>>>>> pratyush
