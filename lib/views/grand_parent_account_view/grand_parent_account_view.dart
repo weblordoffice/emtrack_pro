@@ -102,58 +102,74 @@ class GrandparentAccountView extends StatelessWidget {
 
   /// STEP-1 UI
   Widget _createAccount() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          const Text(
-            "Create Grandparent Account",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-
-          TextFormField(
-            initialValue: "OWNED",
-            readOnly: false,
-            decoration: const InputDecoration(
-              labelText: "Account Type",
-              border: OutlineInputBorder(),
+    return Form(
+      key: c.createFormKey,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const Text(
+              "Create Grandparent Account",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          TextFormField(
-            decoration: const InputDecoration(
-              labelText: "Grandparent Account Name",
-              border: OutlineInputBorder(),
+            TextFormField(
+              initialValue: "OWNED",
+              readOnly: true,
+              decoration: const InputDecoration(
+                labelText: "Account Type",
+                border: OutlineInputBorder(),
+              ),
             ),
-            onChanged: (v) => c.grandparentName.value = v,
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: _bottomButtons(
-                  onNext: c.grandparentName.value.isEmpty
-                      ? null
-                      : c.createGrandparent,
-                  nextText: "Save",
+            const SizedBox(height: 12),
+
+            TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              decoration: const InputDecoration(
+                labelText: "Grandparent Account Name",
+                border: OutlineInputBorder(),
+              ),
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) {
+                  return "Grandparent Account Name is required";
+                }
+                return null;
+              },
+              onChanged: (v) => c.grandparentName.value = v,
+            ),
+            const SizedBox(height: 20),
+
+            Row(
+              children: [
+                Expanded(
+                  child: Obx(
+                        () => _bottomButtons(
+                      onNext: c.grandparentName.value.trim().isEmpty
+                          ? null
+                          : () {
+                        if (c.createFormKey.currentState!.validate()) {
+                          c.createGrandparent();
+                        }
+                      },
+                      nextText: "Save",
+                    ),
+                  ),
                 ),
-              ),
-              SizedBox(width: 15),
-
-              Expanded(
-                child: _bottomButtons(onNext: c.next, nextText: "Next"),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 15),
+                Expanded(
+                  child: _bottomButtons(
+                    onNext: c.next,
+                    nextText: "Next",
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
-  }
-
-  /// STEP-2 UI
-  Widget _assignAccount() {
+  }  Widget _assignAccount() {
     return Obx(
       () => Padding(
         padding: EdgeInsets.all(16),

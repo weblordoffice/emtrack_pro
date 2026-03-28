@@ -51,7 +51,7 @@ class UserManagementController extends GetxController {
 
   /// Dropdown Data
   List<String> roles = <String>[].obs;
-  List<String> countries = <String>[].obs;
+  RxList<String> countries = <String>[].obs;
   List<String> languages = ['English', 'Hindi'];
   List<String> measurements = ['Metric', 'Imperial'];
   List<String> pressureUnits = ['PSI', 'KPA', 'BAR'];
@@ -69,18 +69,10 @@ class UserManagementController extends GetxController {
 
   /// Navigation
   void next() {
-    Get.focusScope?.unfocus();
-
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (currentStep.value == 0 && loginFormKey.currentState!.validate()) {
-        currentStep.value++;
-      } else if (currentStep.value == 1 &&
-          personalFormKey.currentState!.validate()) {
-        currentStep.value++;
-      }
-    });
+    if (currentStep.value < totalSteps - 1) {
+      currentStep.value++;
+    }
   }
-
   void previous() {
     if (currentStep.value > 0) {
       currentStep.value--;
@@ -124,10 +116,8 @@ class UserManagementController extends GetxController {
 
   Future<void> loadCountries() async {
     List<CountryModel> countryList = await _service.countryList();
-
-    countries = countryList.map((e) => e.countryName).toList();
+    countries.assignAll(countryList.map((e) => e.countryName));
   }
-
   Future<void> loadRoles() async {
     List<String> rolelist = await _service.getUserRole();
 

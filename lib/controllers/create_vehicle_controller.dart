@@ -14,13 +14,17 @@ import '../services/create_vehicle_service.dart';
 class VehicleController extends GetxController {
   final VehicleService _vehicleService = VehicleService();
   final MasterDataService _masterService = MasterDataService();
+
   /* ---------------- TEXT CONTROLLERS  ---------------- */
   final manufacturerCtrl = TextEditingController();
   final typeCtrl = TextEditingController();
   final modelCtrl = TextEditingController();
   final tyreSizeCtrl = TextEditingController();
-
   TextEditingController currentHoursCtrl = TextEditingController(text: "0");
+
+  /* ---------------- LOADING STATE ---------------- */
+  RxBool isLoadingMasterData = true.obs;
+  RxBool isSubmitting = false.obs;
 
   /* ---------------- BASIC ---------------- */
   RxString vehicleNumber = ''.obs;
@@ -28,7 +32,7 @@ class VehicleController extends GetxController {
   RxString removalTread = ''.obs;
   RxString currentHours = '0'.obs;
   RxString comments = ''.obs;
-  //===========selected value===============/
+
   RxString selectedManufecturer = "".obs;
   RxString selectedType = "".obs;
   RxString selectedModel = "".obs;
@@ -43,8 +47,7 @@ class VehicleController extends GetxController {
   RxInt typeId = 0.obs;
   RxInt modelId = 0.obs;
   RxInt tireSizeId = 0.obs;
-  RxInt locationId =
-      11711.obs;
+  RxInt locationId = 11711.obs;
 
   /* ---------------- DISPLAY ---------------- */
   RxString manufacturer = ''.obs;
@@ -52,7 +55,7 @@ class VehicleController extends GetxController {
   RxString model = ''.obs;
   RxString tyreSize = ''.obs;
 
-  /*  ERROR MESSAGES */
+  /* ---------------- ERROR MESSAGES ---------------- */
   RxString vehicleNumberError = ''.obs;
   RxString trackingMethodError = ''.obs;
   RxString manufacturerError = ''.obs;
@@ -76,7 +79,6 @@ class VehicleController extends GetxController {
   RxList<String> tyreSizeList = <String>[].obs;
 
   /* ---------------- PRESSURE VISIBILITY ---------------- */
-  /// 🔥 ONLY TYRE SIZE REQUIRED
   bool get showPressureSection => tireSizeId.value != 0;
 
   @override
@@ -84,7 +86,6 @@ class VehicleController extends GetxController {
     super.onInit();
     loadMasterData();
 
-    /* -------- Rx ↔ Controller SYNC (✅ ADDED) -------- */
     ever(manufacturer, (v) => manufacturerCtrl.text = v);
     ever(type, (v) => typeCtrl.text = v);
     ever(model, (v) => modelCtrl.text = v);
@@ -93,41 +94,60 @@ class VehicleController extends GetxController {
 
   /* ---------------- LOAD DATA ---------------- */
   Future<void> loadMasterData() async {
-    final data = await _masterService.fetchMasterData();
+    try {
+      isLoadingMasterData.value = true; // ✅ Loading shuru
 
-    manufacturers = (data['vehicleManufacturers'] as List).map((e) {
-      final m = Manufacturer.fromJson(e);
-      return Manufacturer(
-        manufacturerId: m.manufacturerId,
-        manufacturerName: m.manufacturerName.toUpperCase(),
-        activeFlag: false,
+      final data = await _masterService.fetchMasterData();
+
+      manufacturers = (data['vehicleManufacturers'] as List).map((e) {
+        final m = Manufacturer.fromJson(e);
+        return Manufacturer(
+          manufacturerId: m.manufacturerId,
+          manufacturerName: m.manufacturerName.toUpperCase(),
+          activeFlag: false,
+        );
+      }).toList();
+
+      types = (data['vehicleTypes'] as List)
+          .map((e) => VehicleType.fromJson(e))
+          .toList();
+
+      models = (data['vehicleModels'] as List)
+          .map((e) => VehicleModelItem.fromJson(e))
+          .toList();
+
+      tireSizes = (data['tireSizes'] as List)
+          .map((e) => TireSize.fromJson(e))
+          .where((t) => t.tireSizeName.trim().isNotEmpty)
+          .toList();
+
+      manufacturerList.value =
+          manufacturers.map((e) => e.manufacturerName).toList();
+
+      tyreSizeList.value =
+          tireSizes.map((e) => e.tireSizeName).toSet().toList();
+
+      modelList.value =
+          models.map((e) => e.modelName).toSet().toList();
+
+      print("✅ Manufacturers: ${manufacturerList.length}");
+      print("✅ TyreSizes: ${tyreSizeList.length}");
+      print("✅ Models: ${modelList.length}");
+
+    } catch (e) {
+      print("❌ Master data load error: $e");
+      Get.snackbar(
+        'Error',
+        'Failed to load master data. Please try again.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
-    }).toList();
-
-    types = (data['vehicleTypes'] as List)
-        .map((e) => VehicleType.fromJson(e))
-        .toList();
-
-    models = (data['vehicleModels'] as List)
-        .map((e) => VehicleModelItem.fromJson(e))
-        .toList();
-
-    tireSizes = (data['tireSizes'] as List)
-        .map((e) => TireSize.fromJson(e))
-        .where((t) => t.tireSizeName.trim().isNotEmpty)
-        .toList();
-
-    manufacturerList.value = manufacturers
-        .map((e) => e.manufacturerName)
-        .toList();
-
-    // ✅ Independent dropdowns (duplicate safe)
-    modelList.value = models.map((e) => e.modelName).toSet().toList();
-
-    tyreSizeList.value = tireSizes.map((e) => e.tireSizeName).toSet().toList();
+    } finally {
+      isLoadingMasterData.value = false; // ✅ Loading khatam — success ya error dono pe
+    }
   }
 
-  /* ---------------- MANUFACTURER (DEPENDENT) ---------------- */
+  /* ---------------- MANUFACTURER ---------------- */
   void selectManufacturer(String value) {
     manufacturer.value = value;
 
@@ -138,24 +158,26 @@ class VehicleController extends GetxController {
 
     manufacturerId.value = m.manufacturerId;
 
-    /// DEPENDENT → TYPE
     typeList.value = types
         .where((t) => t.manufacturerId == manufacturerId.value)
         .map((e) => e.typeName)
         .toSet()
         .toList();
 
-    /// RESET DOWNSTREAM
+    // RESET downstream
     type.value = '';
     typeId.value = 0;
-
+    model.value = '';
+    modelId.value = 0;
     modelList.clear();
-    tyreSizeList.clear();
+
+    print("🏭 Manufacturer: $value (ID: ${manufacturerId.value})");
+    print("📋 Types found: ${typeList.length}");
 
     if (typeList.isEmpty) _showDialog('Type');
   }
 
-  /* ---------------- TYPE (DEPENDENT) ---------------- */
+  /* ---------------- TYPE ---------------- */
   void selectType(String value) {
     type.value = value;
 
@@ -164,23 +186,25 @@ class VehicleController extends GetxController {
       orElse: () => types.first,
     );
 
-    /// DEPENDENT → MODEL
+    typeId.value = t.typeId;
+
     modelList.value = models
-        .where((m) => m.vehicleTypeId == typeId.value)
+        .where((m) => m.vehicleTypeId == t.typeId)
         .map((e) => e.modelName)
         .toSet()
         .toList();
 
-    /// RESET DOWNSTREAM
+    // RESET downstream
     model.value = '';
     modelId.value = 0;
 
-    tyreSizeList.clear();
+    print("🔧 Type: $value (ID: ${t.typeId})");
+    print("📋 Models found: ${modelList.length}");
 
-    typeId.value = t.typeId;
+    if (modelList.isEmpty) _showDialog('Model');
   }
 
-  /* ---------------- MODEL (INDEPENDENT) ---------------- */
+  /* ---------------- MODEL ---------------- */
   void selectModel(String value) {
     model.value = value;
 
@@ -195,7 +219,7 @@ class VehicleController extends GetxController {
     modelId.value = matched.first.modelId;
   }
 
-  /* ---------------- TYRE SIZE (INDEPENDENT) ---------------- */
+  /* ---------------- TYRE SIZE ---------------- */
   void selectTyreSize(String value) {
     tyreSize.value = value;
 
@@ -219,21 +243,18 @@ class VehicleController extends GetxController {
       case 'Both':
         return 3;
       default:
-        return 1; // fallback
+        return 1;
     }
   }
 
   int get axleCount {
     int count = 0;
-
     if (axel1Pressure.value >= 0) count++;
     if (axel2Pressure.value >= 0) count++;
-
     return count;
   }
 
   int get installedTyreCount => axleCount * 2;
-
   String get axleConfigValue => "$axleCount Axel";
 
   int get axleConfigIdValue {
@@ -251,115 +272,105 @@ class VehicleController extends GetxController {
 
   /* ---------------- SUBMIT ---------------- */
   Future<void> submitForm() async {
-    // 🔍 VALIDATE ALL FIELDS
-    if (!_validateForm()) {
-      return;
+    if (!_validateForm()) return;
+
+    try {
+      isSubmitting.value = true; // ✅ Submit loading shuru
+
+      final String? parentAccountId = await SecureStorage.getParentAccountId();
+      final String? locationId = await SecureStorage.getLocationId();
+
+      final vehicle = VehicleModel(
+        locationId: int.parse(locationId.toString()),
+        manufacturerId: manufacturerId.value,
+        modelId: modelId.value,
+        parentAccountId: int.parse(parentAccountId.toString()),
+        registeredDate: DateTime.now(),
+        tireSizeId: tireSizeId.value,
+        typeId: typeId.value,
+        vehicleNumber: vehicleNumber.value,
+        mileageType: trackingMethodValue,
+        removalTread: double.parse(removalTread.value),
+        manufacturer: manufacturer.value,
+        typeName: type.value,
+        modelName: model.value,
+        hoursDate: DateTime.now(),
+        vehjsonFootprint: '{}',
+        tireSize: tyreSize.value,
+        axleConfig: axleConfigValue,
+        areaOfOperation: '',
+        modifications: '',
+        imagesLocation: '',
+        installedTireCount: installedTyreCount,
+        installedTires: [],
+        axleConfigId: axleConfigIdValue,
+        currentMiles: 0,
+        currentHours: double.parse(currentHours.value),
+        averageLoadingReqId: 0,
+        averageLoadingReq: '',
+        speedId: 0,
+        speed: '',
+        cutting: '',
+        cuttingId: 0,
+        trackingMethod: trackingMethodValue,
+        severityComments: comments.value,
+        recommendedPressure:
+        ((axel1Pressure.value + axel2Pressure.value) / 2).toDouble(),
+        createdBy: parentAccountId,
+        createdDate: DateTime.now(),
+        updatedBy: parentAccountId,
+        updatedDate: DateTime.now(),
+        lastUpdatedDate: DateTime.now(),
+      );
+
+      int? vehicleId = await _vehicleService.createVehicle(vehicle);
+
+      if (Get.isRegistered<AllVehicleController>()) {
+        Get.find<AllVehicleController>().refreshVehicles();
+      }
+
+      if (vehicleId == null) {
+        Get.snackbar('Error', 'VEHICLE creation failed');
+        return;
+      }
+
+      final String vehicleNoToSend = vehicleNumber.value;
+      resetForm();
+
+      Get.offAllNamed(
+        AppPages.HOME,
+        arguments: {
+          "showSuccess": true,
+          "type": "submit",
+          "module": "vehicle",
+          "vehicleNo": vehicleNoToSend,
+          "vehicleId": vehicleId,
+        },
+      );
+    } catch (e) {
+      print("❌ Submit error: $e");
+      Get.snackbar('Error', 'Something went wrong. Please try again.');
+    } finally {
+      isSubmitting.value = false; // ✅ Submit loading khatam
     }
-
-    /// ✅ GET parentAccountId FROM SECURE STORAGE
-    final String? parentAccountId = await SecureStorage.getParentAccountId();
-    final String? locationId = await SecureStorage.getLocationId();
-
-    print("📦 ParentAccountId BODY: ${int.parse(parentAccountId.toString())}");
-
-    // 🔍 DEBUG: Axle / config values before creating vehicle
-    print("🛞 axleCount => $axleCount");
-    print("🛞 installedTyreCount => $installedTyreCount");
-    print("🛞 axleConfigValue (sending) => $axleConfigValue");
-    print("🛞 axleConfigIdValue (sending) => $axleConfigIdValue");
-
-    final vehicle = VehicleModel(
-      locationId: int.parse(locationId.toString()),
-      manufacturerId: manufacturerId.value,
-      modelId: modelId.value,
-      parentAccountId: int.parse(parentAccountId.toString()),
-      registeredDate: DateTime.now(),
-      tireSizeId: tireSizeId.value,
-      typeId: typeId.value,
-      vehicleNumber: vehicleNumber.value,
-      mileageType: trackingMethodValue, // ✅ INT
-      removalTread: double.parse(removalTread.value),
-      manufacturer: manufacturer.value,
-      typeName: type.value,
-      modelName: model.value,
-      hoursDate: DateTime.now(),
-      vehjsonFootprint: '{}',
-      tireSize: tyreSize.value,
-      axleConfig: axleConfigValue,
-      areaOfOperation: '',
-      modifications: '',
-      imagesLocation: '',
-      installedTireCount: installedTyreCount,
-      installedTires: [],
-      axleConfigId: axleConfigIdValue,
-      currentMiles: 0,
-      currentHours: double.parse(currentHours.value),
-      averageLoadingReqId: 0,
-      averageLoadingReq: '',
-      speedId: 0,
-      speed: '',
-      cutting: '',
-      cuttingId: 0,
-      trackingMethod: trackingMethodValue,
-      severityComments: comments.value,
-      recommendedPressure: ((axel1Pressure.value + axel2Pressure.value) / 2)
-          .toDouble(),
-      createdBy: parentAccountId,
-      createdDate: DateTime.now(),
-      updatedBy: parentAccountId,
-      updatedDate: DateTime.now(),
-      lastUpdatedDate: DateTime.now(),
-    );
-
-    /// 🔥 CREATE VEHICLE
-    int? vehicleId = await _vehicleService.createVehicle(vehicle);
-
-    /// 🔄 REFRESH VEHICLE LIST (if controller exists)
-    if (Get.isRegistered<AllVehicleController>()) {
-      Get.find<AllVehicleController>().refreshVehicles();
-    }
-    if (vehicleId == null) {
-      Get.snackbar('Error', 'VEHICLE creation failed');
-      return; // ✅ Stop here, don't navigate
-    }
-
-    print("Vehicle created with ID: $vehicleId");
-    final String vehicleNoToSend = vehicleNumber.value; // ✅ store first
-
-    resetForm();
-
-    Get.offAllNamed(
-      AppPages.HOME,
-      arguments: {
-        "showSuccess": true,
-        "type": "submit",
-        "module": "vehicle",
-        "vehicleNo": vehicleNoToSend,
-        "vehicleId": vehicleId,
-      },
-    );
   }
 
-  /* ✅ VALIDATION METHOD */
+  /* ---------------- VALIDATION ---------------- */
   bool _validateForm() {
     _clearErrors();
     bool isValid = true;
 
-    /// VEHICLE NUMBER
     if (vehicleNumber.value.trim().isEmpty) {
       vehicleNumberError.value = "VEHICLE ID is required";
       isValid = false;
     } else {
       if (Get.isRegistered<AllVehicleController>()) {
-        final vehicleList =
-            Get.find<AllVehicleController>().vehicleList;
-
+        final vehicleList = Get.find<AllVehicleController>().vehicleList;
         final isDuplicate = vehicleList.any(
               (v) =>
           v.vehicleNumber!.toLowerCase() ==
               vehicleNumber.value.trim().toLowerCase(),
         );
-
         if (isDuplicate) {
           vehicleNumberError.value = "VEHICLE Number is already taken";
           isValid = false;
@@ -367,13 +378,11 @@ class VehicleController extends GetxController {
       }
     }
 
-    /// TRACKING METHOD
     if (trackingMethodText.value.trim().isEmpty) {
       trackingMethodError.value = "PLEASE select tracking method";
       isValid = false;
     }
 
-    /// CURRENT HOURS (Custom Validation)
     if (currentHours.value.trim().isEmpty) {
       currentHoursError.value = "CURRENT hours is required";
       isValid = false;
@@ -385,25 +394,21 @@ class VehicleController extends GetxController {
       isValid = false;
     }
 
-    /// MANUFACTURER
     if (manufacturerId.value == 0) {
       manufacturerError.value = "THIS is a required field.";
       isValid = false;
     }
 
-    /// TYPE
     if (typeId.value == 0) {
       typeError.value = "VEHICLE type is required.";
       isValid = false;
     }
 
-    /// MODEL
     if (modelId.value == 0) {
       modelError.value = "VEHICLE model is required.";
       isValid = false;
     }
 
-    /// TYRE SIZE
     if (tireSizeId.value == 0) {
       tyreSizeError.value = "VEHICLE tire size is required.";
       isValid = false;
@@ -418,8 +423,7 @@ class VehicleController extends GetxController {
     } else if (removalTread.value.contains('.')) {
       final parts = removalTread.value.split('.');
       if (parts[1].length > 1) {
-        removalTreadError.value =
-        "Only 1 digit allowed after decimal point.";
+        removalTreadError.value = "Only 1 digit allowed after decimal point.";
         isValid = false;
       }
     }
@@ -427,7 +431,6 @@ class VehicleController extends GetxController {
     return isValid;
   }
 
-  /* ✅ CLEAR ALL ERRORS */
   void _clearErrors() {
     vehicleNumberError.value = '';
     trackingMethodError.value = '';
@@ -439,7 +442,6 @@ class VehicleController extends GetxController {
     commentsError.value = '';
   }
 
-  /* ✅ CLEAR INDIVIDUAL FIELD ERRORS ON CHANGE */
   void clearVehicleNumberError() => vehicleNumberError.value = '';
   void clearTrackingMethodError() => trackingMethodError.value = '';
   void clearManufacturerError() => manufacturerError.value = '';
@@ -469,7 +471,6 @@ class VehicleController extends GetxController {
     axel2Pressure.value = 32;
   }
 
-  /* ---------------- DIALOG ---------------- */
   void _showDialog(String name) {
     Get.defaultDialog(
       title: 'Data Not Available',

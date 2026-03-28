@@ -8,6 +8,7 @@ import 'package:emtrack/services/api_service.dart';
 import 'package:emtrack/services/grand_parent_account_service/grand_parent_account_service.dart';
 
 import 'package:emtrack/utils/secure_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../views/grand_parent_account_view/grandparent_account_list_view.dart';
@@ -20,6 +21,10 @@ class GrandparentAccountController extends GetxController {
   final int totalSteps = 2;
 
   final isloading = false.obs;
+
+  /// Validation
+  final createFormKey = GlobalKey<FormState>();
+
 
   /// Step-1 fields
   RxString accountType = 'OWNED'.obs;
@@ -83,6 +88,7 @@ class GrandparentAccountController extends GetxController {
   /// Submit Step-2
   Future<void> assignGrandparent() async {
     isloading.value = true;
+
     final model = AssignGrandparentModel(
       userId: selectedParentId.value,
       parentAccountId: selectedParentId.value,
@@ -90,12 +96,20 @@ class GrandparentAccountController extends GetxController {
     );
 
     final data = await service.assignGrandparent(model);
+    isloading.value = false;
+
     if (data) {
+      Get.snackbar(
+        "Success ",
+        "Grandparent assigned successfully!\nUser ID: ${selectedParentId.value}",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+      );
+      await Future.delayed(Duration(seconds: 1));
       Get.to(() => GrandparentAccountListView());
-      isloading.value = false;
     }
   }
-
   Future<void> fetchParentAccounts() async {
     try {
       final response = await ApiService.getApi(

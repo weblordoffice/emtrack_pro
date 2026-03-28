@@ -7,9 +7,6 @@ import 'package:emtrack/utils/secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:flutter/foundation.dart';
-// import 'package:image_picker/image_picker.dart';
-// import 'package:file_picker/file_picker.dart';
 
 class VehicleInspeController extends GetxController {
   final VehicleInspeService service = VehicleInspeService();
@@ -26,66 +23,61 @@ class VehicleInspeController extends GetxController {
   RxBool isSubmitting = false.obs;
   RxBool showHourWarning = true.obs;
 
-  /// 🔥 ADD THIS (API RESPONSE HOLDER)
   Rxn<VehicleInspectionResponse> inspectionResponse =
-      Rxn<VehicleInspectionResponse>();
+  Rxn<VehicleInspectionResponse>();
 
   @override
   void onInit() {
     super.onInit();
 
     var argVehicleId = Get.arguments;
-    // print("🆔 vehicle VEHICLE ID => $argVehicleId");
-
     vehicleId.value = argVehicleId.toString();
     vehicleIdCtrl.text = argVehicleId.toString();
 
-    // vehicleId.value = argVehicleId.toString();
-    // vehicleIdCtrl.text = argVehicleId.toString();
-
-    /// 🔥 CALL GET API HERE
     fetchInspectionData();
   }
 
-  /// 🔥 NEW FUNCTION (GET DATA FROM API)
+  /// ✅ GET inspection data from API
   Future<void> fetchInspectionData() async {
     final response = await service.getInspectionRecord(vehicleId.value);
 
     if (response != null && response.didError == false) {
       inspectionResponse.value = response;
-
-      model = response.model; // 🔥 IMPORTANT LINE
+      model = response.model;
 
       tires.assignAll(model?.installedTires ?? []);
 
-      /// 🔥🔥 ADD THIS LINE
       print("Installed Tires Count: ${tires.length}");
-
       for (var t in tires) {
-        print("Serial => ${t.tireSerialNo}");
+        print("Serial => ${t.tireSerialNo}  WheelPosition => ${t.wheelPosition}");
       }
+
       vehicleNumberCtrl.text = model!.vehicleNumber.toString();
       hours.value = model?.lastRecordedHours?.toString() ?? "";
       hoursCtrl.text = hours.value;
       commentsCtrl.text = model?.comments ?? "";
+
       print("🔄 Refreshed Hours: ${hours.value}");
       print("✅ Inspection data loaded");
       print("VehicleId: ${model?.vehicleId}");
       print("Hours: ${model?.lastRecordedHours}");
       print("Date: ${model?.lastRecordedDate}");
     } else {
-      if (response != null && response.didError == false) {
-        inspectionResponse.value = response;
-        model = response.model;
-      } else {
-        // Get.snackbar(
-        // "Error",
-        //  response?.errorMessage ?? "Failed to load inspection data",
-        // );
-      }
+      print("❌ Failed to load inspection data or didError = true");
     }
   }
 
+  /// ✅ FIX 1: Determine correct action based on tire state
+  String _getTireAction(InstalledTire tire) {
+    // If tire has no valid tireId, it is being freshly installed
+    if (tire.tireId == null || tire.tireId == 0) {
+      return "Install";
+    }
+    // Otherwise it is already mounted — we are inspecting it
+    return "Inspect";
+  }
+
+  /// ✅ SUBMIT with all bugs fixed
   Future<void> submit() async {
     try {
       isSubmitting.value = true;
@@ -100,14 +92,22 @@ class VehicleInspeController extends GetxController {
         return;
       }
 
-      // final isHoursBased =
-      //     (model!.installedTires!.first.mileageType ?? "").toLowerCase() ==
-      //     "hours";
+      if (tires.isEmpty) {
+        Get.snackbar("Error", "No tires found for this vehicle");
+        isSubmitting.value = false;
+        return;
+      }
+
+      // ✅ FIX 2: Track failures properly
+      bool allSuccess = true;
+      List<String> failedTires = [];
 
       for (var tire in tires) {
+        // ✅ FIX 1: Use dynamic action instead of hardcoded "Remove"
+        final String action = _getTireAction(tire);
+
         final vehicleData = {
-          "action":
-              "Remove", // ya "Remove" / "Install" backend enum ke according
+          "action": action, // ✅ FIXED — was hardcoded "Remove"
 
           "inspectionDate": DateTime.now().toIso8601String(),
 
@@ -138,7 +138,7 @@ class VehicleInspeController extends GetxController {
 
           "currentPressure": tire.currentPressure ?? 0.0,
 
-          "pressureUnitId": tire.pressureType ?? 0, // ⚠ int hona chahiye
+          "pressureUnitId": tire.pressureType ?? 0,
           "casingConditionId": tire.casingConditionId ?? 0,
           "wearConditionId": tire.wearConditionId ?? 0,
 
@@ -162,44 +162,57 @@ class VehicleInspeController extends GetxController {
           "isMobInstall": false,
         };
 
-        print("📤 SUBMIT BODY => $vehicleData");
+        print("📤 SUBMIT BODY for tire [${tire.tireSerialNo}] action=[$action] => $vehicleData");
 
         bool result = await service.submitInspection(vehicleData: vehicleData);
 
         if (!result) {
-          Get.snackbar("Error", "Failed to submit tire ${tire.tireSerialNo}");
+          allSuccess = false;
+          failedTires.add(tire.tireSerialNo ?? "Unknown");
+          print("❌ Failed for tire: ${tire.tireSerialNo}");
+        } else {
+          print("✅ Success for tire: ${tire.tireSerialNo}");
         }
       }
-      Get.toNamed(AppPages.HOME);
-      Get.snackbar(
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        "Success",
-        "Vehicle Inspection Submitted ${tires.first.tireSerialNo} Successfully",
-        snackPosition: SnackPosition.TOP,
-      );
+
+      // ✅ FIX 2: Show snackbar ONLY when truly successful
+      if (allSuccess) {
+        Get.toNamed(AppPages.HOME);
+        Get.snackbar(
+          "Success",
+          "Vehicle Inspection Submitted Successfully",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
+      } else {
+        Get.snackbar(
+          "Partial Failure",
+          "Failed tires: ${failedTires.join(', ')}",
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
+      }
     } catch (e) {
       print("❌ Submit Exception: $e");
-      Get.snackbar("Error", "Something went wrong");
+      Get.snackbar("Error", "Something went wrong: $e");
     } finally {
       isSubmitting.value = false;
     }
   }
 
+  /// ✅ Navigate to UpdateHoursView and refresh hours on return
   Future<void> goToUpdateHours() async {
     final result = await Get.to(
-      () => UpdateHoursView(),
+          () => UpdateHoursView(),
       arguments: int.parse(vehicleId.value),
     );
 
-    /// 🔥 Agar update hua hai to value yaha milegi
     if (result != null) {
       hours.value = result.toString();
       hoursCtrl.text = result.toString();
-
-      /// model bhi update kar do
       model?.lastRecordedHours = result;
-
       print("✅ UI updated with new hours: $result");
     }
   }
@@ -208,7 +221,7 @@ class VehicleInspeController extends GetxController {
     showHourWarning.value = false;
   }
 
-  /// ------------------ IMAGE PICKER CODE (UNCHANGED) ------------------
+  /// ------------------ IMAGE PICKER ------------------
 
   RxList<File> uploadedImages = <File>[].obs;
   final ImagePicker _picker = ImagePicker();
@@ -236,5 +249,14 @@ class VehicleInspeController extends GetxController {
     } catch (e) {
       debugPrint('Mobile pick error: $e');
     }
+  }
+
+  @override
+  void onClose() {
+    commentsCtrl.dispose();
+    vehicleNumberCtrl.dispose();
+    vehicleIdCtrl.dispose();
+    hoursCtrl.dispose();
+    super.onClose();
   }
 }

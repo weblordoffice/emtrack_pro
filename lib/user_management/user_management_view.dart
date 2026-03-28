@@ -3,13 +3,20 @@ import 'package:emtrack/user_management/user_management_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class UserManagementView extends StatelessWidget {
-  final c = Get.put(UserManagementController());
+// ==================== user_management_view.dart ====================
 
-  UserManagementView({super.key});
+import 'package:emtrack/color/app_color.dart';
+import 'package:emtrack/user_management/user_management_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class UserManagementView extends StatelessWidget {
+  const UserManagementView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final c = Get.put(UserManagementController());
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primary,
@@ -18,10 +25,10 @@ class UserManagementView extends StatelessWidget {
         leading: const BackButton(color: Colors.white),
       ),
       body: Obx(
-        () => Column(
+            () => Column(
           children: [
-            _stepHeader(),
-            Expanded(child: _stepBody()),
+            _stepHeader(c),
+            Expanded(child: _stepBody(c)),
           ],
         ),
       ),
@@ -30,23 +37,23 @@ class UserManagementView extends StatelessWidget {
 
   // ================= STEP BODY =================
 
-  Widget _stepBody() {
+  Widget _stepBody(UserManagementController c) {
     switch (c.currentStep.value) {
       case 0:
-        return _loginInfo();
+        return _loginInfo(c);
       case 1:
-        return _personalDetail();
+        return _personalDetail(c);
       default:
-        return _preferences();
+        return _preferences(c);
     }
   }
 
-  // ================= STEP 1 =================
+  // ================= STEP 1: LOGIN INFO =================
 
-  Widget _loginInfo() {
+  Widget _loginInfo(UserManagementController c) {
     return Form(
       key: c.loginFormKey,
-      child: _form([
+      child: _form(c, [
         _text(
           "Username",
           c.usernameC,
@@ -67,19 +74,19 @@ class UserManagementView extends StatelessWidget {
             return null;
           },
         ),
-        _dropdown("User Role", c.roles, c.role),
+        _dropdown(c, "User Role", c.roles, c.role),
       ]),
     );
   }
 
-  // ================= STEP 2 =================
+  // ================= STEP 2: PERSONAL DETAIL =================
 
-  Widget _personalDetail() {
+  Widget _personalDetail(UserManagementController c) {
     final nameRegex = RegExp(r'^[A-Za-z ]{2,}$');
 
     return Form(
       key: c.personalFormKey,
-      child: _form([
+      child: _form(c, [
         _text(
           "First Name",
           c.firstNameC,
@@ -129,46 +136,51 @@ class UserManagementView extends StatelessWidget {
             return null;
           },
         ),
-        _dropdown("Country", c.countries, c.country),
+        _dropdown(c, "Country", c.countries, c.country),
       ]),
     );
   }
 
-  // ================= STEP 3 =================
+  // ================= STEP 3: PREFERENCES =================
 
-  Widget _preferences() {
+  Widget _preferences(UserManagementController c) {
     return Form(
       key: c.preferenceFormKey,
-      child: _form([
-        _dropdown("Language", c.languages, c.language),
-        _dropdown("Measurement", c.measurements, c.measurement),
-        _dropdown("Pressure Unit", c.pressureUnits, c.pressureUnit),
+      child: _form(c, [
+        _dropdown(c, "Language", c.languages, c.language),
+        _dropdown(c, "Measurement", c.measurements, c.measurement),
+        _dropdown(c, "Pressure Unit", c.pressureUnits, c.pressureUnit),
       ]),
     );
   }
 
-  // ================= COMMON FORM UI =================
+  // ================= COMMON FORM WRAPPER =================
 
-  Widget _form(List<Widget> children) {
+  Widget _form(UserManagementController c, List<Widget> children) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: ListView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        children: [...children, const SizedBox(height: 20), _buttons()],
+        children: [...children, const SizedBox(height: 20), _buttons(c)],
       ),
     );
   }
 
   // ================= BUTTONS =================
 
-  Widget _buttons() {
+  Widget _buttons(UserManagementController c) {
     return Row(
       children: [
         if (c.currentStep.value > 0)
           Expanded(
             child: OutlinedButton(
               onPressed: c.previous,
-              child: const Text("PREVIOUS"),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.primary, width: 1.5), // ✅ change color here
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                minimumSize: const Size(double.infinity, 48),
+              ),
+              child: Text("PREVIOUS", style: TextStyle(color: AppColors.primary)), // ✅ match text color
             ),
           ),
         if (c.currentStep.value > 0) const SizedBox(width: 12),
@@ -178,7 +190,7 @@ class UserManagementView extends StatelessWidget {
               minimumSize: const Size(double.infinity, 48),
               backgroundColor: Colors.red,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10), // ✅ border radius 10
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
             onPressed: () {
@@ -200,7 +212,7 @@ class UserManagementView extends StatelessWidget {
             },
             child: Text(
               c.currentStep.value == 2 ? "CREATE" : "NEXT",
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ),
@@ -210,13 +222,15 @@ class UserManagementView extends StatelessWidget {
 
   // ================= TEXT FIELD =================
 
+// ================= TEXT FIELD =================
+
   Widget _text(
-    String label,
-    TextEditingController controller, {
-    bool obscure = false,
-    FocusNode? focusNode,
-    String? Function(String?)? validator,
-  }) {
+      String label,
+      TextEditingController controller, {
+        bool obscure = false,
+        FocusNode? focusNode,
+        String? Function(String?)? validator,
+      }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
@@ -228,12 +242,23 @@ class UserManagementView extends StatelessWidget {
         validator: validator,
         decoration: InputDecoration(
           labelText: label,
-          border: const OutlineInputBorder(),
+          labelStyle: TextStyle(color: Colors.black54),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey.shade400),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: AppColors.primary, width: 2),
+          ),
         ),
       ),
     );
   }
-
   // ================= DROPDOWN =================
 
   // Widget _dropdown(String label, List<String> items, RxString value) {
@@ -258,25 +283,43 @@ class UserManagementView extends StatelessWidget {
   //   );
   // }
 
-  Widget _dropdown(String label, List<String> items, RxString value) {
+  // ================= DROPDOWN =================
+
+  Widget _dropdown(
+      UserManagementController c,
+      String label,
+      List<String> items,
+      RxString value,
+      ) {
+    final RxBool touched = false.obs;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Obx(
-        () => InkWell(
+            () => InkWell(
           onTap: () {
+            touched.value = true;
             _openSelectionDialog(title: label, items: items, value: value);
           },
           child: InputDecorator(
             decoration: InputDecoration(
               labelText: label,
               border: const OutlineInputBorder(),
-              errorText: value.value.isEmpty ? "Please select $label" : null,
+              errorText: (touched.value && value.value.isEmpty)
+                  ? "Please select $label"
+                  : null,
             ),
-            child: Text(
-              value.value.isEmpty ? "Select $label" : value.value,
-              style: TextStyle(
-                color: value.value.isEmpty ? Colors.grey : Colors.black,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  value.value.isEmpty ? "Select $label" : value.value,
+                  style: TextStyle(
+                    color: value.value.isEmpty ? Colors.grey : Colors.black,
+                  ),
+                ),
+                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+              ],
             ),
           ),
         ),
@@ -284,14 +327,15 @@ class UserManagementView extends StatelessWidget {
     );
   }
 
+  // ================= SELECTION DIALOG =================
+
   void _openSelectionDialog({
     required String title,
-    required RxString value,
     required List<String> items,
+    required RxString value,
   }) {
     final RxList<String> filteredList = items.obs;
     final RxString tempSelected = RxString(value.value);
-
     final TextEditingController searchCtrl = TextEditingController();
 
     Get.dialog(
@@ -330,16 +374,13 @@ class UserManagementView extends StatelessWidget {
                 if (filteredList.isEmpty) {
                   return const Center(child: Text("No data found"));
                 }
-
                 return ListView.separated(
                   itemCount: filteredList.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (_, index) {
                     final item = filteredList[index];
-
                     return Obx(() {
                       final isSelected = tempSelected.value == item;
-
                       return ListTile(
                         title: Text(
                           item,
@@ -350,9 +391,7 @@ class UserManagementView extends StatelessWidget {
                         trailing: isSelected
                             ? const Icon(Icons.check, color: Colors.red)
                             : null,
-                        onTap: () {
-                          tempSelected.value = item;
-                        },
+                        onTap: () => tempSelected.value = item,
                       );
                     });
                   },
@@ -379,7 +418,7 @@ class UserManagementView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(width: .5, color: Colors.grey),
+                  Container(width: 0.5, color: Colors.grey),
                   Expanded(
                     child: InkWell(
                       onTap: () {
@@ -408,280 +447,23 @@ class UserManagementView extends StatelessWidget {
     );
   }
 
-  // void _openSelectionDialog({
-  //   required String title,
-  //   required RxString value,
-  //   required List<String> items,
-  // }) {
-  //   final RxList<String> filteredList = items.obs;
-  //   final RxString tempSelected = RxString(value.value);
-
-  //   final TextEditingController searchCtrl = TextEditingController();
-
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     Get.dialog(
-  //       Scaffold(
-  //         appBar: AppBar(
-  //           title: Text("Select $title"),
-  //           leading: IconButton(
-  //             icon: const Icon(Icons.arrow_back),
-  //             onPressed: Get.back,
-  //           ),
-  //           elevation: 1,
-  //         ),
-  //         body: Column(
-  //           children: [
-  //             /// 🔍 SEARCH
-  //             Padding(
-  //               padding: const EdgeInsets.all(12),
-  //               child: TextField(
-  //                 controller: searchCtrl,
-  //                 decoration: const InputDecoration(
-  //                   hintText: "Search...",
-  //                   prefixIcon: Icon(Icons.search),
-  //                   border: OutlineInputBorder(),
-  //                 ),
-  //                 onChanged: (v) {
-  //                   filteredList.value = items
-  //                       .where((e) => e.toLowerCase().contains(v.toLowerCase()))
-  //                       .toList();
-  //                 },
-  //               ),
-  //             ),
-
-  //             /// 📜 LIST
-  //             Expanded(
-  //               child: Obx(
-  //                 () => filteredList.isEmpty
-  //                     ? const Center(child: Text("No data found"))
-  //                     : ListView.separated(
-  //                         itemCount: filteredList.length,
-  //                         separatorBuilder: (_, __) => const Divider(height: 1),
-  //                         itemBuilder: (_, index) {
-  //                           final item = filteredList[index];
-  //                           final isSelected = tempSelected.value == item;
-
-  //                           return ListTile(
-  //                             title: Text(
-  //                               item,
-  //                               style: TextStyle(
-  //                                 color: isSelected ? Colors.red : Colors.black,
-  //                               ),
-  //                             ),
-  //                             trailing: isSelected
-  //                                 ? const Icon(Icons.check, color: Colors.red)
-  //                                 : null,
-  //                             onTap: () {
-  //                               tempSelected.value = item;
-  //                             },
-  //                           );
-  //                         },
-  //                       ),
-  //               ),
-  //             ),
-
-  //             /// 🔻 BOTTOM ACTION BAR
-  //             Container(
-  //               height: 56,
-  //               decoration: const BoxDecoration(
-  //                 border: Border(top: BorderSide(color: Colors.grey)),
-  //               ),
-  //               child: Row(
-  //                 children: [
-  //                   Expanded(
-  //                     child: InkWell(
-  //                       onTap: Get.back,
-  //                       child: const Center(
-  //                         child: Text(
-  //                           "Cancel",
-  //                           style: TextStyle(color: Colors.red, fontSize: 16),
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   Container(width: .5, color: Colors.grey),
-  //                   Expanded(
-  //                     child: InkWell(
-  //                       onTap: () {
-  //                         value.value = tempSelected.value;
-  //                         Get.back();
-  //                       },
-  //                       child: const Center(
-  //                         child: Text(
-  //                           "OK",
-  //                           style: TextStyle(
-  //                             color: Colors.red,
-  //                             fontSize: 16,
-  //                             fontWeight: FontWeight.bold,
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //       barrierDismissible: false,
-  //     );
-  //   });
-  // }
-
   // ================= STEP HEADER =================
-  // void _openSelectionDialog(String title, List<String> list, RxString value) {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     Get.dialog(
-  //       StatefulBuilder(
-  //         builder: (context, setState) {
-  //           List<String> filteredList = List.from(list);
-  //           TextEditingController searchController = TextEditingController();
 
-  //           String? selectedValue = value.value.isEmpty ? null : value.value;
-
-  //           return Scaffold(
-  //             appBar: AppBar(
-  //               title: Text("Select $title"),
-  //               leading: IconButton(
-  //                 icon: const Icon(Icons.arrow_back),
-  //                 onPressed: Get.back,
-  //               ),
-  //               elevation: 1,
-  //             ),
-  //             body: Column(
-  //               children: [
-  //                 /// 🔍 SEARCH
-  //                 Padding(
-  //                   padding: const EdgeInsets.all(16),
-  //                   child: TextField(
-  //                     controller: searchController,
-  //                     decoration: const InputDecoration(
-  //                       hintText: "Search...",
-  //                       prefixIcon: Icon(Icons.search),
-  //                       border: OutlineInputBorder(),
-  //                     ),
-  //                     onChanged: (text) {
-  //                       setState(() {
-  //                         filteredList = text.isEmpty
-  //                             ? List.from(list)
-  //                             : list
-  //                                   .where(
-  //                                     (e) => e.toLowerCase().contains(
-  //                                       text.toLowerCase(),
-  //                                     ),
-  //                                   )
-  //                                   .toList();
-  //                       });
-  //                     },
-  //                   ),
-  //                 ),
-
-  //                 /// 📜 LIST
-  //                 Expanded(
-  //                   child: filteredList.isEmpty
-  //                       ? const Center(child: Text("No data found"))
-  //                       : ListView.separated(
-  //                           itemCount: filteredList.length,
-  //                           separatorBuilder: (_, __) =>
-  //                               const Divider(height: 1),
-  //                           itemBuilder: (_, i) {
-  //                             final item = filteredList[i];
-  //                             final isSelected = selectedValue == item;
-
-  //                             return ListTile(
-  //                               title: Text(
-  //                                 item,
-  //                                 style: TextStyle(
-  //                                   color: isSelected
-  //                                       ? Colors.red
-  //                                       : Colors.black,
-  //                                 ),
-  //                               ),
-  //                               trailing: isSelected
-  //                                   ? const Icon(Icons.check, color: Colors.red)
-  //                                   : null,
-  //                               onTap: () {
-  //                                 setState(() {
-  //                                   selectedValue = item;
-  //                                 });
-  //                               },
-  //                             );
-  //                           },
-  //                         ),
-  //                 ),
-
-  //                 /// 🔻 BOTTOM ACTIONS
-  //                 Container(
-  //                   height: 56,
-  //                   decoration: const BoxDecoration(
-  //                     border: Border(top: BorderSide(color: Colors.grey)),
-  //                   ),
-  //                   child: Row(
-  //                     children: [
-  //                       Expanded(
-  //                         child: InkWell(
-  //                           onTap: Get.back,
-  //                           child: const Center(
-  //                             child: Text(
-  //                               "Cancel",
-  //                               style: TextStyle(
-  //                                 color: Colors.red,
-  //                                 fontSize: 16,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       Container(width: .5, color: Colors.grey),
-  //                       Expanded(
-  //                         child: InkWell(
-  //                           onTap: () {
-  //                             if (selectedValue != null) {
-  //                               value.value = selectedValue!;
-  //                             }
-  //                             Get.back();
-  //                           },
-  //                           child: const Center(
-  //                             child: Text(
-  //                               "OK",
-  //                               style: TextStyle(
-  //                                 color: Colors.red,
-  //                                 fontSize: 16,
-  //                                 fontWeight: FontWeight.bold,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       ),
-  //       barrierDismissible: false,
-  //     );
-  //   });
-  // }
-
-  Widget _stepHeader() {
+  Widget _stepHeader(UserManagementController c) {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _circle(0, "Login"),
-          _circle(1, "Personal"),
-          _circle(2, "Preference"),
+          _circle(c, 0, "Login"),
+          _circle(c, 1, "Personal"),
+          _circle(c, 2, "Preference"),
         ],
       ),
     );
   }
 
-  Widget _circle(int step, String title) {
+  Widget _circle(UserManagementController c, int step, String title) {
     final isDone = step < c.currentStep.value;
     final isCurrent = step == c.currentStep.value;
 
@@ -696,9 +478,9 @@ class UserManagementView extends StatelessWidget {
           child: isDone
               ? const Icon(Icons.check, color: Colors.white)
               : Text(
-                  "${step + 1}",
-                  style: const TextStyle(color: Colors.white),
-                ),
+            "${step + 1}",
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
         const SizedBox(height: 4),
         Text(title),
@@ -706,7 +488,6 @@ class UserManagementView extends StatelessWidget {
     );
   }
 }
-
 // import 'package:emtrack/color/app_color.dart';
 // import 'package:emtrack/user_management/user_management_controller.dart';
 // import 'package:flutter/material.dart';
