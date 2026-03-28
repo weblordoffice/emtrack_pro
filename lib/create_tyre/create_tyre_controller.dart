@@ -7,6 +7,7 @@ import 'package:emtrack/utils/secure_storage.dart';
 import 'package:emtrack/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../controllers/all_tyre_controller.dart';
 import '../routes/app_pages.dart';
 import '../services/tyre_service.dart';
 import '../utils/app_dialog.dart';
@@ -18,6 +19,8 @@ class CreateTyreController extends GetxController {
   final MasterDataService _masterService = MasterDataService();
 
   final ScrollController pageScrollController = ScrollController();
+
+  RxString tireSerialNoError = ''.obs;
 
   // ===== Manufacturer Mapping =====
   final Map<String, int> manufacturerMap = {};
@@ -304,6 +307,24 @@ class CreateTyreController extends GetxController {
       return;
     }
 
+    if (Get.isRegistered<AllTyreController>()) {
+      final allTyres = Get.find<AllTyreController>().allTyres;
+      final isDuplicate = allTyres.any(
+            (t) => t.tireSerialNo?.toLowerCase() ==
+            tireSerialNo.text.trim().toLowerCase(),
+      );
+      if (isDuplicate) {
+        tireSerialNoError.value = "This serial number already exists";
+        Get.snackbar(
+          "Error",
+          "This serial number already exists",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+    }
     try {
       AppLoader.show();
 

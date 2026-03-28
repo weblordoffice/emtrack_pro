@@ -90,6 +90,7 @@ class InspectTyreController extends GetxController {
         final data = await service.getTireById(tire.tireId!);
         model.value = InspectTyreModel.fromJson(data);
 
+        // Update dropdowns from the fetched model
         selectedCasingConditionId.value = model.value.casingConditionId ?? 0;
         selectedWearConditionsId.value = model.value.wearConditionId ?? 0;
       } catch (e) {
@@ -98,16 +99,26 @@ class InspectTyreController extends GetxController {
     }
 
     model.update((m) {
-      m!.outsideTread = tire.outsideTread?.toDouble() ?? 0.0;
-      m.insideTread = tire.insideTread?.toDouble() ?? 0.0;
-      m.airPressure = tire.currentPressure?.toDouble() ?? 0.0;
+      m!.outsideTread = m.outsideTread ?? 0.0;
+      m.insideTread = m.insideTread ?? 0.0;
+      m.airPressure = m.airPressure ?? tire.currentPressure?.toDouble() ?? 0.0;
+      m.vehicleId = tire.vehicleId;
       m.comments = tire.comments ?? "";
     });
   }
-
   // =========================================================
   // COUNTERS
   // =========================================================
+
+  void incAir() => model.update((m) {
+    m!.airPressure = (m.airPressure ?? 0) + 1;
+  });
+
+  void decAir() => model.update((m) {
+    if ((m!.airPressure ?? 0) > 0) {
+      m.airPressure = m.airPressure! - 1;
+    }
+  });
   void incOutside() => model.update((m) {
     m!.outsideTread++;
     _calcAverage(m);
@@ -128,13 +139,7 @@ class InspectTyreController extends GetxController {
     _calcAverage(m);
   });
 
-  void incAir() => model.update((m) {
-    m!.airPressure;
-  });
 
-  void decAir() => model.update((m) {
-    if (m!.airPressure! > 0) m.airPressure;
-  });
 
   void _calcAverage(InspectTyreModel m) {
     m.averageTread = ((m.outsideTread + m.insideTread) / 2).toStringAsFixed(2);
@@ -184,8 +189,7 @@ class InspectTyreController extends GetxController {
 
         "locationId": locationId,
         "parentAccountId": parentAccountId,
-        "vehicleId": tire.vehicleId ?? 0,
-
+        "vehicleId": tire.vehicleId ?? model.value.vehicleId ?? 0,
         "inspectionId": 0,
 
         "currentHours": tire.currentHours?.toInt() ?? 0,

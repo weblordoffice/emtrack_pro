@@ -7,6 +7,8 @@ import 'package:emtrack/search_tyre_vehicle/search_api_service.dart';
 import 'package:emtrack/utils/secure_storage.dart';
 import 'package:get/get.dart';
 
+import '../inspection/vehicle_inspe_model.dart';
+
 class SearchVehicleTyreController extends GetxController {
   final SearchApi api = SearchApi();
 
@@ -117,36 +119,59 @@ class SearchVehicleTyreController extends GetxController {
   }
 
   /// ================= SELECT ITEM =================
+  // void selectItem(dynamic item) {
+  //   if (selectedTab.value == 0) {
+  //     final vehicle = item as VehicleItem;
+  //
+  //     if (!recentVehicles.any((e) => e.vehicleId == vehicle.vehicleId)) {
+  //       recentVehicles.add(vehicle);
+  //       _saveRecentVehicles();
+  //     }
+  //
+  //     if (!_isNavigating) {
+  //       _isNavigating = true;
+  //       Get.to(
+  //         () => VehicleInspeView(),
+  //         arguments: vehicle.vehicleId,
+  //       )?.then((_) => _isNavigating = false);
+  //     }
+  //   } else {
+  //     final tyre = item as TireItem;
+  //
+  //     if (!recentTyres.any((e) => e.tireId == tyre.tireId)) {
+  //       recentTyres.add(tyre);
+  //       _saveRecentTyres();
+  //     }
+  //
+  //     if (!_isNavigating) {
+  //       _isNavigating = true;
+  //       Get.to(
+  //         () => InspectTyreView(),
+  //         arguments: tyre.tireId,
+  //       )?.then((_) => _isNavigating = false);
+  //     }
+  //   }
+  // }
+
+
+
   void selectItem(dynamic item) {
     if (selectedTab.value == 0) {
-      final vehicle = item as VehicleItem;
-
-      if (!recentVehicles.any((e) => e.vehicleId == vehicle.vehicleId)) {
-        recentVehicles.add(vehicle);
-        _saveRecentVehicles();
-      }
-
-      if (!_isNavigating) {
-        _isNavigating = true;
-        Get.to(
-          () => VehicleInspeView(),
-          arguments: vehicle.vehicleId,
-        )?.then((_) => _isNavigating = false);
-      }
     } else {
-      final tyre = item as TireItem;
-
-      if (!recentTyres.any((e) => e.tireId == tyre.tireId)) {
-        recentTyres.add(tyre);
-        _saveRecentTyres();
-      }
+      final tyre = item;
 
       if (!_isNavigating) {
         _isNavigating = true;
-        Get.to(
-          () => InspectTyreView(),
-          arguments: tyre.tireId,
-        )?.then((_) => _isNavigating = false);
+
+        final passingData = InstalledTire(
+          tireId: tyre.tireId,
+          tireSerialNo: tyre.tireSerialNo,
+
+          vehicleId: 0,
+        );
+
+        Get.to(() => InspectTyreView(), arguments: passingData)
+            ?.then((_) => _isNavigating = false);
       }
     }
   }

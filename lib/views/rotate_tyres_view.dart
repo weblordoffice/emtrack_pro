@@ -1,6 +1,7 @@
 import 'package:emtrack/color/app_color.dart';
 import 'package:emtrack/widgets/vehicle_daigram_Rotate_tyres.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../create_tyre/tyre_rotation_controller.dart';
 import '../models/tyre_data.dart';
@@ -68,7 +69,27 @@ class _RotateTyresViewState extends State<RotateTyresView> {
               ),
               SizedBox(height: 30),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  final controller = TyreRotationController.instance;
+
+                  if (controller.bufferTyre != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please place the tyre in a slot before saving"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Tyre rotation saved successfully!"),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+
+                },
                 child: Container(
                   padding: EdgeInsets.all(8),
                   width: double.infinity,
@@ -90,7 +111,7 @@ class _RotateTyresViewState extends State<RotateTyresView> {
               SizedBox(height: 11),
               Center(
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () => Get.back(),
                   child: Text(
                     "Cancel",
                     style: TextStyle(color: AppColors.buttonDanger),

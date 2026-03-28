@@ -115,16 +115,12 @@ class SearchVehicleTyreView extends StatelessWidget {
                                         tireId: e.tireId,
                                         tireSerialNo: e.tireSerialNo,
                                         wheelPosition: e.wheelPosition,
-                                        //vehicleId: e.vehicleId,
-                                        // map other fields
+                                        // vehicleId: e.vehicleId,
+                                        vehicleId: 0,
                                       );
 
-                                      Get.to(
-                                        () => InspectTyreView(),
-                                        arguments: installedTire,
-                                      );
+                                      Get.to(() => InspectTyreView(), arguments: installedTire);
                                     },
-
                                     title: e.tireId.toString(),
                                     onRemove: () =>
                                         controller.removeRecentTyre(e),
@@ -381,6 +377,9 @@ class SearchVehicleTyreView extends StatelessWidget {
       ),
     );
   }
+
+
+
 
   Future<bool?> confirmRemoveDialog(
     BuildContext context, {

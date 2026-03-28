@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import '../controllers/all_tyre_controller.dart';
 import 'create_tyre_controller.dart';
 
 class Step1View extends StatefulWidget {
@@ -54,11 +55,47 @@ class _Step1ViewState extends State<Step1View> {
               const SizedBox(height: 10),
 
               // ── Tire Serial Number ──
+// ── Tire Serial Number ──
               Row(children: [
                 const Text("Tire Serial Number "),
                 const Text("*", style: TextStyle(color: Colors.red)),
               ]),
-              _tf(
+              Obx(() => Padding(
+                padding: const EdgeInsets.only(bottom: 14),
+                child: TextFormField(
+                  controller: c.tireSerialNo,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText: "Enter Tire Serial Number",
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 2),
+                    ),
+                    errorText: c.tireSerialNoError.value.isNotEmpty
+                        ? c.tireSerialNoError.value
+                        : null,
+                    errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) {
+                      return "TIRE Serial Number is required.";
+                    }
+                    return null;
+                  },
+                  onChanged: (v) {
+                    c.tireSerialNoError.value = '';
+                    if (v.trim().isNotEmpty && Get.isRegistered<AllTyreController>()) {
+                      final allTyres = Get.find<AllTyreController>().allTyres;
+                      final isDuplicate = allTyres.any(
+                            (t) => t.tireSerialNo?.toLowerCase() == v.trim().toLowerCase(),
+                      );
+                      if (isDuplicate) {
+                        c.tireSerialNoError.value = "This serial number already exists";
+                      }
+                    }
+                  },
+                ),
+              )),              _tf(
                 label: "Enter Tire Serial Number",
                 controller: c.tireSerialNo,
                 validator: (v) {

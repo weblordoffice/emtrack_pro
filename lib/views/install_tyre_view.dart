@@ -147,7 +147,7 @@ class InstallTyreView extends StatelessWidget {
                 searchDropdownDialog(
                   hintText: "Wear Condition",
                   controller: controller.wearConditionsId,
-                  nameList: controller.casingConditionList,
+                  nameList: controller.wearConditionsList,
                   idList: controller.wearConditionsIdList,
                   selectedId: controller.selectedWearConditionsId,
                   context: context,

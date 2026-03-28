@@ -13,10 +13,19 @@ class InstallTyreService {
         throw Exception("Session expired. Please login again.");
       }
 
+      // ✅ STEP 1: Pehle unwanted fields hata do
+      data.remove("inspectionId");
+      data.remove("removalReasonId");
+      data.remove("rimDispositionId");
+      data.remove("mountedRimId");
+      data.remove("middleTread");
+      data.remove("imagesLocation");
+
+      // ✅ STEP 2: Date fix
       if (data.containsKey("inspectionDate") &&
           data["inspectionDate"] is DateTime) {
         data["inspectionDate"] =
-            '${(data["inspectionDate"] as DateTime).toUtc().toIso8601String().split('.').first}Z';
+        '${(data["inspectionDate"] as DateTime).toUtc().toIso8601String().split('.').first}Z';
       }
 
       final url = Uri.parse(
@@ -28,14 +37,13 @@ class InstallTyreService {
         "Cookie": cookie,
       };
 
+      print("📤 FINAL PAYLOAD => ${jsonEncode(data)}");
+
       final response = await http.put(
         url,
         headers: headers,
         body: jsonEncode(data),
       );
-      // 🔥 Temporary test fix
-      data.remove("inspectionId");
-      data.remove("removalReasonId");
 
       print("📡 STATUS: ${response.statusCode}");
       print("📥 BODY: ${response.body}");
@@ -44,8 +52,7 @@ class InstallTyreService {
         final decoded = jsonDecode(response.body);
         if (decoded["didError"] == false) return true;
         throw Exception(
-          decoded["errorMessage"] ??
-              "Backend returned an error without message.",
+          decoded["errorMessage"] ?? "Backend returned an error without message.",
         );
       }
 
@@ -54,28 +61,8 @@ class InstallTyreService {
         throw Exception("Session expired. Please login again.");
       }
 
-      final fallback = await http.put(
-        Uri.parse("${ApiConstants.baseUrl}/api/Inspection/InstallTire"),
-        headers: headers,
-        body: jsonEncode(data),
-      );
-      print("RAW JSON => ${jsonEncode(data)}");
-
-      print("📡 RETRY STATUS: ${fallback.statusCode}");
-      print("📥 RETRY BODY: ${fallback.body}");
-
-      if (fallback.statusCode == 200) {
-        final decoded = jsonDecode(fallback.body);
-
-        if (decoded["didError"] == false) return true;
-        throw Exception(
-          decoded["errorMessage"] ??
-              "Backend returned an error without message.",
-        );
-      }
-
       throw Exception(
-        "Failed with status code ${response.statusCode}: ${response.reasonPhrase}",
+        "Failed with status ${response.statusCode}: ${response.body}",
       );
     } catch (e) {
       print("❌ Install Tire API Error: $e");
